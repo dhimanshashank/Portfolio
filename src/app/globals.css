@@ -202,6 +202,22 @@ body {
   line-height: var(--leading-normal);
 }
 
+/* Form inputs — let the browser handle focus/keyboard natively.
+   touch-action: manipulation tells the OS to process taps immediately
+   (show keyboard) even when a parent has touch-action: none from Lenis.
+   font-size: 16px minimum prevents iOS Safari from auto-zooming on focus. */
+input,
+textarea,
+select,
+button {
+  touch-action: manipulation;
+}
+input,
+textarea,
+select {
+  font-size: max(16px, 1em);
+}
+
 /* Selection — quietly branded */
 ::selection {
   background: var(--signal);

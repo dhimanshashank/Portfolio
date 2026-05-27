@@ -235,7 +235,7 @@ const inputClasses = `
   bg-transparent
   px-0 py-3
   text-ink
-  text-[15px]
+  text-[16px]
   placeholder:text-ink-4
   focus:outline-none focus:border-signal
   disabled:opacity-60 disabled:cursor-not-allowed

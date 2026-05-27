@@ -46,6 +46,18 @@ export function LenisProvider({ children }: { children: React.ReactNode }) {
         touchMultiplier: 1.5,
         // smoothWheel only — touch scroll should stay native for feel & accessibility.
         smoothWheel: true,
+        // Do NOT intercept touch events on interactive form elements.
+        // Without this, Lenis swallows the touchstart and the browser never
+        // fires the focus event that opens the mobile keyboard.
+        prevent: (node: Element) => {
+          const tag = node.tagName;
+          return (
+            tag === "INPUT" ||
+            tag === "TEXTAREA" ||
+            tag === "SELECT" ||
+            (node as HTMLElement).isContentEditable
+          );
+        },
       });
       lenisRef.current = lenis;
 
