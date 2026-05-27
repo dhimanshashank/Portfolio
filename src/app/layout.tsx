@@ -4,6 +4,7 @@ import "./globals.css";
 import { LenisProvider } from "@/lib/motion/lenis-provider";
 import { Nav } from "@/components/shell/nav";
 import { Footer } from "@/components/shell/footer";
+import { ScrollProgress } from "@/components/shell/scroll-progress";
 
 // ─── Fonts ──────────────────────────────────────────────────────────────
 
@@ -169,6 +170,7 @@ export default function RootLayout({
           <Nav />
           <main>{children}</main>
           <Footer />
+          <ScrollProgress />
         </LenisProvider>
       </body>
     </html>
