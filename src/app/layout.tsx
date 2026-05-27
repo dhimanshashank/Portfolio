@@ -6,8 +6,6 @@ import { Nav } from "@/components/shell/nav";
 import { Footer } from "@/components/shell/footer";
 
 // ─── Fonts ──────────────────────────────────────────────────────────────
-// All three are variable fonts (best perf + flexibility). Loaded as CSS vars
-// so globals.css can wire them into the @theme block without re-importing.
 
 const inter = Inter({
   variable: "--font-inter",
@@ -28,19 +26,125 @@ const jetbrains = JetBrains_Mono({
   display: "swap",
 });
 
-// ─── Metadata ───────────────────────────────────────────────────────────
+// ─── SEO Metadata ───────────────────────────────────────────────────────
+
+const BASE_URL = "https://shashankdhiman.in";
 
 export const metadata: Metadata = {
-  title: "Shashank Dhiman — Backend Engineer",
+  metadataBase: new URL(BASE_URL),
+
+  title: {
+    default: "Shashank Dhiman — Backend Engineer",
+    template: "%s · Shashank Dhiman",
+  },
   description:
-    "Backend & real-time systems engineer. Building things that survive at 200 concurrent users.",
-  metadataBase: new URL("https://dhimanshashank.dev"),
+    "Backend & real-time systems engineer based in India. Building systems that survive production — WebSockets, event-driven architecture, distributed infrastructure.",
+
+  keywords: [
+    "Shashank Dhiman",
+    "backend engineer",
+    "ai engineer",
+    "real-time systems",
+    "Node.js",
+    "WebSocket",
+    "distributed systems",
+    "India",
+    "software engineer",
+    "portfolio",
+  ],
+
+  authors: [{ name: "Shashank Dhiman", url: BASE_URL }],
+  creator: "Shashank Dhiman",
+  publisher: "Shashank Dhiman",
+
+  // ── Canonical & alternates ──────────────────────────────────────────
+  alternates: {
+    canonical: BASE_URL,
+  },
+
+  // ── Open Graph ──────────────────────────────────────────────────────
   openGraph: {
+    type: "website",
+    url: BASE_URL,
+    siteName: "Shashank Dhiman",
     title: "Shashank Dhiman — Backend Engineer",
     description:
-      "Backend & real-time systems engineer. Building things that survive at 200 concurrent users.",
-    type: "website",
+      "Backend & real-time systems engineer. Building things that survive production.",
+    images: [
+      {
+        url: "/hero/portrait-halftone.png",
+        width: 1200,
+        height: 630,
+        alt: "Shashank Dhiman — Backend Engineer",
+      },
+    ],
+    locale: "en_IN",
   },
+
+  // ── Twitter / X card ────────────────────────────────────────────────
+  twitter: {
+    card: "summary_large_image",
+    title: "Shashank Dhiman — Backend Engineer",
+    description:
+      "Backend & real-time systems engineer. Building things that survive production.",
+    images: ["/hero/portrait-halftone.png"],
+  },
+
+  // ── Robots ──────────────────────────────────────────────────────────
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+
+  // ── Icons ────────────────────────────────────────────────────────────
+  icons: {
+    icon: [
+      { url: "/favicon/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+    ],
+    apple: [
+      { url: "/favicon/apple-touch-icon.png" },
+    ],
+    other: [
+      { rel: "manifest", url: "/favicon/site.webmanifest" },
+    ],
+  },
+
+  // ── Verification (add tokens once you connect Search Console) ───────
+  // verification: {
+  //   google: "YOUR_GOOGLE_SEARCH_CONSOLE_TOKEN",
+  // },
+};
+
+// ─── JSON-LD Person schema ───────────────────────────────────────────────
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: "Shashank Dhiman",
+  url: BASE_URL,
+  jobTitle: "Backend Engineer",
+  description:
+    "Backend & real-time systems engineer based in India. Building systems that survive production.",
+  sameAs: [
+    "https://github.com/dhimanshashank",
+    "https://www.linkedin.com/in/shashank-dhiman-358535219/",
+  ],
+  knowsAbout: [
+    "Backend Engineering",
+    "Real-time Systems",
+    "WebSockets",
+    "Node.js",
+    "Distributed Systems",
+    "Event-driven Architecture",
+  ],
 };
 
 // ─── Root layout ────────────────────────────────────────────────────────
@@ -54,6 +158,12 @@ export default function RootLayout({
       className={`${inter.variable} ${fraunces.variable} ${jetbrains.variable}`}
       suppressHydrationWarning
     >
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body className="min-h-screen bg-paper text-ink" suppressHydrationWarning>
         <LenisProvider>
           <Nav />

@@ -98,7 +98,7 @@ export function Hero() {
             order-2 md:order-1
             relative z-10
             flex flex-col justify-center
-            px-6 md:px-10 lg:pl-[clamp(40px,6vw,96px)] lg:pr-12
+            px-6 md:px-10 lg:pl-[clamp(40px,6vw,96px)] lg:pr-6
             py-10 md:py-0
             will-change-transform
           "
