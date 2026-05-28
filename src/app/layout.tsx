@@ -73,7 +73,7 @@ export const metadata: Metadata = {
       "Backend & real-time systems engineer. Building things that survive production.",
     images: [
       {
-        url: "/hero/portrait-halftone.png",
+        url: "/hero/portrait-halftone2.png",
         width: 1200,
         height: 630,
         alt: "Shashank Dhiman — Backend Engineer",
@@ -88,7 +88,7 @@ export const metadata: Metadata = {
     title: "Shashank Dhiman — Backend Engineer",
     description:
       "Backend & real-time systems engineer. Building things that survive production.",
-    images: ["/hero/portrait-halftone.png"],
+    images: ["/hero/portrait-halftone2.png"],
   },
 
   // ── Robots ──────────────────────────────────────────────────────────

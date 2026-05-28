@@ -1,21 +1,27 @@
 import { Hero } from "@/components/hero/hero";
 import { ManifestoScroll } from "@/components/manifesto/manifesto-scroll";
+import { SelectedWork } from "@/components/home/selected-work";
+import { WorksOn } from "@/components/home/works-on";
 
 /**
  * Home (/).
  *
- * Phase 1 ↻  Hero
- * Phase 2 ↻  ManifestoScroll  — its own closing CTA hands off to /work.
+ * Phase 3 — Field Cartography composition.
  *
- * Atmosphere strip + Phase-3 placeholder removed. The page ends with the
- * manifesto's closing CTA; the footer (rendered by the root layout) sits
- * directly below it. Clean exit, no orphaned scaffolding.
+ *   I.   Hero               — declaration, not description
+ *   II.  Manifesto          — two italic lines, one scene, signal-tick between
+ *   III. Selected Work      — four projects, scroll-revealed cards w/ visuals
+ *   IV.  Territory + Story  — works-on bar + closing CTA into /about
+ *
+ * The footer (rendered by the root layout) sits directly below. Clean exit.
  */
 export default function HomePage() {
   return (
     <>
       <Hero />
       <ManifestoScroll />
+      <SelectedWork />
+      <WorksOn />
     </>
   );
 }

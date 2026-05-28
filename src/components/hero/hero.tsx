@@ -103,9 +103,9 @@ export function Hero() {
             will-change-transform
           "
         >
-          {/* Eyebrow */}
+          {/* Eyebrow — three coordinates, not a job title */}
           <p className="hero-eyebrow font-mono text-[11px] uppercase tracking-[0.22em] text-signal mb-8 opacity-0">
-            <span aria-hidden>▍</span> Backend · Real-time systems
+            <span aria-hidden>▍</span> Real-time systems · AI infrastructure · India
           </p>
 
           {/* Name — large, declarative, no scramble */}
@@ -121,24 +121,23 @@ export function Hero() {
             {person.name}.
           </h1>
 
-          {/* Tagline — Option A, italic Fraunces, lead size */}
+          {/* Tagline — declaration, not description. Implies the role through
+              what it builds, not by announcing a title. Works for backend AND
+              AI infra because "production" is the common adversary. */}
           <p
             className="hero-tagline mt-5 font-display italic text-ink-2 opacity-0"
             style={{
               fontSize: "clamp(18px, 1.9vw, 24px)",
               lineHeight: 1.4,
-              // Italic Fraunces — letters slant right, so negative tracking
-              // makes glyphs collide with each other. Keep at 0; let the
-              // serif's own metrics do the work.
               letterSpacing: "0",
               wordSpacing: "0.02em",
               fontWeight: 400,
               maxWidth: "32ch",
             }}
           >
-            Backend engineer working on real-time systems
+            Builds the parts that don&apos;t fail
             <br className="hidden md:block" />
-            {" "}built to survive production.
+            {" "}when production finally looks at them.
           </p>
 
           {/* Signature + CTA */}
@@ -153,9 +152,9 @@ export function Hero() {
                 {person.github.handle}
               </a>
               <span className="mx-3 text-ink-4">·</span>
-              backend engineer
+              backend + ai infra
               <span className="mx-3 text-ink-4">·</span>
-              india
+              building from india
             </p>
 
             <div className="flex flex-wrap items-center gap-4">

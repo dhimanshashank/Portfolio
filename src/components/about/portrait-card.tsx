@@ -19,7 +19,7 @@ import { person } from "@/lib/person";
  * feels intentional — no broken-image UI.
  */
 export function PortraitCard({
-  src = "/hero/portrait-halftone.png",
+  src = "/hero/portrait-halftone2.png",
   className,
 }: {
   src?: string;

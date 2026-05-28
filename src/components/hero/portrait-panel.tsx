@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
  * Right padding removed so portrait bleeds to the viewport edge.
  */
 export function PortraitPanel({
-  src = "/hero/portrait-halftone.png",
+  src = "/hero/portrait-halftone2.png",
   alt = "Portrait of Shashank Dhiman",
   className,
 }: {
