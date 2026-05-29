@@ -5,7 +5,6 @@ import { useRef } from "react";
 import { useGSAP, gsap, ScrollTrigger } from "@/lib/motion/use-gsap";
 import { person } from "@/lib/person";
 import { PortraitPanel } from "./portrait-panel";
-import { SignalTrace } from "./signal-trace";
 import { ScrollIndicator } from "./scroll-indicator";
 
 /**
@@ -142,20 +141,36 @@ export function Hero() {
 
           {/* Signature + CTA */}
           <div className="hero-meta mt-12 flex flex-col gap-7 opacity-0">
-            <p className="font-mono text-[12px] uppercase tracking-[0.18em] text-ink-3">
-              <a
-                href={person.github.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-signal transition-colors"
-              >
-                {person.github.handle}
-              </a>
-              <span className="mx-3 text-ink-4">·</span>
-              backend + ai infra
-              <span className="mx-3 text-ink-4">·</span>
-              building from india
-            </p>
+            {/* Layered meta block — 2 lines:
+                  1. Handle + discipline + location  (primary)
+                  2. Recruiter anchor                (secondary)
+                MU context lives in the footer + /about — three stacked
+                mono lines here read as clutter, and the sketch-style
+                MU mark didn't render legibly at 14px anyway. */}
+            <div className="flex flex-col gap-1.5">
+              <p className="font-mono text-[12px] uppercase tracking-[0.18em] text-ink-3">
+                <a
+                  href={person.github.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-signal transition-colors"
+                >
+                  {person.github.handle}
+                </a>
+                <span className="mx-3 text-ink-4">·</span>
+                real-time + ai infra
+                <span className="mx-3 text-ink-4">·</span>
+                India
+              </p>
+
+              <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-ink-4">
+                1+ year shipped
+                <span className="mx-3">·</span>
+                4 production systems
+                <span className="mx-3">·</span>
+                open to remote roles
+              </p>
+            </div>
 
             <div className="flex flex-wrap items-center gap-4">
               <Link
@@ -214,9 +229,6 @@ export function Hero() {
           <PortraitPanel />
         </div>
       </div>
-
-      {/* ─── Signal trace — full-width bottom band, sits behind everything ── */}
-      <SignalTrace className="bottom-20 hidden md:block" />
 
       {/* ─── Scroll indicator — bottom-left ────────────────────────────── */}
       <div

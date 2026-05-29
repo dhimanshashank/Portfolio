@@ -198,8 +198,8 @@ export function ContactForm() {
       </div>
 
       <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-ink-4 max-w-[50ch]">
-        Submissions go straight to my inbox via Resend. Your email is set as
-        reply-to so I can answer you directly.
+        Lands in my inbox directly. I read every message — usually replied
+        within 48 hours.
       </p>
     </form>
   );

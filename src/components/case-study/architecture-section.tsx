@@ -1,8 +1,8 @@
 "use client";
 
+import Image from "next/image";
 import { useRef } from "react";
 import { useGSAP, gsap } from "@/lib/motion/use-gsap";
-import { ArchProctoring } from "@/components/work/visuals/arch-proctoring";
 import { caseArchitecture, isTodo } from "@/lib/proctoring-case-study";
 import { cn } from "@/lib/utils";
 
@@ -88,8 +88,22 @@ export function ArchitectureSection() {
             >
               {caseArchitecture.sectionTitle}
             </h2>
+            {/* Real architecture image — production system diagram.
+                Replaces the earlier abstract SVG mock; this is what was
+                actually shipped, so peer reviewers get the real artifact. */}
             <div className="w-full max-w-[680px]">
-              <ArchProctoring />
+              <div className="relative aspect-[4/3] overflow-hidden rounded-sm border border-ink/10 bg-paper-soft">
+                <Image
+                  src="/work/proctoring/architecture-1.png"
+                  alt="Proctoring system architecture diagram — production"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 680px"
+                  className="object-contain p-2"
+                />
+              </div>
+              <p className="mt-3 font-mono text-[10px] uppercase tracking-[0.22em] text-ink-4">
+                FIG. — System architecture, production
+              </p>
             </div>
           </div>
 

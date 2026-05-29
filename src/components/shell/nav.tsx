@@ -19,8 +19,15 @@ const links = [
   { href: "/work", label: "Work" },
   { href: "/about", label: "About" },
   { href: "/now", label: "Now" },
-  { href: "/blog", label: "Notes" },
   { href: "/contact", label: "Contact" },
+];
+
+// External / utility links rendered alongside the main nav.
+// `Resume ↗` is the recruiter exit ramp — always one click from anywhere.
+// Filename intentionally meaningful so it lands in the recruiter's
+// downloads folder as `Shashank_Resume.pdf`, not a generic `resume.pdf`.
+const utilityLinks = [
+  { href: "/Shashank_Resume.pdf", label: "Resume ↗", external: true },
 ];
 
 export function Nav() {
@@ -59,6 +66,19 @@ export function Nav() {
                 </Link>
               );
             })}
+
+            {/* Utility — Resume ↗ etc. */}
+            {utilityLinks.map((l) => (
+              <a
+                key={l.href}
+                href={l.href}
+                target={l.external ? "_blank" : undefined}
+                rel={l.external ? "noopener noreferrer" : undefined}
+                className="font-mono text-[11px] tracking-[0.18em] uppercase text-ink hover:text-signal transition-colors"
+              >
+                {l.label}
+              </a>
+            ))}
           </nav>
 
           {/* Mobile hamburger */}
@@ -108,6 +128,26 @@ export function Nav() {
                   </motion.div>
                 );
               })}
+
+              {/* Utility links — Resume ↗ etc., mirrored from desktop */}
+              {utilityLinks.map((l, i) => (
+                <motion.div
+                  key={l.href}
+                  initial={{ opacity: 0, x: -8 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: (links.length + 1 + i) * 0.04, duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                >
+                  <a
+                    href={l.href}
+                    target={l.external ? "_blank" : undefined}
+                    rel={l.external ? "noopener noreferrer" : undefined}
+                    onClick={() => setOpen(false)}
+                    className="block font-mono text-[12px] tracking-[0.18em] uppercase py-3.5 text-ink hover:text-signal transition-colors"
+                  >
+                    {l.label}
+                  </a>
+                </motion.div>
+              ))}
             </nav>
           </motion.div>
         )}

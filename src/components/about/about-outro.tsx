@@ -35,7 +35,7 @@ export function AboutOutro() {
           {stripDraft(aboutOutro.line)}
         </p>
 
-        <div className="mt-10 flex flex-wrap items-center gap-4">
+        <div className="mt-10 flex flex-wrap items-center gap-4 md:gap-5">
           <Link
             href={aboutOutro.primary.href}
             className="
@@ -76,6 +76,30 @@ export function AboutOutro() {
               →
             </span>
           </Link>
+
+          {/* Tertiary — recruiter exit ramp. Unstyled mono link, no border.
+              Sits visually quieter than the other two so it reads as a
+              utility, not a competing CTA. */}
+          <a
+            href={aboutOutro.tertiary.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="
+              group inline-flex items-center gap-2
+              font-mono text-[11px] uppercase tracking-[0.18em] text-ink-3
+              px-2 py-3
+              transition-colors duration-300
+              hover:text-signal
+            "
+          >
+            {aboutOutro.tertiary.label}
+            <span
+              aria-hidden
+              className="inline-block opacity-70 transition-transform duration-300 group-hover:translate-x-1"
+            >
+              ↗
+            </span>
+          </a>
         </div>
       </div>
     </section>

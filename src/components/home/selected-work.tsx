@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useRef } from "react";
 import { useGSAP, gsap } from "@/lib/motion/use-gsap";
 import { projects, type WorkProject } from "@/lib/work-data";
@@ -330,19 +331,32 @@ function WorkCard({ project, index }: { project: WorkProject; index: number }) {
   );
 }
 
-// ─── Per-project abstract visual ───────────────────────────────────────────
+// ─── Per-project visual ──────────────────────────────────────────────────
+// Proctoring renders the real architecture image; the other three keep
+// their abstract SVG mocks (placeholders until real diagrams arrive).
 function WorkVisual({ project }: { project: WorkProject }) {
+  const isReal = project.id === "proctoring";
+
   return (
     <div
       data-work-viz
       className="relative h-full w-full overflow-hidden border border-ink/10"
       style={{ background: "var(--paper-soft)", opacity: 0 }}
     >
-      {/* faint grid backdrop */}
-      <GridBackdrop />
+      {/* faint grid backdrop — only for the abstract mocks. The real photo
+          has its own surface and the grid would compete with it. */}
+      {!isReal && <GridBackdrop />}
 
       {/* project-specific drawing */}
-      {project.id === "proctoring" && <VizProctoring />}
+      {project.id === "proctoring" && (
+        <Image
+          src="/work/proctoring/architecture-1.png"
+          alt="Proctoring system architecture — production"
+          fill
+          sizes="(max-width: 768px) 100vw, 50vw"
+          className="object-contain p-3 md:p-4"
+        />
+      )}
       {project.id === "messaging" && <VizMessaging />}
       {project.id === "analytics" && <VizAnalytics />}
       {project.id === "eventify" && <VizEventify />}

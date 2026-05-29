@@ -18,10 +18,10 @@ export function ContactHero() {
           lineHeight: 1.05,
           letterSpacing: "-0.035em",
           fontWeight: 400,
-          maxWidth: "20ch",
+          maxWidth: "22ch",
         }}
       >
-        Building something real-time?
+        Building something real-time, or wiring an LLM into production?
         <br />
         <span className="italic text-ink-2" style={{ letterSpacing: 0, wordSpacing: "0.04em" }}>
           Let&apos;s talk.
@@ -33,11 +33,12 @@ export function ContactHero() {
         style={{
           fontSize: "clamp(16px, 1.5vw, 19px)",
           lineHeight: 1.55,
-          maxWidth: "52ch",
+          maxWidth: "56ch",
         }}
       >
-        Reach out about backend roles, real-time systems work, or anything in
-        the proctoring / WebRTC / streaming space. I read every message.
+        Reach out about backend roles, real-time systems, AI infrastructure,
+        or anything in the proctoring / WebRTC / streaming space. I read
+        every message.
       </p>
     </section>
   );
