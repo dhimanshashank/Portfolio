@@ -1,6 +1,7 @@
 import { Hero } from "@/components/hero/hero";
 import { ManifestoScroll } from "@/components/manifesto/manifesto-scroll";
 import { SelectedWork } from "@/components/home/selected-work";
+import { EngineeringLog } from "@/components/problems/engineering-log";
 import { WorksOn } from "@/components/home/works-on";
 
 /**
@@ -11,7 +12,8 @@ import { WorksOn } from "@/components/home/works-on";
  *   I.   Hero               — declaration, not description
  *   II.  Manifesto          — two italic lines, one scene, signal-tick between
  *   III. Selected Work      — four projects, scroll-revealed cards w/ visuals
- *   IV.  Territory + Story  — works-on bar + closing CTA into /about
+ *   IV.  Engineering Log    — void section: production investigations, clue → root cause → fix
+ *   V.   Territory + Story  — works-on bar + closing CTA into /about
  *
  * The footer (rendered by the root layout) sits directly below. Clean exit.
  */
@@ -21,6 +23,7 @@ export default function HomePage() {
       <Hero />
       <ManifestoScroll />
       <SelectedWork />
+      <EngineeringLog />
       <WorksOn />
     </>
   );

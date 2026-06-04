@@ -485,6 +485,21 @@ User asked about more home content. Three options on the table:
 Recommendation was **A + C** (Now Strip + Contact Strip) for forward momentum
 + deliberate ending. Awaiting explicit go.
 
+### Engineering Log — SHIPPED (Plate V)
+
+Dark void section inserted between `<SelectedWork>` and `<WorksOn>` on the
+home page. Answers the recruiter question "what's the latest problem you faced?"
+
+- **Data**: `src/lib/problems-data.ts` — add new entries there only. No
+  component changes needed.
+- **Component**: `src/components/problems/engineering-log.tsx`
+- **Card anatomy**: severity badge (P1/P2/P3) · tags · date | italic Fraunces
+  title | hook body | terminal clue block (smoking-gun line in signal orange) |
+  root cause + fix
+- **Two entries shipped**: webm-timestamp-reset (P1) + s3-multipart-orphan (P2)
+- **Future**: a `/logs` route showing all entries with tag filtering can be
+  added when there are 4+ problems. Until then, the homepage section is enough.
+
 ### Content gaps to fill
 
 - All `DRAFT · ` lines in `src/lib/about-content.ts` and `src/lib/now-content.ts`

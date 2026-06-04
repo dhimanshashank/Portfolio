@@ -74,7 +74,7 @@ export const aboutFacts = {
     { group: "Backend", items: ["Node.js", "Express", "REST", "Microservices"] },
     { group: "Real-time", items: ["WebRTC (Mediasoup)", "Socket.IO", "Redis Pub/Sub"] },
     { group: "Data", items: ["PostgreSQL", "ClickHouse", "Redis", "MongoDB"] },
-    { group: "Cloud", items: ["AWS Lambda", "SQS", "S3", "Docker"] },
+    { group: "Cloud", items: ["AWS Lambda", "SQS", "AWS S3", "Docker"] },
     { group: "Languages", items: ["TypeScript", "JavaScript", "SQL"] },
     { group: "Frontend", items: ["React", "Next.js", "Tailwind"] },
   ],
