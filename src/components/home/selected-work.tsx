@@ -518,6 +518,15 @@ function VizMessaging() {
 }
 
 // Analytics — partition map
+//
+// `cellFilled` is a deterministic spatial hash → matches between SSR and
+// client, no hydration mismatch. Same input always returns the same value,
+// distribution lands roughly at the original ~45% density target.
+function cellFilled(row: number, col: number): boolean {
+  const seed = ((row * 73856093) ^ (col * 19349663)) >>> 0;
+  return seed % 100 < 45;
+}
+
 function VizAnalytics() {
   return (
     <svg
@@ -529,7 +538,7 @@ function VizAnalytics() {
       {Array.from({ length: 6 }).map((_, row) => (
         <g key={row}>
           {Array.from({ length: 10 }).map((__, col) => {
-            const filled = Math.random() < 0.45;
+            const filled = cellFilled(row, col);
             return (
               <rect
                 key={col}

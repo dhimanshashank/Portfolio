@@ -243,7 +243,17 @@ export function SketchAsterisk({
   style,
   color = "currentColor",
   weight = 1,
-}: Omit<SketchProps, "drawMs">) {
+  drawMs = 0,
+}: SketchProps) {
+  const drawProps = (offsetMs: number) =>
+    drawMs
+      ? {
+          strokeDasharray: 24,
+          strokeDashoffset: 24,
+          animation: `sketch-draw ${drawMs}ms ${offsetMs}ms cubic-bezier(0.7,0,0.3,1) forwards`,
+        }
+      : undefined;
+
   return (
     <svg
       aria-hidden
@@ -251,9 +261,37 @@ export function SketchAsterisk({
       className={className}
       style={{ display: "block", overflow: "visible", ...style }}
     >
-      <path d="M12 3 L 12 21" stroke={color} strokeWidth={1.2 * weight} strokeLinecap="round" fill="none" />
-      <path d="M4 8 L 20 16" stroke={color} strokeWidth={1.2 * weight} strokeLinecap="round" fill="none" />
-      <path d="M4 16 L 20 8" stroke={color} strokeWidth={1.2 * weight} strokeLinecap="round" fill="none" />
+      <path
+        d="M12 3 L 12 21"
+        stroke={color}
+        strokeWidth={1.2 * weight}
+        strokeLinecap="round"
+        fill="none"
+        style={drawProps(0)}
+      />
+      <path
+        d="M4 8 L 20 16"
+        stroke={color}
+        strokeWidth={1.2 * weight}
+        strokeLinecap="round"
+        fill="none"
+        style={drawProps(drawMs * 0.25)}
+      />
+      <path
+        d="M4 16 L 20 8"
+        stroke={color}
+        strokeWidth={1.2 * weight}
+        strokeLinecap="round"
+        fill="none"
+        style={drawProps(drawMs * 0.5)}
+      />
+      {drawMs > 0 && (
+        <style>{`
+          @keyframes sketch-draw {
+            to { stroke-dashoffset: 0; }
+          }
+        `}</style>
+      )}
     </svg>
   );
 }

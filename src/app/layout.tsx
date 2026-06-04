@@ -7,6 +7,8 @@ import { LenisProvider } from "@/lib/motion/lenis-provider";
 import { Nav } from "@/components/shell/nav";
 import { Footer } from "@/components/shell/footer";
 import { ScrollProgress } from "@/components/shell/scroll-progress";
+import { RouteTransition } from "@/components/shell/route-transition";
+import { InitialCurtain } from "@/components/shell/initial-curtain";
 
 // ─── Fonts ──────────────────────────────────────────────────────────────
 
@@ -180,6 +182,15 @@ export default function RootLayout({
             in dev (they no-op locally). */}
         <Analytics />
         <SpeedInsights />
+
+        {/* Global route-change ceremony — two ink panels meet, sketch
+            asterisk pencils in, panels split apart. */}
+        <RouteTransition />
+
+        {/* Cold-load / hard-reload welcome — panels start closed, asterisk
+            pencils in, Delhi coordinates fade in, then panels open. Plays
+            once per page load, then self-unmounts. */}
+        <InitialCurtain />
       </body>
     </html>
   );
