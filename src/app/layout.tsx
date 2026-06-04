@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter, Fraunces, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { LenisProvider } from "@/lib/motion/lenis-provider";
 import { Nav } from "@/components/shell/nav";
 import { Footer } from "@/components/shell/footer";
@@ -172,6 +174,12 @@ export default function RootLayout({
           <Footer />
           <ScrollProgress />
         </LenisProvider>
+
+        {/* Vercel telemetry — page views + Web Vitals. Both inject scripts
+            only in production and respect Do Not Track. Safe to leave on
+            in dev (they no-op locally). */}
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
