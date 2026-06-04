@@ -167,22 +167,39 @@ export function ProjectCard({
             ))}
           </ul>
 
-          {/* Action */}
-          {href ? (
-            <span className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.18em] text-ink whitespace-nowrap">
-              Case study
-              <span
-                aria-hidden
-                className="inline-block transition-transform duration-300 group-hover:translate-x-1.5"
-              >
-                →
+          {/* Action — case-study CTA + optional Live ↗ link */}
+          <div className="flex flex-col items-end gap-2 whitespace-nowrap">
+            {href ? (
+              <span className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.18em] text-ink">
+                Case study
+                <span
+                  aria-hidden
+                  className="inline-block transition-transform duration-300 group-hover:translate-x-1.5"
+                >
+                  →
+                </span>
               </span>
-            </span>
-          ) : (
-            <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-ink-4 whitespace-nowrap">
-              Case study · soon
-            </span>
-          )}
+            ) : (
+              <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-ink-4">
+                Case study · soon
+              </span>
+            )}
+
+            {project.liveUrl && (
+              // Stop propagation so the parent <Link> (case study) doesn't
+              // hijack the click — the Live link belongs to a different
+              // destination than the rest of the card.
+              <a
+                href={project.liveUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="font-mono text-[10px] uppercase tracking-[0.18em] text-signal hover:text-ink transition-colors"
+              >
+                Live ↗
+              </a>
+            )}
+          </div>
         </div>
       </div>
     </article>

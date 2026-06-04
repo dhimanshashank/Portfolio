@@ -37,6 +37,9 @@ export type WorkProject = {
   context?: string;
   /** Card variant in the grid — only one "featured" allowed. */
   variant: "featured" | "regular";
+  /** External live-demo URL. Rendered as a small "Live ↗" link on the card
+   *  when present. Reserved for projects with a publicly accessible deploy. */
+  liveUrl?: string;
 };
 
 export const projects: WorkProject[] = [
@@ -63,17 +66,18 @@ export const projects: WorkProject[] = [
     id: "messaging",
     slug: "messaging-system",
     num: "02",
-    title: "Real-Time Messaging",
-    tagline: "Sub-second chat at scale",
+    title: "Doubt & Discussion",
+    tagline: "Four chat types, one socket layer",
     blurb:
-      "End-to-end messaging — DMs, group channels, presence, read receipts. Keyset cursor pagination replaced an O(n) offset scan with an O(log n) index seek. A Redis cache layer covers the hot path so PostgreSQL barely sees it.",
-    stack: ["node", "socket.io", "redis", "postgres"],
+      "Direct chats, group threads, course discussions, and announcements — four conversation types sharing one realtime layer. The system tracks who's viewing what, so messages auto-mark-read when the recipient is already inside the thread.",
+    stack: ["node", "socket.io", "redis", "postgres", "sequelize"],
     metrics: [
+      { value: "4", label: "chat types unified" },
       { value: "−70%", label: "API latency" },
       { value: "−60%", label: "DB round-trips" },
     ],
-    visualKind: "code",
-    caseStudy: false,
+    visualKind: "architecture",
+    caseStudy: true,
     context: "Masters' Union · production",
     variant: "regular",
   },
@@ -100,10 +104,10 @@ export const projects: WorkProject[] = [
     slug: "eventify",
     num: "04",
     title: "Eventify",
-    tagline: "MERN · payments · auth",
+    tagline: "MERN · Stripe · webhook-driven orders",
     blurb:
-      "Full-stack event platform with Stripe payments, JWT auth, and role-based access control. Order state lives in the webhook handler — never trusted to the client confirmation — so a closed browser doesn't lose a paid order.",
-    stack: ["react", "node", "mongo", "stripe", "jwt"],
+      "Full-stack event-management platform — browse, book, and pay for events end-to-end. Stripe Checkout handles payment, but order state lives in the webhook handler — never the client confirmation — so a closed browser mid-payment doesn't lose a paid order. JWT auth + role-scoped middleware keeps organisers, attendees, and admins on their own surfaces.",
+    stack: ["react", "node", "express", "mongo", "stripe", "jwt"],
     metrics: [
       { value: "0", label: "lost payments" },
       { value: "3", label: "user roles, scoped" },
@@ -112,6 +116,7 @@ export const projects: WorkProject[] = [
     caseStudy: false,
     context: "Qspider · internship",
     variant: "regular",
+    liveUrl: "https://eventify-gamma-eight.vercel.app",
   },
 ];
 

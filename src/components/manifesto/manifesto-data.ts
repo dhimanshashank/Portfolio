@@ -30,8 +30,10 @@ export const SENTENCES: [ManifestoSentence, ManifestoSentence] = [
   },
 ];
 
-/** Milliseconds each line dwells before being replaced by the other. */
-export const DWELL_MS = 3600;
+/** Milliseconds each line dwells before being replaced by the other.
+ *  Tuned short so a visitor who's scrolling past doesn't feel held up —
+ *  the lines read once, swap, and you can keep moving. */
+export const DWELL_MS = 2200;
 
 /** Milliseconds for the fade between lines. */
-export const FADE_MS = 700;
+export const FADE_MS = 550;

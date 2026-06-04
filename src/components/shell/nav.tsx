@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
@@ -34,6 +34,16 @@ const utilityLinks = [
 export function Nav() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+
+  // Auto-close the mobile drawer whenever the route changes. We can't rely
+  // on each Link's onClick to close it — the global RouteTransition listens
+  // in the capture phase with stopPropagation, which prevents synthetic
+  // onClicks from firing on the underlying <a>. Watching pathname is the
+  // one signal that always fires after navigation, regardless of how the
+  // click was routed.
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
 
   return (
     <>

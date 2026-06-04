@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
  * Cold-load ceremony. Plays once on every fresh page load (and hard reload).
  * Two ink panels are already closed when the page paints; a signal-orange
  * registration tick + Delhi coordinates fade in across a long hold, then
- * the panels split apart revealing the site.
+ * the tick + coordinates fade away, then the panels split apart cleanly.
  *
  * Timeline (≈2360ms):
  *
@@ -16,8 +16,10 @@ import { useEffect, useState } from "react";
  *   t = 200     signal-orange tick fades in at centre
  *   t = 360     coordinates fade in (28°36'N · 77°12'E)
  *   t = 520     place line fades in (New Delhi · IN)
- *   t = 1800    hold ends, panels start splitting (560ms open)
- *   t = 2360    panels fully off-screen, content fades complete
+ *   t = 1600    tick + coords + place begin fading out (200ms)
+ *   t = 1800    hold ends, panels start splitting (560ms open) — content
+ *               already gone so the seam reveals a clean ink field
+ *   t = 2360    panels fully off-screen
  *   t = 2460    component unmounts itself
  *
  * Why this lives separate from <RouteTransition>:
@@ -107,7 +109,8 @@ export function InitialCurtain() {
           justify-content: center;
           gap: 18px;
           color: var(--bone);
-          animation: initial-curtain-content-out 540ms 1820ms ease-out forwards;
+          /* No unified content-out here — each child owns its own exit so
+             the tick can collapse to a dot while the coords just fade. */
         }
 
         .initial-curtain-tick {
@@ -115,8 +118,14 @@ export function InitialCurtain() {
           width: 72px;
           height: 2px;
           background: var(--signal);
+          transform-origin: center;
           opacity: 0;
-          animation: initial-curtain-tick-in 320ms 200ms ease-out forwards;
+          /* Fade in (320ms @ 200ms) then collapse to a dot + fade out
+             (200ms @ 1600ms). Two independent animations on the same
+             element — non-overlapping, so they don't fight. */
+          animation:
+            initial-curtain-tick-in 320ms 200ms ease-out forwards,
+            initial-curtain-tick-out 200ms 1600ms ease-out forwards;
         }
 
         .initial-curtain-coords {
@@ -126,7 +135,9 @@ export function InitialCurtain() {
           color: var(--bone-2);
           margin: 0;
           opacity: 0;
-          animation: initial-curtain-coords-in 360ms 360ms ease-out forwards;
+          animation:
+            initial-curtain-coords-in 360ms 360ms ease-out forwards,
+            initial-curtain-text-out 200ms 1600ms ease-out forwards;
         }
         .initial-curtain-place {
           font-size: 10px;
@@ -135,7 +146,9 @@ export function InitialCurtain() {
           color: var(--bone-3);
           margin: 0;
           opacity: 0;
-          animation: initial-curtain-coords-in 360ms 520ms ease-out forwards;
+          animation:
+            initial-curtain-coords-in 360ms 520ms ease-out forwards,
+            initial-curtain-text-out 200ms 1600ms ease-out forwards;
         }
 
         @keyframes initial-curtain-up {
@@ -144,14 +157,21 @@ export function InitialCurtain() {
         @keyframes initial-curtain-down {
           to { transform: translateY(100%); }
         }
-        @keyframes initial-curtain-content-out {
-          to { opacity: 0; }
-        }
         @keyframes initial-curtain-tick-in {
           to { opacity: 1; }
         }
+        @keyframes initial-curtain-tick-out {
+          /* Line collapses horizontally to a 2-3px dot first, then fades.
+             Using scaleX keeps the element centered on its midpoint. */
+          0%   { transform: scaleX(1);    opacity: 1; }
+          60%  { transform: scaleX(0.04); opacity: 1; }
+          100% { transform: scaleX(0.04); opacity: 0; }
+        }
         @keyframes initial-curtain-coords-in {
           to { opacity: 0.92; }
+        }
+        @keyframes initial-curtain-text-out {
+          to { opacity: 0; }
         }
 
         /* Reduced motion — hide entirely from first paint, no animation.

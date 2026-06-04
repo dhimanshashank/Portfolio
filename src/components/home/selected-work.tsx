@@ -292,7 +292,7 @@ function WorkCard({ project, index }: { project: WorkProject; index: number }) {
           </p>
         </div>
 
-        <div className="mt-8">
+        <div className="mt-8 flex flex-wrap items-center gap-4">
           <Link
             href={href}
             className="
@@ -313,12 +313,36 @@ function WorkCard({ project, index }: { project: WorkProject; index: number }) {
               →
             </span>
           </Link>
-          {project.context && (
-            <p className="mt-4 font-mono text-[10px] uppercase tracking-[0.18em] text-ink-4">
-              {project.context}
-            </p>
+
+          {project.liveUrl && (
+            <a
+              href={project.liveUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="
+                group inline-flex items-center gap-2
+                font-mono text-[11px] uppercase tracking-[0.18em] text-signal
+                px-2 py-3
+                transition-colors duration-300
+                hover:text-ink
+              "
+            >
+              Live
+              <span
+                aria-hidden
+                className="inline-block transition-transform duration-300 group-hover:translate-x-1"
+              >
+                ↗
+              </span>
+            </a>
           )}
         </div>
+
+        {project.context && (
+          <p className="mt-4 font-mono text-[10px] uppercase tracking-[0.18em] text-ink-4">
+            {project.context}
+          </p>
+        )}
       </div>
 
       {/* ─── Visual column ───────────────────────────────────────────── */}
@@ -332,10 +356,10 @@ function WorkCard({ project, index }: { project: WorkProject; index: number }) {
 }
 
 // ─── Per-project visual ──────────────────────────────────────────────────
-// Proctoring renders the real architecture image; the other three keep
-// their abstract SVG mocks (placeholders until real diagrams arrive).
+// Projects with real architecture images render those. The remaining two
+// keep their abstract SVG mocks until real diagrams arrive.
 function WorkVisual({ project }: { project: WorkProject }) {
-  const isReal = project.id === "proctoring";
+  const isReal = project.id === "proctoring" || project.id === "messaging";
 
   return (
     <div
@@ -343,8 +367,8 @@ function WorkVisual({ project }: { project: WorkProject }) {
       className="relative h-full w-full overflow-hidden border border-ink/10"
       style={{ background: "var(--paper-soft)", opacity: 0 }}
     >
-      {/* faint grid backdrop — only for the abstract mocks. The real photo
-          has its own surface and the grid would compete with it. */}
+      {/* Faint grid backdrop — only for the abstract mocks. The real diagrams
+          have their own surface and the grid would compete with them. */}
       {!isReal && <GridBackdrop />}
 
       {/* project-specific drawing */}
@@ -357,7 +381,15 @@ function WorkVisual({ project }: { project: WorkProject }) {
           className="object-contain p-3 md:p-4"
         />
       )}
-      {project.id === "messaging" && <VizMessaging />}
+      {project.id === "messaging" && (
+        <Image
+          src="/work/chat/chatSystemArchitecture.png"
+          alt="Doubt & Discussion system architecture — production"
+          fill
+          sizes="(max-width: 768px) 100vw, 50vw"
+          className="object-contain p-3 md:p-4"
+        />
+      )}
       {project.id === "analytics" && <VizAnalytics />}
       {project.id === "eventify" && <VizEventify />}
 

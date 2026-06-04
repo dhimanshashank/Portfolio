@@ -200,21 +200,24 @@ function CurtainOverlay({ phase }: { phase: Phase }) {
         <PaperGrain />
       </div>
 
-      {/* Signal-orange registration tick at the seam — the only thing that
-          sits between the two halves while they're closed. Subtle rhythm
-          marker; appears as they meet, fades gracefully as they split so
-          the trailing edge of the tick rides out with the panels. */}
-      <div
-        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
-        style={{
-          opacity: phase === "holding" ? 1 : 0,
-          transition:
-            phase === "holding"
-              ? "opacity 220ms ease-out 40ms"
-              : "opacity 300ms ease-in",
-        }}
-      >
-        <span className="block h-[2px] w-16 bg-signal" />
+      {/* Signal-orange registration tick at the seam.
+          On `opening`: collapses horizontally to a small dot, then the dot
+          fades. Two-stage exit — line → dot → gone. Both stages finish well
+          before the panels visibly part. */}
+      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+        <span
+          className="block h-[2px] w-16 bg-signal"
+          style={{
+            transformOrigin: "center",
+            transform:
+              phase === "holding" ? "scaleX(1)" : "scaleX(0.04)",
+            opacity: phase === "holding" ? 1 : 0,
+            transition:
+              phase === "holding"
+                ? "transform 220ms ease-out 40ms, opacity 220ms ease-out 40ms"
+                : "transform 200ms cubic-bezier(0.7, 0, 0.3, 1), opacity 120ms ease-out 140ms",
+          }}
+        />
       </div>
     </div>
   );
