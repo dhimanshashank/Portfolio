@@ -82,13 +82,20 @@ export function Hero() {
   return (
     <section
       ref={heroRef}
-      className="relative h-screen min-h-[640px] overflow-hidden bg-paper"
+      className="
+        relative overflow-hidden bg-paper
+        min-h-screen
+        md:h-screen md:min-h-[640px]
+      "
     >
       {/* ─── Split grid ────────────────────────────────────────────────────
-          On mobile: column-reverse stacks the portrait visually above text.
+          On mobile: portrait row above text. Portrait sized to 42vh (was
+          55vh) so the recruiter-anchor line + CTAs reach above the fold.
+          The section is min-h-screen, not h-screen, so the text row can
+          grow naturally without clipping.
           On desktop: 55/45 split with text left, portrait right.
           ─────────────────────────────────────────────────────────────── */}
-      <div className="relative grid h-full grid-cols-1 grid-rows-[55vh_auto] md:grid-cols-[1.22fr_1fr] md:grid-rows-1">
+      <div className="relative grid grid-cols-1 grid-rows-[42vh_auto] md:h-full md:grid-cols-[1.22fr_1fr] md:grid-rows-1">
 
         {/* ── TEXT COLUMN ─────────────────────────────────────────────── */}
         <div
@@ -103,7 +110,7 @@ export function Hero() {
           "
         >
           {/* Eyebrow — three coordinates, not a job title */}
-          <p className="hero-eyebrow font-mono text-[11px] uppercase tracking-[0.22em] text-signal mb-8 opacity-0">
+          <p className="hero-eyebrow font-mono text-[11px] uppercase tracking-[0.22em] text-signal mb-5 md:mb-8 opacity-0">
             <span aria-hidden>▍</span> Real-time systems · AI infrastructure · India
           </p>
 
@@ -139,8 +146,9 @@ export function Hero() {
             {" "}when production finally looks at them.
           </p>
 
-          {/* Signature + CTA */}
-          <div className="hero-meta mt-12 flex flex-col gap-7 opacity-0">
+          {/* Signature + CTA — tighter on mobile so the recruiter anchor
+              and CTAs both fit close to the fold. */}
+          <div className="hero-meta mt-8 md:mt-12 flex flex-col gap-5 md:gap-7 opacity-0">
             {/* Layered meta block — 2 lines:
                   1. Handle + discipline + location  (primary)
                   2. Recruiter anchor                (secondary)
@@ -222,7 +230,7 @@ export function Hero() {
           className="
             order-1 md:order-2
             relative
-            h-[55vh] md:h-full
+            h-[42vh] md:h-full
             will-change-transform
           "
         >

@@ -176,7 +176,10 @@ export function SelectedWork() {
         </h2>
       </div>
 
-      <div className="container-wide pb-32 md:pb-40 flex flex-col gap-28 md:gap-40">
+      {/* Tighter gap on mobile — each project gets a card frame to define
+          its bounds. On desktop the projects are wide enough that the gap
+          + visual borders already do that work, so cards stay frameless. */}
+      <div className="container-wide pb-32 md:pb-40 flex flex-col gap-12 md:gap-40">
         {projects.map((p, i) => (
           <WorkCard key={p.id} project={p} index={i} />
         ))}
@@ -194,19 +197,21 @@ function WorkCard({ project, index }: { project: WorkProject; index: number }) {
     <article
       data-work-card
       className="
-        grid grid-cols-1 gap-10 items-center
-        md:grid-cols-[1.05fr_1fr] md:gap-16
         relative
+        rounded-sm border border-ink/12 bg-paper-soft/40 p-5
+        md:rounded-none md:border-0 md:bg-transparent md:p-0
+        grid grid-cols-1 gap-6 items-center
+        md:grid-cols-[1.05fr_1fr] md:gap-16
       "
     >
       {/* ─── Text column ─────────────────────────────────────────────── */}
       <div className={reverse ? "md:order-2" : "md:order-1"}>
-        <div className="flex items-baseline gap-5 mb-6">
+        <div className="flex items-baseline gap-4 mb-4 md:mb-6 md:gap-5">
           <span
             data-work-number
             className="font-display text-ink-4"
             style={{
-              fontSize: "clamp(48px, 7vw, 96px)",
+              fontSize: "clamp(34px, 6vw, 96px)",
               lineHeight: 1,
               fontWeight: 400,
               letterSpacing: "-0.03em",
