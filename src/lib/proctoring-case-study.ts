@@ -190,8 +190,8 @@ export const caseOutro = {
   blogSub:
     "The unabridged 24-minute deep dive on GitHub Pages — three more lessons, the WebRTC race conditions, the dashboard refactor in detail.",
   next: {
-    label: "Real-Time Messaging",
-    href: "/work",
-    sub: "Up next in the queue · case study soon",
+    label: "Doubt & Discussion",
+    href: "/work/messaging-system",
+    sub: "Next case study · four chat types, one socket layer",
   },
 } as const;

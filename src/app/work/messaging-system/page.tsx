@@ -70,12 +70,40 @@ export default function MessagingCaseStudy() {
         </p>
 
         <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-2 font-mono text-[10px] uppercase tracking-[0.22em] text-ink-4">
-          <span>Masters&apos; Union · production</span>
+          <span>Venture Pact (Masters&apos; Union) · production</span>
           <span aria-hidden>·</span>
           <span>2025 — present</span>
           <span aria-hidden>·</span>
           <span>node · socket.io · redis · postgres</span>
         </div>
+      </section>
+
+      {/* ─── Metrics band — the numbers behind the story ─────────────── */}
+      <section className="container-wide pb-16 md:pb-20">
+        <ul className="grid grid-cols-1 gap-10 sm:grid-cols-3 sm:gap-6 border-t border-ink/10 pt-10">
+          {[
+            { value: "<100ms", label: "message delivery" },
+            { value: "−70%", label: "API latency" },
+            { value: "−60%", label: "DB round-trips" },
+          ].map((m) => (
+            <li key={m.label}>
+              <span
+                className="block font-display tabular-nums text-ink"
+                style={{
+                  fontSize: "clamp(36px, 4.4vw, 60px)",
+                  lineHeight: 1,
+                  letterSpacing: "-0.03em",
+                  fontWeight: 400,
+                }}
+              >
+                {m.value}
+              </span>
+              <span className="mt-3 block font-mono text-[10px] uppercase tracking-[0.22em] text-ink-3">
+                {m.label}
+              </span>
+            </li>
+          ))}
+        </ul>
       </section>
 
       {/* ─── Section 1 — Four conversations ──────────────────────────── */}
@@ -159,6 +187,41 @@ export default function MessagingCaseStudy() {
           Nothing visible to the user except that the module just felt
           right inside the larger platform. The kind of detail nobody
           notices until you take it away.
+        </p>
+      </Section>
+
+      {/* ─── Section 5 — Presence ────────────────────────────────────── */}
+      <Section eyebrow="05 / Presence" title="Who's here, in O(log n).">
+        <p>
+          That &quot;quiet, running record&quot; is a Redis sorted set. Every
+          heartbeat is a ZADD with the timestamp as the score — so
+          &quot;who&apos;s online&quot; is a single range query, and stale
+          entries age out by score with no sweeper job. Presence reads never
+          touch PostgreSQL.
+        </p>
+        <p>
+          With Redis fronting the hot path — presence, unread counts, the
+          conversation list — measured API latency dropped 70% under
+          concurrency, and message delivery stayed under 100ms end to end.
+        </p>
+      </Section>
+
+      {/* ─── Section 6 — The data layer ──────────────────────────────── */}
+      <Section eyebrow="06 / History" title="Scrollback without OFFSET.">
+        <p>
+          Chat history breaks naive pagination. OFFSET walks every skipped
+          row, so page fifty of a busy thread costs fifty times page one —
+          and rows shift under you as new messages land. Keyset pagination
+          fixes both: remember the last message&apos;s id, ask for what came
+          before it, let the index do the work. Every page costs the same
+          O(log n) lookup.
+        </p>
+        <p>
+          The other classic failure was N+1: load twenty conversations, fire
+          twenty more queries for their senders and attachments. DataLoader
+          collapses those into one batched query per entity type within a
+          tick. DB round-trips for high-concurrency chat history fell by 60%
+          — the same screens, a fraction of the database&apos;s attention.
         </p>
       </Section>
 
