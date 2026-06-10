@@ -63,6 +63,9 @@ export function ProofStripView({ stats }: { stats: ProofStats }) {
       ? `synced ${relativeHours(stats.fetchedAt)}`
       : "figures as of June 2026";
 
+  const weeks = stats.github.weeks;
+  const maxWeek = weeks?.length ? Math.max(...weeks, 1) : 1;
+
   return (
     <section
       ref={sectionRef}
@@ -103,6 +106,39 @@ export function ProofStripView({ stats }: { stats: ProofStats }) {
             </li>
           ))}
         </ul>
+
+        {/* 26-week contribution sparkline — only when live data landed.
+            Ink bars, orange reserved for the single busiest week. */}
+        {weeks && weeks.length > 0 && (
+          <div data-proof-cell className="mt-10" style={{ opacity: 0 }}>
+            <svg
+              viewBox={`0 0 ${weeks.length * 10} 36`}
+              className="h-9 w-full max-w-[420px]"
+              role="img"
+              aria-label="GitHub contributions, last 26 weeks"
+            >
+              {weeks.map((count, i) => {
+                const h = Math.max(2, (count / maxWeek) * 32);
+                const isMax = count === maxWeek && count > 0;
+                return (
+                  <rect
+                    key={i}
+                    x={i * 10 + 2}
+                    y={36 - h}
+                    width={6}
+                    height={h}
+                    rx={1}
+                    fill={isMax ? "var(--signal)" : "var(--ink-4)"}
+                    opacity={isMax ? 0.95 : 0.45}
+                  />
+                );
+              })}
+            </svg>
+            <p className="mt-2 font-mono text-[10px] uppercase tracking-[0.2em] text-ink-4">
+              github contributions · last 26 weeks
+            </p>
+          </div>
+        )}
       </div>
     </section>
   );

@@ -7,6 +7,13 @@ import { ProofStrip } from "@/components/home/proof-strip";
 import { WorksOn } from "@/components/home/works-on";
 
 /**
+ * ISR — re-render every 6 hours so the proof strip's GitHub/LeetCode
+ * numbers stay fresh without a per-request fetch. Classic segment config;
+ * cacheComponents is intentionally OFF in this project.
+ */
+export const revalidate = 21600;
+
+/**
  * Home (/).
  *
  * Field Cartography composition:
