@@ -11,16 +11,24 @@
 
 import { person } from "@/lib/person";
 
+export type ContributionDay = {
+  date: string; // ISO "YYYY-MM-DD"
+  count: number;
+};
+
 export type GithubLive = {
   totalContributions: number;
-  /** Last 26 weekly contribution totals, oldest → newest. */
-  weeks: number[];
+  /** Trailing ~26 weeks of daily contributions, oldest → newest, for the
+   *  GitHub-style heatmap calendar. */
+  days: ContributionDay[];
 };
 
 type ApiResponse = {
   total?: Record<string, number>;
   contributions?: { date: string; count: number }[];
 };
+
+const TRAILING_DAYS = 26 * 7;
 
 export async function fetchGithubLive(): Promise<GithubLive | null> {
   try {
@@ -31,26 +39,20 @@ export async function fetchGithubLive(): Promise<GithubLive | null> {
     if (!res.ok) return null;
 
     const data = (await res.json()) as ApiResponse;
-    const days = data.contributions;
-    if (!Array.isArray(days) || days.length === 0) return null;
+    const all = data.contributions;
+    if (!Array.isArray(all) || all.length === 0) return null;
 
-    const totalContributions = days.reduce(
-      (sum, d) => sum + (typeof d.count === "number" ? d.count : 0),
-      0
+    const valid = all.filter(
+      (d) => typeof d.date === "string" && typeof d.count === "number"
     );
+    if (valid.length === 0) return null;
 
-    // Bucket trailing days into 26 weekly totals, oldest → newest.
-    const weeks: number[] = [];
-    for (let end = days.length; end > 0 && weeks.length < 26; end -= 7) {
-      const start = Math.max(0, end - 7);
-      weeks.unshift(
-        days
-          .slice(start, end)
-          .reduce((s, d) => s + (typeof d.count === "number" ? d.count : 0), 0)
-      );
-    }
+    const totalContributions = valid.reduce((sum, d) => sum + d.count, 0);
+    const days = valid
+      .slice(-TRAILING_DAYS)
+      .map((d) => ({ date: d.date, count: d.count }));
 
-    return { totalContributions, weeks };
+    return { totalContributions, days };
   } catch {
     return null;
   }

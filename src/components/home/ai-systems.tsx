@@ -102,7 +102,7 @@ export function AiSystems() {
             <li
               key={row.num}
               data-ai-row
-              className="grid grid-cols-1 gap-4 border-t border-ink/10 py-9 md:grid-cols-[88px_1fr_minmax(200px,260px)] md:gap-10 md:py-11 last:border-b last:border-ink/10"
+              className="grid grid-cols-1 gap-4 border-t border-ink/10 py-9 md:grid-cols-[88px_1fr_minmax(200px,260px)] md:gap-10 md:py-11"
               style={{ opacity: 0 }}
             >
               <span className="font-mono text-[12px] uppercase tracking-[0.24em] text-signal">

@@ -1,20 +1,34 @@
 /**
- * LeetCode live stats — solved count + "beats %" via the public GraphQL
- * endpoint. LeetCode is known to 403 datacenter IPs (Vercel included), so
- * the static fallback in proof-data.ts is the contract; this is a bonus.
+ * LeetCode live stats — solved counts (total + per difficulty), problem
+ * totals, and "beats %" via the public GraphQL endpoint. LeetCode is known
+ * to 403 datacenter IPs (Vercel included), so the static fallback in
+ * proof-data.ts is the contract; this is a bonus.
  *
  * Contract: NEVER throws. Returns null on any failure.
  */
 
 import { person } from "@/lib/person";
 
+export type DifficultySlice = {
+  solved: number;
+  total: number;
+};
+
 export type LeetcodeLive = {
   solved: number;
   beatsPercent: number;
+  /** Per-difficulty breakdown for the LeetCode-style ring. Null if the
+   *  response shape didn't include everything we need. */
+  byDifficulty: {
+    easy: DifficultySlice;
+    medium: DifficultySlice;
+    hard: DifficultySlice;
+  } | null;
 };
 
 const QUERY = `
   query proofStats($username: String!) {
+    allQuestionsCount { difficulty count }
     matchedUser(username: $username) {
       submitStatsGlobal {
         acSubmissionNum { difficulty count }
@@ -24,16 +38,22 @@ const QUERY = `
   }
 `;
 
+type CountRow = { difficulty: string; count: number };
+
 type ApiResponse = {
   data?: {
+    allQuestionsCount?: CountRow[];
     matchedUser?: {
-      submitStatsGlobal?: {
-        acSubmissionNum?: { difficulty: string; count: number }[];
-      };
+      submitStatsGlobal?: { acSubmissionNum?: CountRow[] };
       problemsSolvedBeatsStats?: { difficulty: string; percentage: number }[];
     };
   };
 };
+
+function pick(rows: CountRow[] | undefined, difficulty: string): number | null {
+  const v = rows?.find((r) => r.difficulty === difficulty)?.count;
+  return typeof v === "number" ? v : null;
+}
 
 export async function fetchLeetcodeLive(): Promise<LeetcodeLive | null> {
   try {
@@ -58,22 +78,40 @@ export async function fetchLeetcodeLive(): Promise<LeetcodeLive | null> {
     const user = data.data?.matchedUser;
     if (!user) return null;
 
-    const solved = user.submitStatsGlobal?.acSubmissionNum?.find(
-      (e) => e.difficulty === "All"
-    )?.count;
+    const solvedRows = user.submitStatsGlobal?.acSubmissionNum;
+    const totalRows = data.data?.allQuestionsCount;
+
+    const solved = pick(solvedRows, "All");
 
     // "Beats %" is reported per difficulty; surface the strongest tier the
-    // way the resume does (93.9% comes from the best difficulty mix).
+    // way the resume does.
     const beats = user.problemsSolvedBeatsStats
       ?.map((e) => e.percentage)
       .filter((p): p is number => typeof p === "number");
-    const beatsPercent = beats?.length ? Math.max(...beats) : undefined;
+    const beatsPercent = beats?.length ? Math.max(...beats) : null;
 
-    if (typeof solved !== "number" || typeof beatsPercent !== "number") {
-      return null;
-    }
+    if (solved === null || beatsPercent === null) return null;
 
-    return { solved, beatsPercent: Math.round(beatsPercent * 10) / 10 };
+    // Per-difficulty ring data — optional; the headline number stands alone.
+    const slices = (["Easy", "Medium", "Hard"] as const).map((d) => ({
+      solved: pick(solvedRows, d),
+      total: pick(totalRows, d),
+    }));
+    const byDifficulty = slices.every(
+      (s) => s.solved !== null && s.total !== null
+    )
+      ? {
+          easy: { solved: slices[0].solved!, total: slices[0].total! },
+          medium: { solved: slices[1].solved!, total: slices[1].total! },
+          hard: { solved: slices[2].solved!, total: slices[2].total! },
+        }
+      : null;
+
+    return {
+      solved,
+      beatsPercent: Math.round(beatsPercent * 10) / 10,
+      byDifficulty,
+    };
   } catch {
     return null;
   }

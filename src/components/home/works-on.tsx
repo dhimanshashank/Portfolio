@@ -5,9 +5,9 @@ import { useRef } from "react";
 import { useGSAP, gsap } from "@/lib/motion/use-gsap";
 import {
   SketchUnderline,
-  SketchDivider,
   SketchAsterisk,
 } from "@/components/ui/sketch-marks";
+import { LiveTrace } from "./live-trace";
 
 /**
  * <WorksOn> — Phase 3.2 (center + sketch rework)
@@ -106,11 +106,37 @@ export function WorksOn() {
       className="relative bg-paper border-t border-ink/10"
       aria-label="Territory"
     >
-      <div className="container-wide py-24 md:py-32 flex flex-col items-center text-center">
+      {/* Faint blueprint grid — fills the plate's air without competing
+          with the type. Same 40px cell as the architecture diagrams. */}
+      <svg
+        aria-hidden
+        className="pointer-events-none absolute inset-0 h-full w-full text-ink"
+        style={{
+          maskImage:
+            "radial-gradient(75% 70% at 50% 45%, black 30%, transparent 100%)",
+          WebkitMaskImage:
+            "radial-gradient(75% 70% at 50% 45%, black 30%, transparent 100%)",
+        }}
+      >
+        <defs>
+          <pattern id="territory-grid" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path
+              d="M 40 0 L 0 0 0 40"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="0.5"
+              opacity="0.07"
+            />
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#territory-grid)" />
+      </svg>
+
+      <div className="container-wide relative py-20 md:py-28 flex flex-col items-center text-center">
         {/* ─── Eyebrow ────────────────────────────────────────────────── */}
         <p
           data-works-eyebrow
-          className="font-mono text-[11px] uppercase tracking-[0.22em] text-ink-3 mb-14 md:mb-20"
+          className="font-mono text-[11px] uppercase tracking-[0.22em] text-ink-3 mb-10 md:mb-14"
           style={{ opacity: 0 }}
         >
           <span className="text-signal">▍</span> Plate IV — Territory
@@ -154,19 +180,22 @@ export function WorksOn() {
           ))}
         </div>
 
-        {/* ─── Sketch divider ────────────────────────────────────────── */}
+        {/* ─── Live trace divider — the signal responds to the cursor ── */}
         <div
           data-works-divider
-          className="mt-20 md:mt-28 w-40 text-ink-3"
+          className="mt-12 md:mt-16 w-full max-w-[560px]"
           style={{ opacity: 0 }}
         >
-          <SketchDivider color="currentColor" weight={1.1} />
+          <LiveTrace />
+          <p className="mt-2 font-mono text-[9px] uppercase tracking-[0.24em] text-ink-4">
+            fig. 05 — live signal · it notices you
+          </p>
         </div>
 
         {/* ─── Centered punchline — with sketch underline on "portrait" ── */}
         <div
           data-works-punchline
-          className="mt-12 md:mt-16 flex flex-col items-center"
+          className="mt-10 md:mt-14 flex flex-col items-center"
           style={{ opacity: 0 }}
         >
           <SketchAsterisk

@@ -3,13 +3,17 @@
  *
  * The strip mixes two kinds of numbers:
  *   resume metrics — static facts from production work; never fetched
- *   live stats     — LeetCode solved/beats and GitHub contributions,
- *                    fetched at build/revalidate time with these fallbacks
+ *   live stats     — LeetCode solved/beats (+ per-difficulty ring) and
+ *                    GitHub contribution calendar, fetched at
+ *                    build/revalidate time with these fallbacks
  *
  * The fallback IS the contract: if every API call fails, the strip still
  * renders truthful June-2026 figures. Live data is a bonus, never a
  * dependency.
  */
+
+import type { LeetcodeLive } from "@/lib/live/leetcode";
+import type { ContributionDay } from "@/lib/live/github";
 
 export type ProofSource = "live" | "fallback";
 
@@ -19,14 +23,16 @@ export type ProofStats = {
   fetchedAt: string;
   leetcode: {
     solved: number;
-    /** "Beats x%" on the primary difficulty mix, per LeetCode. */
+    /** "Beats x%" on the strongest difficulty tier, per LeetCode. */
     beatsPercent: number;
+    /** Per-difficulty breakdown for the ring widget; null = hide ring. */
+    byDifficulty: LeetcodeLive["byDifficulty"];
   };
   github: {
     /** Total contributions in the last year; null until live data lands. */
     totalContributions: number | null;
-    /** Last 26 weeks of contribution counts for the sparkline; null = hide. */
-    weeks: number[] | null;
+    /** Trailing daily contributions for the heatmap; null = hide heatmap. */
+    days: ContributionDay[] | null;
   };
 };
 
@@ -34,8 +40,8 @@ export type ProofStats = {
 export const fallbackProof: ProofStats = {
   source: "fallback",
   fetchedAt: "2026-06-08",
-  leetcode: { solved: 225, beatsPercent: 93.9 },
-  github: { totalContributions: null, weeks: null },
+  leetcode: { solved: 225, beatsPercent: 93.9, byDifficulty: null },
+  github: { totalContributions: null, days: null },
 };
 
 /** Static resume metrics — these never change at runtime. */
