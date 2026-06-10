@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
@@ -39,10 +39,13 @@ export function Nav() {
   // in the capture phase with stopPropagation, which prevents synthetic
   // onClicks from firing on the underlying <a>. Watching pathname is the
   // one signal that always fires after navigation, regardless of how the
-  // click was routed.
-  useEffect(() => {
+  // click was routed. Adjusting state during render (instead of in an
+  // effect) re-renders before paint, so the drawer never flashes open.
+  const [prevPathname, setPrevPathname] = useState(pathname);
+  if (prevPathname !== pathname) {
+    setPrevPathname(pathname);
     setOpen(false);
-  }, [pathname]);
+  }
 
   return (
     <>

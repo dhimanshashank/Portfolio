@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, type ReactNode } from "react";
-import { useGSAP, gsap, ScrollTrigger } from "@/lib/motion/use-gsap";
+import { useGSAP, ScrollTrigger } from "@/lib/motion/use-gsap";
 import { cn } from "@/lib/utils";
 
 /**

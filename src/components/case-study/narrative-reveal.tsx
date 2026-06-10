@@ -54,7 +54,6 @@ export function NarrativeReveal() {
         if (!el) return;
         const enterAt = i * step;
         const peakAt = enterAt + step * 0.35;
-        const exitAt = enterAt + step * 0.85;
 
         // Enter — opacity 0 → 1, slight Y, prominent
         tl.fromTo(

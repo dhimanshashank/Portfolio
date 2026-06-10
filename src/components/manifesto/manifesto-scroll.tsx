@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { SketchUnderline, SketchAsterisk } from "@/components/ui/sketch-marks";
@@ -23,11 +23,27 @@ import {
  *   desktop widths. Single-line wrap is allowed only on small screens
  *   where it's unavoidable.
  */
+const REDUCED_MQ = "(prefers-reduced-motion: reduce)";
+function subscribeReducedMotion(cb: () => void) {
+  const m = window.matchMedia(REDUCED_MQ);
+  m.addEventListener?.("change", cb);
+  return () => m.removeEventListener?.("change", cb);
+}
+function getReducedMotion() {
+  return window.matchMedia(REDUCED_MQ).matches;
+}
+
 export function ManifestoScroll() {
   const sectionRef = useRef<HTMLElement>(null);
   const [idx, setIdx] = useState(0);
   const [active, setActive] = useState(true);
-  const [reduced, setReduced] = useState(false);
+  // Reduced-motion preference as an external-store subscription — no
+  // setState-in-effect, and SSR renders the motion-on markup by default.
+  const reduced = useSyncExternalStore(
+    subscribeReducedMotion,
+    getReducedMotion,
+    () => false
+  );
 
   // Pause cycling when section leaves viewport
   useEffect(() => {
@@ -50,15 +66,6 @@ export function ManifestoScroll() {
     );
     return () => clearTimeout(t);
   }, [idx, active]);
-
-  // Reduced motion preference
-  useEffect(() => {
-    const m = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setReduced(m.matches);
-    const cb = () => setReduced(m.matches);
-    m.addEventListener?.("change", cb);
-    return () => m.removeEventListener?.("change", cb);
-  }, []);
 
   return (
     <section

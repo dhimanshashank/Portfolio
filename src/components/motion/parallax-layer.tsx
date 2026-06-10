@@ -31,10 +31,6 @@ export function ParallaxLayer({
     () => {
       if (!ref.current) return;
 
-      // Calculate the total scroll distance so the element finishes its movement
-      // at the bottom of the viewport, not before — feels more natural.
-      const yEnd = `${speed * 100}%`;
-
       gsap.fromTo(
         ref.current,
         { yPercent: -speed * 50 },
