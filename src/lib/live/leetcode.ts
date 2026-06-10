@@ -25,6 +25,9 @@ export type LeetcodeCalendar = {
   /** Longest streak this year, per LeetCode. */
   streak: number;
   totalActiveDays: number;
+  /** Sum of every submission in the calendar — "N submissions in the past
+   *  one year", exactly the figure LeetCode's profile header shows. */
+  totalSubmissionsPastYear: number;
 };
 
 export type LeetcodeLive = {
@@ -103,6 +106,11 @@ function parseCalendar(
       number
     >;
 
+    const totalSubmissionsPastYear = Object.values(byEpoch).reduce(
+      (sum, v) => sum + (typeof v === "number" ? v : 0),
+      0
+    );
+
     const DAY = 86_400_000;
     const todayUtc = Math.floor(Date.now() / DAY) * DAY;
     const days: SubmissionDay[] = [];
@@ -119,6 +127,7 @@ function parseCalendar(
       days,
       streak: raw.streak,
       totalActiveDays: raw.totalActiveDays,
+      totalSubmissionsPastYear,
     };
   } catch {
     return null;

@@ -26,7 +26,6 @@ export function PortraitPanel({
 }) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
-  const displaceRef = useRef<SVGFEDisplacementMapElement>(null);
   const [loaded, setLoaded] = useState(false);
   const [errored, setErrored] = useState(false);
 
@@ -44,47 +43,6 @@ export function PortraitPanel({
         yoyo: true,
         repeat: -1,
       });
-
-      // Hover distortion — a turbulence ripple passes through the halftone.
-      // CSS can't transition SVG filter primitives, so GSAP tweens the
-      // displacement scale attribute directly: 0 → ~18 → 0. Pointer-fine
-      // devices only; touch never sees it.
-      const fine = window.matchMedia("(pointer: fine) and (hover: hover)").matches;
-      const card = wrapRef.current?.querySelector("[data-portrait-card]");
-      const disp = displaceRef.current;
-      if (!fine || !card || !disp) return;
-
-      const ripple = { scale: 0 };
-      let tween: gsap.core.Tween | null = null;
-
-      const apply = () => disp.setAttribute("scale", String(ripple.scale));
-
-      const onEnter = () => {
-        tween?.kill();
-        tween = gsap.to(ripple, {
-          scale: 18,
-          duration: 0.45,
-          ease: "power2.out",
-          onUpdate: apply,
-        });
-      };
-      const onLeave = () => {
-        tween?.kill();
-        tween = gsap.to(ripple, {
-          scale: 0,
-          duration: 0.6,
-          ease: "power2.inOut",
-          onUpdate: apply,
-        });
-      };
-
-      card.addEventListener("mouseenter", onEnter);
-      card.addEventListener("mouseleave", onLeave);
-      return () => {
-        card.removeEventListener("mouseenter", onEnter);
-        card.removeEventListener("mouseleave", onLeave);
-        tween?.kill();
-      };
     },
     { scope: wrapRef, dependencies: [errored, loaded] }
   );
@@ -101,30 +59,7 @@ export function PortraitPanel({
       )}
     >
       {/* Inner card */}
-      <div
-        data-portrait-card
-        className="relative isolate h-full w-full overflow-hidden rounded-l-sm bg-paper-soft"
-      >
-        {/* Displacement filter for the hover ripple. scale=0 is identity, so
-            the filter is inert until the GSAP tween raises it. */}
-        <svg aria-hidden width="0" height="0" className="absolute">
-          <filter id="portrait-ripple">
-            <feTurbulence
-              type="turbulence"
-              baseFrequency="0.012 0.02"
-              numOctaves="2"
-              result="noise"
-            />
-            <feDisplacementMap
-              ref={displaceRef}
-              in="SourceGraphic"
-              in2="noise"
-              scale="0"
-              xChannelSelector="R"
-              yChannelSelector="G"
-            />
-          </filter>
-        </svg>
+      <div className="relative isolate h-full w-full overflow-hidden rounded-l-sm bg-paper-soft">
 
         {/* Portrait — next/image handles WebP conversion + responsive srcSet */}
         {!errored && (
@@ -144,7 +79,7 @@ export function PortraitPanel({
               loaded ? "opacity-100" : "opacity-0"
             )}
             style={{
-              filter: "contrast(1.04) brightness(0.99) url(#portrait-ripple)",
+              filter: "contrast(1.04) brightness(0.99)",
               willChange: "transform",
             }}
           />
