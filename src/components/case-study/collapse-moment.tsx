@@ -2,8 +2,7 @@
 
 import { useRef } from "react";
 import { useGSAP, gsap } from "@/lib/motion/use-gsap";
-import { caseCollapse, isTodo } from "@/lib/proctoring-case-study";
-import { cn } from "@/lib/utils";
+import { caseCollapse } from "@/lib/proctoring-case-study";
 
 /**
  * <CollapseMoment>
@@ -172,10 +171,7 @@ export function CollapseMoment() {
 
             <p
               ref={buildupRef}
-              className={cn(
-                "mb-12 max-w-[40ch] font-display italic text-ink-2 will-change-transform",
-                isTodo(caseCollapse.buildup) && "text-ink-4"
-              )}
+              className="mb-12 max-w-[40ch] font-display italic text-ink-2 will-change-transform"
               style={{
                 fontSize: "clamp(18px, 1.8vw, 24px)",
                 lineHeight: 1.45,
@@ -225,10 +221,7 @@ export function CollapseMoment() {
             {/* Cooldown — appears after the headline */}
             <p
               ref={cooldownRef}
-              className={cn(
-                "mt-8 max-w-[36ch] font-mono text-[12px] uppercase tracking-[0.18em] text-ink-3 will-change-transform",
-                isTodo(caseCollapse.cooldown) && "text-ink-4 italic normal-case tracking-normal"
-              )}
+              className="mt-8 max-w-[36ch] font-mono text-[12px] uppercase tracking-[0.18em] text-ink-3 will-change-transform"
               style={{ opacity: 0 }}
             >
               {caseCollapse.cooldown}

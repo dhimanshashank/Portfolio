@@ -195,9 +195,3 @@ export const caseOutro = {
     sub: "Up next in the queue · case study soon",
   },
 } as const;
-
-// ─── HELPER — detects unfilled TODOs at render time ───────────────────────
-export function isTodo(value: string | null | undefined): boolean {
-  if (!value) return true;
-  return /^TODO/.test(value.trim());
-}

@@ -7,6 +7,14 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: path.resolve(__dirname),
   },
+
+  // Retired routes — /now had only draft content, /blog merged into /log.
+  async redirects() {
+    return [
+      { source: "/now", destination: "/about", permanent: true },
+      { source: "/blog", destination: "/log", permanent: true },
+    ];
+  },
 };
 
 export default nextConfig;

@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import { useGSAP, gsap } from "@/lib/motion/use-gsap";
-import { caseNarrative, isTodo } from "@/lib/proctoring-case-study";
+import { caseNarrative } from "@/lib/proctoring-case-study";
 import { cn } from "@/lib/utils";
 
 /**
@@ -97,8 +97,7 @@ export function NarrativeReveal() {
                 className={cn(
                   "absolute inset-x-0 font-display text-ink will-change-transform",
                   // First paragraph is the hook — italic for weight
-                  i === 0 && "italic",
-                  isTodo(text) && "text-ink-4"
+                  i === 0 && "italic"
                 )}
                 style={{
                   fontSize:

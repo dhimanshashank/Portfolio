@@ -3,8 +3,7 @@
 import { useRef } from "react";
 import { useGSAP, gsap } from "@/lib/motion/use-gsap";
 import { CodeFrame } from "@/components/work/visuals/code-frame";
-import { caseCode, isTodo } from "@/lib/proctoring-case-study";
-import { cn } from "@/lib/utils";
+import { caseCode } from "@/lib/proctoring-case-study";
 
 /**
  * <CodeReveal>
@@ -105,10 +104,7 @@ function CodeSnippetBlock({
           {String(index + 1).padStart(2, "0")} / {snippet.filename}
         </p>
         <p
-          className={cn(
-            "max-w-[30ch] text-ink-2 leading-relaxed",
-            isTodo(snippet.context) && "text-ink-4 italic"
-          )}
+          className="max-w-[30ch] text-ink-2 leading-relaxed"
           style={{ fontSize: "clamp(15px, 1.15vw, 17px)" }}
         >
           {snippet.context}

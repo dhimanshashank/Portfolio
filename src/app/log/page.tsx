@@ -2,26 +2,34 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ProblemCard } from "@/components/problems/problem-card";
 import { problems } from "@/lib/problems-data";
+import { NoteCard } from "@/components/notes/note-card";
+import { notes, notesFootnote } from "@/lib/notes-content";
 
 export const metadata: Metadata = {
-  title: "Log — Shashank Dhiman",
+  title: "Log & Notes — Shashank Dhiman",
   description:
-    "A running log of production investigations. The clue that cracked each one, the root cause, the fix.",
+    "A running log of production investigations and long-form writing — the clue that cracked each one, the root cause, the fix.",
 };
 
 /**
- * /log — Engineering Log.
+ * /log — Engineering Log & Notes.
  *
- * Full list of production investigations. New entries get appended to
- * `src/lib/problems-data.ts`; this page renders them in array order
- * (newest first, by convention).
+ * Two registers on one page (merged from the old /blog):
+ *   investigations — short-form production post-mortems from
+ *                    `src/lib/problems-data.ts`, newest first
+ *   notes          — curated long-form pieces from `src/lib/notes-content.ts`,
+ *                    mostly linking out to GitHub Pages
  *
  * Composition:
  *   1. Page header  — eyebrow, italic title, intro paragraph
  *   2. Entry list   — one <ProblemCard /> per problem
- *   3. Closing note — quiet footer signalling "more coming"
+ *   3. Notes        — featured NoteCard + grid for the rest
+ *   4. Closing note — quiet footer signalling "more coming"
  */
 export default function LogPage() {
+  const featuredNote = notes.find((n) => n.featured);
+  const restNotes = notes.filter((n) => !n.featured);
+
   return (
     <main className="bg-paper">
       {/* ─── Page header ─────────────────────────────────────────────── */}
@@ -62,6 +70,35 @@ export default function LogPage() {
         {problems.map((problem) => (
           <ProblemCard key={problem.id} problem={problem} />
         ))}
+      </section>
+
+      {/* ─── Notes — long-form writing (merged from /blog) ───────────── */}
+      <section className="container-wide pb-12 md:pb-16 hairline-t">
+        <p className="pt-12 md:pt-16 font-mono text-[11px] uppercase tracking-[0.22em] text-ink-3 mb-8">
+          <span className="text-signal">▍</span> Notes — long-form
+        </p>
+
+        <p
+          className="text-ink-2 max-w-[58ch] mb-10"
+          style={{ fontSize: "clamp(14px, 1.1vw, 17px)", lineHeight: 1.65 }}
+        >
+          Pieces I&apos;ve sat with long enough to argue for. Most live on
+          GitHub Pages while the publishing setup is intentionally simple.
+        </p>
+
+        {featuredNote && <NoteCard note={featuredNote} variant="featured" />}
+
+        {restNotes.length > 0 && (
+          <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-7">
+            {restNotes.map((note) => (
+              <NoteCard key={note.slug} note={note} />
+            ))}
+          </div>
+        )}
+
+        <p className="mt-10 pb-12 font-mono text-[11px] uppercase tracking-[0.18em] text-ink-4 max-w-[60ch]">
+          {notesFootnote.line}
+        </p>
       </section>
 
       {/* ─── Closing note ────────────────────────────────────────────── */}

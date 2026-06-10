@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 /**
  * <NoteCard>
  *
- * Used at two sizes on /blog: `featured` (full-width, larger type) and
+ * Used at two sizes on /log: `featured` (full-width, larger type) and
  * `regular` (grid tile). Both share the same surface vocabulary —
  * eyebrow row + title + preview line + tag row + link.
  *

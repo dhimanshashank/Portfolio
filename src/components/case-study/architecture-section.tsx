@@ -3,8 +3,7 @@
 import Image from "next/image";
 import { useRef } from "react";
 import { useGSAP, gsap } from "@/lib/motion/use-gsap";
-import { caseArchitecture, isTodo } from "@/lib/proctoring-case-study";
-import { cn } from "@/lib/utils";
+import { caseArchitecture } from "@/lib/proctoring-case-study";
 
 /**
  * <ArchitectureSection>
@@ -122,10 +121,7 @@ export function ArchitectureSection() {
                     {a.label}
                   </p>
                   <p
-                    className={cn(
-                      "text-ink-2 leading-relaxed",
-                      isTodo(a.note) && "text-ink-4 italic"
-                    )}
+                    className="text-ink-2 leading-relaxed"
                     style={{ fontSize: "clamp(14px, 1.05vw, 16px)" }}
                   >
                     {a.note}

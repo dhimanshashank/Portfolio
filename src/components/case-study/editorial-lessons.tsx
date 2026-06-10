@@ -3,7 +3,7 @@
 import { useRef } from "react";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
-import { caseLessons, caseOutro, isTodo } from "@/lib/proctoring-case-study";
+import { caseLessons, caseOutro } from "@/lib/proctoring-case-study";
 import { cn } from "@/lib/utils";
 
 /**
@@ -106,9 +106,6 @@ function LessonBlock({
   const reduce = useReducedMotion();
   const blockRef = useRef<HTMLLIElement>(null);
 
-  const titleIsTodo = isTodo(title);
-  const bodyIsTodo = isTodo(body);
-
   const variants = {
     hidden: { opacity: 0, y: 24 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] } },
@@ -140,10 +137,7 @@ function LessonBlock({
         className="max-w-[60ch]"
       >
         <h3
-          className={cn(
-            "font-display italic text-ink",
-            titleIsTodo && "text-ink-4"
-          )}
+          className="font-display italic text-ink"
           style={{
             fontSize: "clamp(28px, 3.4vw, 44px)",
             lineHeight: 1.15,
@@ -156,10 +150,7 @@ function LessonBlock({
         </h3>
 
         <p
-          className={cn(
-            "mt-6 text-ink-2",
-            bodyIsTodo && "text-ink-4 italic"
-          )}
+          className="mt-6 text-ink-2"
           style={{
             fontSize: "clamp(16px, 1.25vw, 19px)",
             lineHeight: 1.6,

@@ -17,32 +17,18 @@ export const aboutHero = {
     "One year shipped, four production systems. Currently at Venture Pact (Masters' Union); open to what's next.",
 } as const;
 
-// ─── THREE ESSAYS — the spine of the page ────────────────────────────────
+// ─── THE ESSAY — the spine of the page ───────────────────────────────────
+// One condensed narrative (origin → production lesson → direction) instead
+// of three separate essays. Recruiters skim; one tight read beats three walls.
 export const aboutEssays = [
   {
-    eyebrow: "01 / Origin",
-    title: "Where I started.",
-    paragraphs: [
-      "I went to Guru Nanak Dev Engineering College in Ludhiana and finished my CS degree in 2025. The first code I shipped to production was during a 2024 internship at Qspider — a MERN event platform with Stripe webhooks, JWT, and role-based access. It worked.",
-      "It worked the way an exam answer works: complete, untested by anything weird. The weird stuff arrived later — when real users showed up, and the architecture I'd written without much thought started telling me what it really thought of my assumptions.",
-    ],
-  },
-  {
-    eyebrow: "02 / What Masters' Union taught me",
+    eyebrow: "The story so far",
     title: "Production is a different problem.",
     paragraphs: [
-      "A year at Masters' Union, mostly on the proctoring system, taught me that the gap between passes the demo and survives 200 concurrent users is where the engineering actually lives. The rest is choreography.",
-      "The first time the server CPU pinned at 100% with five users on it, I learned that an architecture decision can be wrong — not slow, wrong. The rewrite that followed (client-worker inference, SFU routing) was a lesson in the difference between optimisation and reconsideration.",
-      "The messaging refactor, the analytics pipeline, the event classifier — all variants of the same lesson. Most of my year was spent there. Most of what I now believe about systems came from there.",
-    ],
-  },
-  {
-    eyebrow: "03 / What I'm chasing next",
-    title: "Distributed systems. LLMs as infrastructure.",
-    paragraphs: [
-      "Right now I'm pulling apart how people build at the edge of what's possible — the papers, the post-mortems, the boring parts that don't make it into talks.",
-      "The thing I find most interesting in 2026 is LLMs as infrastructure problems. Not the chat UI. The queueing, the rate limits, the failure modes when inference takes eight seconds and the user is still typing. I want to work on the systems that hold that up.",
-      "If you're building there, I'd like to hear about it.",
+      "I finished my CS degree at Guru Nanak Dev Engineering College in 2025. The first code I shipped to production was during a 2024 internship at Qspider — a MERN event platform with Stripe webhooks, JWT, and role-based access. It worked the way an exam answer works: complete, untested by anything weird.",
+      "The weird stuff arrived at Venture Pact (Masters' Union), mostly on the proctoring system. The first time the server CPU pinned at 100% with five users on it, I learned that an architecture decision can be wrong — not slow, wrong. The rewrite that followed (client-worker inference, SFU routing, OpenRouter-powered session summaries) was a lesson in the difference between optimisation and reconsideration.",
+      "The messaging refactor, the analytics pipeline, the event classifier — all variants of the same lesson: the gap between passes the demo and survives 200 concurrent users is where the engineering actually lives. Most of what I now believe about systems came from that year.",
+      "What I find most interesting in 2026 is LLMs as infrastructure problems. Not the chat UI — the queueing, the rate limits, the failure modes when inference takes eight seconds and the user is still typing. I want to work on the systems that hold that up. If you're building there, I'd like to hear about it.",
     ],
   },
 ] as const;

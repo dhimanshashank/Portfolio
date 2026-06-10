@@ -1,5 +1,5 @@
 /**
- * /blog — Notes index content.
+ * Notes content — long-form writing index, rendered on /log.
  *
  * Long-form writing lives elsewhere (GitHub Pages, for now). This page is
  * just a curated index — each entry a card that links out. Adding a new

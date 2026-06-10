@@ -19,27 +19,24 @@ export const metadata: Metadata = {
 /**
  * /about — The Story.
  *
- * Phase 3.5 — full composition with timeline + MU explainer + How-I-work
- * + testimonials slot. Order is tuned for a recruiter / EM read-through:
+ * One condensed essay instead of three — tuned for a recruiter / EM
+ * read-through:
  *
  *   1. AboutHero            — editorial opener, voice in one breath
- *   2. Essay 01 Origin      — where I came from
+ *   2. Essay                — origin → production lesson → direction
  *   3. DeskImageBand        — atmospheric break
- *   4. Essay 02 MU          — what production taught me
- *   5. ExperienceTimeline   — the dated facts behind the essay
- *   6. MastersUnionBlock    — one-line MU explainer for outsiders
- *   7. Essay 03 Next        — what I'm chasing
- *   8. HowIWork             — process / collaboration signal
- *   9. Testimonials         — invisible until quotes are added
- *  10. AboutSidebar         — facts: skills, education, contact
- *  11. AboutOutro           — closing line + CTAs (incl. Download CV)
+ *   4. ExperienceTimeline   — the dated facts behind the essay
+ *   5. MastersUnionBlock    — one-line employer explainer for outsiders
+ *   6. HowIWork             — process / collaboration signal
+ *   7. Testimonials         — invisible until quotes are added
+ *   8. AboutSidebar         — facts: skills, education, contact
+ *   9. AboutOutro           — closing line + CTAs (incl. Download CV)
  */
 export default function AboutPage() {
   return (
     <>
       <AboutHero />
 
-      {/* 01 — Origin */}
       <EssayBlock
         eyebrow={aboutEssays[0].eyebrow}
         title={aboutEssays[0].title}
@@ -48,22 +45,8 @@ export default function AboutPage() {
 
       <DeskImageBand />
 
-      {/* 02 — What MU taught me */}
-      <EssayBlock
-        eyebrow={aboutEssays[1].eyebrow}
-        title={aboutEssays[1].title}
-        paragraphs={aboutEssays[1].paragraphs}
-      />
-
       <ExperienceTimeline />
       <MastersUnionBlock />
-
-      {/* 03 — What I'm chasing next */}
-      <EssayBlock
-        eyebrow={aboutEssays[2].eyebrow}
-        title={aboutEssays[2].title}
-        paragraphs={aboutEssays[2].paragraphs}
-      />
 
       <HowIWork />
       <Testimonials />

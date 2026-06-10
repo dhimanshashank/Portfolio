@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import { useGSAP, gsap } from "@/lib/motion/use-gsap";
-import { caseBeforeAfter, isTodo } from "@/lib/proctoring-case-study";
+import { caseBeforeAfter } from "@/lib/proctoring-case-study";
 import { cn } from "@/lib/utils";
 
 /**
@@ -199,8 +199,6 @@ function Row({
   accent?: boolean;
   refSetter: (el: HTMLSpanElement | null) => void;
 }) {
-  const valueIsTodo = isTodo(row.value);
-  const subIsTodo = isTodo(row.sub);
   return (
     <li className="border-t border-hairline pt-6">
       <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.18em] text-ink-3">
@@ -211,8 +209,7 @@ function Row({
         data-value={row.value}
         className={cn(
           "block font-display tabular-nums",
-          accent ? "text-ink" : "text-ink-2",
-          valueIsTodo && "text-ink-4 italic"
+          accent ? "text-ink" : "text-ink-2"
         )}
         style={{
           fontSize: "clamp(40px, 5vw, 72px)",
@@ -224,10 +221,7 @@ function Row({
         {row.value}
       </span>
       <p
-        className={cn(
-          "mt-3 max-w-[28ch] text-ink-3",
-          subIsTodo && "text-ink-4 italic"
-        )}
+        className="mt-3 max-w-[28ch] text-ink-3"
         style={{ fontSize: "clamp(13px, 1vw, 15px)", lineHeight: 1.5 }}
       >
         {row.sub}
