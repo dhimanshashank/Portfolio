@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import { useGSAP, gsap } from "@/lib/motion/use-gsap";
+import { TextScramble } from "@/components/hero/text-scramble";
 import { resumeMetrics, type ProofStats } from "@/lib/proof-data";
 
 /**
@@ -83,17 +84,14 @@ export function ProofStripView({ stats }: { stats: ProofStats }) {
         >
           {cells.map((cell) => (
             <li key={cell.label} data-proof-cell style={{ opacity: 0 }}>
-              <span
-                className="block font-display tabular-nums text-ink"
-                style={{
-                  fontSize: "clamp(30px, 3.4vw, 48px)",
-                  lineHeight: 1,
-                  letterSpacing: "-0.03em",
-                  fontWeight: 400,
-                }}
-              >
-                {cell.value}
-              </span>
+              <TextScramble
+                text={cell.value}
+                startOnMount={false}
+                startOnView
+                duration={1.1}
+                as="span"
+                className="block font-display tabular-nums text-ink font-normal leading-none tracking-[-0.03em] text-[clamp(30px,3.4vw,48px)]"
+              />
               <span className="mt-3 block font-mono text-[10px] uppercase tracking-[0.2em] text-ink-3">
                 {cell.label}
               </span>

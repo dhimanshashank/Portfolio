@@ -9,6 +9,7 @@ import { Footer } from "@/components/shell/footer";
 import { ScrollProgress } from "@/components/shell/scroll-progress";
 import { RouteTransition } from "@/components/shell/route-transition";
 import { InitialCurtain } from "@/components/shell/initial-curtain";
+import { CustomCursor } from "@/components/shell/custom-cursor";
 
 // ─── Fonts ──────────────────────────────────────────────────────────────
 
@@ -205,6 +206,10 @@ export default function RootLayout({
             pencils in, Delhi coordinates fade in, then panels open. Plays
             once per page load, then self-unmounts. */}
         <InitialCurtain />
+
+        {/* Ink dot + trailing ring over the native cursor. Pointer-fine,
+            hover-capable, motion-tolerant devices only. */}
+        <CustomCursor />
       </body>
     </html>
   );

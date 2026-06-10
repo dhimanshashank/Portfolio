@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRef } from "react";
 import { useGSAP, gsap } from "@/lib/motion/use-gsap";
 import { SketchAsterisk } from "@/components/ui/sketch-marks";
+import { TextScramble } from "@/components/hero/text-scramble";
 import { problems } from "@/lib/problems-data";
 import { SeverityBadge } from "./problem-card";
 
@@ -155,7 +156,13 @@ export function EngineeringLog() {
 
             {/* Eyebrow row */}
             <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-ink-4 mb-4 pr-[40px]">
-              Latest entry
+              <TextScramble
+                text="Latest entry"
+                startOnMount={false}
+                startOnView
+                duration={1}
+                as="span"
+              />
             </p>
 
             {/* Meta */}

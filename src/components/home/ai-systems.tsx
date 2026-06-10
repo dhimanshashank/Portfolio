@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import { useGSAP, gsap } from "@/lib/motion/use-gsap";
+import { TextScramble } from "@/components/hero/text-scramble";
 import { aiHeader, aiRows } from "@/lib/ai-content";
 
 /**
@@ -64,7 +65,14 @@ export function AiSystems() {
         {/* ─── Section header ───────────────────────────────────────────── */}
         <div data-ai-header style={{ opacity: 0 }}>
           <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-ink-3 mb-8">
-            <span className="text-signal">▍</span> {aiHeader.eyebrow}
+            <span className="text-signal">▍</span>{" "}
+            <TextScramble
+              text={aiHeader.eyebrow}
+              startOnMount={false}
+              startOnView
+              duration={1.2}
+              as="span"
+            />
           </p>
 
           <h2

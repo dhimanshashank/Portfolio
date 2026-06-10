@@ -6,6 +6,7 @@ import { useGSAP, gsap, ScrollTrigger } from "@/lib/motion/use-gsap";
 import { person } from "@/lib/person";
 import { PortraitPanel } from "./portrait-panel";
 import { ScrollIndicator } from "./scroll-indicator";
+import { Magnetic } from "@/components/ui/magnetic";
 
 /**
  * <Hero>  (Phase 1 — rework)
@@ -181,26 +182,28 @@ export function Hero() {
             </div>
 
             <div className="flex flex-wrap items-center gap-4">
-              <Link
-                href="/work"
-                className="
-                  group inline-flex items-center gap-3
-                  bg-signal text-paper
-                  px-6 py-3.5
-                  font-mono text-[12px] uppercase tracking-[0.18em]
-                  rounded-sm
-                  transition-colors duration-300
-                  hover:bg-signal-low
-                "
-              >
-                Selected work
-                <span
-                  aria-hidden
-                  className="inline-block transition-transform duration-300 group-hover:translate-x-1.5"
+              <Magnetic>
+                <Link
+                  href="/work"
+                  className="
+                    group inline-flex items-center gap-3
+                    bg-signal text-paper
+                    px-6 py-3.5
+                    font-mono text-[12px] uppercase tracking-[0.18em]
+                    rounded-sm
+                    transition-colors duration-300
+                    hover:bg-signal-low
+                  "
                 >
-                  →
-                </span>
-              </Link>
+                  Selected work
+                  <span
+                    aria-hidden
+                    className="inline-block transition-transform duration-300 group-hover:translate-x-1.5"
+                  >
+                    →
+                  </span>
+                </Link>
+              </Magnetic>
 
               <Link
                 href="/about"

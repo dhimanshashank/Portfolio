@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { aboutOutro, isDraft, stripDraft } from "@/lib/about-content";
+import { Magnetic } from "@/components/ui/magnetic";
 import { cn } from "@/lib/utils";
 
 /**
@@ -36,46 +37,50 @@ export function AboutOutro() {
         </p>
 
         <div className="mt-10 flex flex-wrap items-center gap-4 md:gap-5">
-          <Link
-            href={aboutOutro.primary.href}
-            className="
-              group inline-flex items-center gap-3
-              bg-signal text-paper
-              px-6 py-3.5
-              font-mono text-[12px] uppercase tracking-[0.18em]
-              rounded-sm
-              transition-colors duration-300
-              hover:bg-signal-low
-            "
-          >
-            {aboutOutro.primary.label}
-            <span
-              aria-hidden
-              className="inline-block transition-transform duration-300 group-hover:translate-x-1.5"
+          <Magnetic>
+            <Link
+              href={aboutOutro.primary.href}
+              className="
+                group inline-flex items-center gap-3
+                bg-signal text-paper
+                px-6 py-3.5
+                font-mono text-[12px] uppercase tracking-[0.18em]
+                rounded-sm
+                transition-colors duration-300
+                hover:bg-signal-low
+              "
             >
-              →
-            </span>
-          </Link>
-          <Link
-            href={aboutOutro.secondary.href}
-            className="
-              group inline-flex items-center gap-3
-              border border-ink/20
-              px-5 py-3
-              font-mono text-[11px] uppercase tracking-[0.18em] text-ink
-              rounded-sm
-              transition-colors duration-300
-              hover:bg-ink hover:text-paper hover:border-ink
-            "
-          >
-            {aboutOutro.secondary.label}
-            <span
-              aria-hidden
-              className="inline-block transition-transform duration-300 group-hover:translate-x-1.5"
+              {aboutOutro.primary.label}
+              <span
+                aria-hidden
+                className="inline-block transition-transform duration-300 group-hover:translate-x-1.5"
+              >
+                →
+              </span>
+            </Link>
+          </Magnetic>
+          <Magnetic>
+            <Link
+              href={aboutOutro.secondary.href}
+              className="
+                group inline-flex items-center gap-3
+                border border-ink/20
+                px-5 py-3
+                font-mono text-[11px] uppercase tracking-[0.18em] text-ink
+                rounded-sm
+                transition-colors duration-300
+                hover:bg-ink hover:text-paper hover:border-ink
+              "
             >
-              →
-            </span>
-          </Link>
+              {aboutOutro.secondary.label}
+              <span
+                aria-hidden
+                className="inline-block transition-transform duration-300 group-hover:translate-x-1.5"
+              >
+                →
+              </span>
+            </Link>
+          </Magnetic>
 
           {/* Tertiary — recruiter exit ramp. Unstyled mono link, no border.
               Sits visually quieter than the other two so it reads as a

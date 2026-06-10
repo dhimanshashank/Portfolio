@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useRef } from "react";
 import { useGSAP, gsap } from "@/lib/motion/use-gsap";
 import { cn } from "@/lib/utils";
 
@@ -31,6 +31,10 @@ export function TextScramble({
   duration = 1.4,
   delay = 0,
   startOnMount = true,
+  /** Defer the scramble until the element scrolls into view (fires once).
+   *  Takes precedence over startOnMount's timing but still requires one of
+   *  the two start flags to be true. */
+  startOnView = false,
   as: Tag = "span",
   /** Settle distribution. 0.5 = chars settle across the back half of the timeline.
    *  Higher → tighter (more chars settling together). Lower → looser. */
@@ -41,6 +45,7 @@ export function TextScramble({
   duration?: number;
   delay?: number;
   startOnMount?: boolean;
+  startOnView?: boolean;
   as?: "span" | "h1" | "h2" | "h3" | "p" | "div";
   settleSpread?: number;
 }) {
@@ -64,7 +69,7 @@ export function TextScramble({
         typeof window !== "undefined" &&
         window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-      if (reduce || !startOnMount) {
+      if (reduce || (!startOnMount && !startOnView)) {
         chars.forEach((char, i) => {
           const el = containerRef.current?.children[i] as HTMLElement | undefined;
           if (el) el.textContent = char;
@@ -86,6 +91,16 @@ export function TextScramble({
         duration,
         delay,
         ease: "power2.out",
+        // In view mode the tween arms on scroll entry and fires once.
+        ...(startOnView && containerRef.current
+          ? {
+              scrollTrigger: {
+                trigger: containerRef.current,
+                start: "top 88%",
+                once: true,
+              },
+            }
+          : {}),
         onUpdate: () => {
           chars.forEach((char, i) => {
             const el = containerRef.current?.children[i] as HTMLElement | undefined;
@@ -107,7 +122,7 @@ export function TextScramble({
         },
       });
     },
-    { scope: containerRef as React.RefObject<HTMLElement>, dependencies: [text, duration, delay, startOnMount] }
+    { scope: containerRef as React.RefObject<HTMLElement>, dependencies: [text, duration, delay, startOnMount, startOnView] }
   );
 
   // We render with `aria-label` carrying the real text so screen readers

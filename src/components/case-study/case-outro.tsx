@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { caseOutro } from "@/lib/proctoring-case-study";
+import { Magnetic } from "@/components/ui/magnetic";
 
 /**
  * <CaseOutro>
@@ -38,28 +39,30 @@ export function CaseOutro() {
           >
             {caseOutro.blogSub}
           </p>
-          <a
-            href={caseOutro.blogUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="
-              group mt-8 inline-flex items-center gap-3
-              bg-signal text-paper
-              px-6 py-3.5
-              font-mono text-[12px] uppercase tracking-[0.18em]
-              rounded-sm
-              transition-colors duration-300
-              hover:bg-signal-low
-            "
-          >
-            {caseOutro.blogCta}
-            <span
-              aria-hidden
-              className="inline-block transition-transform duration-300 group-hover:translate-x-1.5"
+          <Magnetic className="mt-8">
+            <a
+              href={caseOutro.blogUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="
+                group inline-flex items-center gap-3
+                bg-signal text-paper
+                px-6 py-3.5
+                font-mono text-[12px] uppercase tracking-[0.18em]
+                rounded-sm
+                transition-colors duration-300
+                hover:bg-signal-low
+              "
             >
-              ↗
-            </span>
-          </a>
+              {caseOutro.blogCta}
+              <span
+                aria-hidden
+                className="inline-block transition-transform duration-300 group-hover:translate-x-1.5"
+              >
+                ↗
+              </span>
+            </a>
+          </Magnetic>
         </div>
 
         {/* Secondary — next in the queue */}
@@ -82,26 +85,28 @@ export function CaseOutro() {
           <p className="mt-3 font-mono text-[10px] uppercase tracking-[0.18em] text-ink-4">
             {caseOutro.next.sub}
           </p>
-          <Link
-            href={caseOutro.next.href}
-            className="
-              group mt-6 inline-flex items-center gap-3
-              border border-ink/20
-              px-5 py-3
-              font-mono text-[11px] uppercase tracking-[0.18em] text-ink
-              rounded-sm
-              transition-colors duration-300
-              hover:bg-ink hover:text-paper hover:border-ink
-            "
-          >
-            Back to selected work
-            <span
-              aria-hidden
-              className="inline-block transition-transform duration-300 group-hover:translate-x-1.5"
+          <Magnetic className="mt-6">
+            <Link
+              href={caseOutro.next.href}
+              className="
+                group inline-flex items-center gap-3
+                border border-ink/20
+                px-5 py-3
+                font-mono text-[11px] uppercase tracking-[0.18em] text-ink
+                rounded-sm
+                transition-colors duration-300
+                hover:bg-ink hover:text-paper hover:border-ink
+              "
             >
-              →
-            </span>
-          </Link>
+              Read the case study
+              <span
+                aria-hidden
+                className="inline-block transition-transform duration-300 group-hover:translate-x-1.5"
+              >
+                →
+              </span>
+            </Link>
+          </Magnetic>
         </div>
       </div>
     </section>

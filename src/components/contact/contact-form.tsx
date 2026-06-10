@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import { person } from "@/lib/person";
+import { Magnetic } from "@/components/ui/magnetic";
 import { cn } from "@/lib/utils";
 
 /**
@@ -150,32 +151,34 @@ export function ContactForm() {
       {/* ── Action row ──────────────────────────────────────────────── */}
       <div className="flex flex-wrap items-center gap-5 pt-2">
         {!isSuccess && (
-          <button
-            type="submit"
-            disabled={isSending}
-            className={cn(
-              "group inline-flex items-center gap-3",
-              "bg-signal text-paper",
-              "px-6 py-3.5",
-              "font-mono text-[12px] uppercase tracking-[0.18em]",
-              "rounded-sm",
-              "transition-colors duration-300",
-              "hover:bg-signal-low",
-              "focus:outline-none focus-visible:ring-2 focus-visible:ring-signal/40",
-              "disabled:opacity-60 disabled:cursor-not-allowed"
-            )}
-          >
-            {isSending ? "Sending" : "Send message"}
-            <span
-              aria-hidden
+          <Magnetic>
+            <button
+              type="submit"
+              disabled={isSending}
               className={cn(
-                "inline-block transition-transform duration-300",
-                isSending ? "animate-pulse" : "group-hover:translate-x-1.5"
+                "group inline-flex items-center gap-3",
+                "bg-signal text-paper",
+                "px-6 py-3.5",
+                "font-mono text-[12px] uppercase tracking-[0.18em]",
+                "rounded-sm",
+                "transition-colors duration-300",
+                "hover:bg-signal-low",
+                "focus:outline-none focus-visible:ring-2 focus-visible:ring-signal/40",
+                "disabled:opacity-60 disabled:cursor-not-allowed"
               )}
             >
-              {isSending ? "…" : "→"}
-            </span>
-          </button>
+              {isSending ? "Sending" : "Send message"}
+              <span
+                aria-hidden
+                className={cn(
+                  "inline-block transition-transform duration-300",
+                  isSending ? "animate-pulse" : "group-hover:translate-x-1.5"
+                )}
+              >
+                {isSending ? "…" : "→"}
+              </span>
+            </button>
+          </Magnetic>
         )}
 
         {isSuccess && (
