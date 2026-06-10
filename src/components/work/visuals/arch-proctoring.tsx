@@ -188,6 +188,27 @@ export function ArchProctoring({ className }: { className?: string }) {
         >
           critical path
         </text>
+
+        {/* ─── Travelling pulse — one RTP packet riding the critical path.
+            Invisible spine: student edge → through the SFU → admin. Same
+            SMIL pattern as the analytics diagram's ingest dot. ─────────── */}
+        <path
+          id="proc-spine"
+          d="M 145 200 L 640 200"
+          fill="none"
+          stroke="none"
+        />
+        <circle r="3.5" fill="var(--signal)">
+          <animateMotion dur="4.5s" repeatCount="indefinite" rotate="auto">
+            <mpath href="#proc-spine" />
+          </animateMotion>
+          <animate
+            attributeName="opacity"
+            values="0;1;1;1;0"
+            dur="4.5s"
+            repeatCount="indefinite"
+          />
+        </circle>
       </g>
     </svg>
   );

@@ -9,18 +9,21 @@ import { projects, type WorkProject } from "@/lib/work-data";
 /**
  * <SelectedWork>
  *
- * Phase 3 — the home page's central work section. Four project cards
- * stacked vertically. Each card animates in as it enters the viewport
- * (number rises into place, title slides in, metrics stagger, the
- * abstract visual on the right draws itself with a line-trace effect).
+ * The home page's central work section. On desktop the four project cards
+ * play as a horizontal showcase: the section pins and vertical scroll
+ * scrubs the track sideways, one full-viewport panel per project. Each
+ * card's reveal timeline (number rises, title slides, metrics stagger,
+ * SVG line-trace) rides the horizontal scrub via containerAnimation.
  *
- * Each card sits ~80vh tall so it commands the viewport without forcing
- * a heavy ScrollTrigger pin on every project (which would compound badly
- * with the manifesto pin above). The result: every card gets undivided
- * attention as the visitor scrolls, without the page feeling captive.
+ * On mobile (≤768px) and under prefers-reduced-motion the track stacks
+ * vertically — pinning + horizontal scrub on a phone is hostile, and the
+ * layout fallback is pure CSS (md:motion-safe: variants), so no-JS and
+ * reduced-motion visitors get a normal page.
  */
 export function SelectedWork() {
   const sectionRef = useRef<HTMLElement>(null);
+  const pinRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
 
   useGSAP(
     () => {
@@ -28,7 +31,12 @@ export function SelectedWork() {
       const cards =
         sectionRef.current.querySelectorAll<HTMLElement>("[data-work-card]");
 
-      cards.forEach((card) => {
+      // One reveal timeline per card; only the ScrollTrigger vars differ
+      // between the horizontal (desktop) and vertical (mobile) modes.
+      const buildReveal = (
+        card: HTMLElement,
+        scrollTrigger: ScrollTrigger.Vars
+      ) => {
         const number = card.querySelector<HTMLElement>("[data-work-number]");
         const title = card.querySelector<HTMLElement>("[data-work-title]");
         const tagline = card.querySelector<HTMLElement>("[data-work-tagline]");
@@ -42,14 +50,7 @@ export function SelectedWork() {
         const vizDots =
           card.querySelectorAll<SVGCircleElement>("[data-work-viz] circle");
 
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: card,
-            start: "top 78%",
-            end: "top 30%",
-            toggleActions: "play none none reverse",
-          },
-        });
+        const tl = gsap.timeline({ scrollTrigger });
 
         if (number) {
           tl.fromTo(
@@ -147,6 +148,68 @@ export function SelectedWork() {
             0.8
           );
         }
+      };
+
+      const mm = gsap.matchMedia();
+
+      // Desktop + motion ok → pinned horizontal showcase.
+      mm.add(
+        "(min-width: 769px) and (prefers-reduced-motion: no-preference)",
+        () => {
+          const pin = pinRef.current;
+          const track = trackRef.current;
+          if (!pin || !track) return;
+
+          const scrollWidth = () => track.scrollWidth - window.innerWidth;
+
+          const scrollTween = gsap.to(track, {
+            x: () => -scrollWidth(),
+            ease: "none",
+            scrollTrigger: {
+              trigger: pin,
+              start: "top top",
+              end: () => `+=${scrollWidth()}`,
+              scrub: 1,
+              pin: true,
+              anticipatePin: 1,
+              invalidateOnRefresh: true,
+            },
+          });
+
+          cards.forEach((card) => {
+            buildReveal(card, {
+              trigger: card,
+              containerAnimation: scrollTween,
+              start: "left 72%",
+              toggleActions: "play none none reverse",
+            });
+          });
+        }
+      );
+
+      // Mobile + motion ok → vertical stack with per-card reveals.
+      mm.add(
+        "(max-width: 768px) and (prefers-reduced-motion: no-preference)",
+        () => {
+          cards.forEach((card) => {
+            buildReveal(card, {
+              trigger: card,
+              start: "top 78%",
+              end: "top 30%",
+              toggleActions: "play none none reverse",
+            });
+          });
+        }
+      );
+
+      // Reduced motion → no pin, no scrub, everything simply visible.
+      mm.add("(prefers-reduced-motion: reduce)", () => {
+        gsap.set(
+          sectionRef.current!.querySelectorAll(
+            "[data-work-number], [data-work-title], [data-work-tagline], [data-work-blurb], [data-work-metric], [data-work-stack], [data-work-viz]"
+          ),
+          { autoAlpha: 1 }
+        );
       });
     },
     { scope: sectionRef as React.RefObject<HTMLElement> }
@@ -176,13 +239,34 @@ export function SelectedWork() {
         </h2>
       </div>
 
-      {/* Tighter gap on mobile — each project gets a card frame to define
-          its bounds. On desktop the projects are wide enough that the gap
-          + visual borders already do that work, so cards stay frameless. */}
-      <div className="container-wide pb-32 md:pb-40 flex flex-col gap-12 md:gap-40">
-        {projects.map((p, i) => (
-          <WorkCard key={p.id} project={p} index={i} />
-        ))}
+      {/* Horizontal showcase wrapper. The md:motion-safe: variants apply
+          the one-panel-per-viewport layout only where the GSAP scrub will
+          actually run — mobile and reduced-motion keep the vertical stack
+          purely in CSS, so the page never strands panels off-screen. */}
+      <div
+        ref={pinRef}
+        className="pb-32 md:pb-40 md:motion-safe:overflow-hidden md:motion-safe:pb-0"
+      >
+        <div
+          ref={trackRef}
+          className="
+            flex flex-col gap-12 md:gap-40
+            md:motion-safe:h-screen md:motion-safe:w-max md:motion-safe:flex-row
+            md:motion-safe:items-stretch md:motion-safe:gap-0
+          "
+        >
+          {projects.map((p, i) => (
+            <div
+              key={p.id}
+              data-work-panel
+              className="md:motion-safe:flex md:motion-safe:h-screen md:motion-safe:w-screen md:motion-safe:shrink-0 md:motion-safe:items-center"
+            >
+              <div className="container-wide w-full">
+                <WorkCard project={p} index={i} />
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -445,111 +529,6 @@ function GridBackdrop() {
           opacity="0.18"
         />
       ))}
-    </svg>
-  );
-}
-
-// Proctoring — SFU radial topology
-function VizProctoring() {
-  const peers = Array.from({ length: 12 }).map((_, i) => {
-    const a = (i / 12) * Math.PI * 2;
-    return { x: 50 + Math.cos(a) * 32, y: 40 + Math.sin(a) * 26 };
-  });
-  return (
-    <svg
-      className="absolute inset-0 h-full w-full"
-      viewBox="0 0 100 80"
-      aria-hidden
-    >
-      {/* fan-out lines */}
-      {peers.map((p, i) => (
-        <path
-          key={i}
-          d={`M50 40 L${p.x} ${p.y}`}
-          stroke="currentColor"
-          strokeWidth="0.25"
-          fill="none"
-          className="text-ink"
-        />
-      ))}
-      {/* peers */}
-      {peers.map((p, i) => (
-        <circle
-          key={`d${i}`}
-          cx={p.x}
-          cy={p.y}
-          r="1.4"
-          className="text-ink fill-current"
-        />
-      ))}
-      {/* SFU core */}
-      <circle cx="50" cy="40" r="3" className="fill-current text-signal" />
-      <circle
-        cx="50"
-        cy="40"
-        r="5.5"
-        className="text-signal"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="0.3"
-      />
-    </svg>
-  );
-}
-
-// Messaging — latency histogram fall
-function VizMessaging() {
-  const bars = [62, 58, 70, 64, 55, 48, 40, 33, 28, 24, 22, 20, 19, 18, 18, 17];
-  return (
-    <svg
-      className="absolute inset-0 h-full w-full"
-      viewBox="0 0 100 80"
-      aria-hidden
-    >
-      {/* baseline */}
-      <path
-        d="M8 70 L92 70"
-        stroke="currentColor"
-        strokeWidth="0.3"
-        className="text-ink"
-        opacity="0.5"
-      />
-      {/* histogram bars rendered as path so the dash animation can sweep them */}
-      {bars.map((h, i) => {
-        const x = 10 + i * 5;
-        const top = 70 - (h / 70) * 50;
-        return (
-          <path
-            key={i}
-            d={`M${x} 70 L${x} ${top}`}
-            stroke="currentColor"
-            strokeWidth="2.4"
-            className={i < 4 ? "text-ink" : "text-signal"}
-            opacity={i < 4 ? 0.4 : 0.9}
-          />
-        );
-      })}
-      {/* axis caption */}
-      <text
-        x="10"
-        y="76"
-        className="text-ink"
-        fontSize="3"
-        opacity="0.55"
-        fontFamily="monospace"
-      >
-        BEFORE
-      </text>
-      <text
-        x="60"
-        y="76"
-        className="text-signal"
-        fontSize="3"
-        opacity="0.9"
-        fontFamily="monospace"
-      >
-        AFTER
-      </text>
     </svg>
   );
 }
