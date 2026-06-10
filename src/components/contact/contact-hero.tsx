@@ -36,7 +36,7 @@ export function ContactHero() {
           maxWidth: "56ch",
         }}
       >
-        Reach out about backend roles, real-time systems, AI infrastructure,
+        Reach out about full-stack or backend roles, real-time systems, AI infrastructure,
         or anything in the proctoring / WebRTC / streaming space. I read
         every message.
       </p>

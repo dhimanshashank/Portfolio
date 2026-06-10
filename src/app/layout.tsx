@@ -39,17 +39,21 @@ export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
 
   title: {
-    default: "Shashank Dhiman — Backend Engineer",
+    default: "Shashank Dhiman — Full Stack Engineer",
     template: "%s · Shashank Dhiman",
   },
   description:
-    "Backend & real-time systems engineer based in India. Building systems that survive production — WebSockets, event-driven architecture, distributed infrastructure.",
+    "Full stack engineer specialising in real-time systems and API & backend engineering. Building systems that survive production — WebRTC, event-driven architecture, LLM integration, distributed infrastructure.",
 
   keywords: [
     "Shashank Dhiman",
+    "full stack engineer",
     "backend engineer",
     "ai engineer",
     "real-time systems",
+    "LLM integration",
+    "OpenRouter",
+    "MediaPipe",
     "Node.js",
     "WebSocket",
     "distributed systems",
@@ -72,15 +76,15 @@ export const metadata: Metadata = {
     type: "website",
     url: BASE_URL,
     siteName: "Shashank Dhiman",
-    title: "Shashank Dhiman — Backend Engineer",
+    title: "Shashank Dhiman — Full Stack Engineer",
     description:
-      "Backend & real-time systems engineer. Building things that survive production.",
+      "Full stack engineer — real-time systems, APIs, LLM integration. Building things that survive production.",
     images: [
       {
         url: "/hero/portrait-halftone2.png",
         width: 1200,
         height: 630,
-        alt: "Shashank Dhiman — Backend Engineer",
+        alt: "Shashank Dhiman — Full Stack Engineer",
       },
     ],
     locale: "en_IN",
@@ -89,9 +93,9 @@ export const metadata: Metadata = {
   // ── Twitter / X card ────────────────────────────────────────────────
   twitter: {
     card: "summary_large_image",
-    title: "Shashank Dhiman — Backend Engineer",
+    title: "Shashank Dhiman — Full Stack Engineer",
     description:
-      "Backend & real-time systems engineer. Building things that survive production.",
+      "Full stack engineer — real-time systems, APIs, LLM integration. Building things that survive production.",
     images: ["/hero/portrait-halftone2.png"],
   },
 
@@ -142,20 +146,23 @@ const jsonLd = {
   "@type": "Person",
   name: "Shashank Dhiman",
   url: BASE_URL,
-  jobTitle: "Backend Engineer",
+  jobTitle: "Full Stack Engineer",
   description:
-    "Backend & real-time systems engineer based in India. Building systems that survive production.",
+    "Full stack engineer based in India — real-time systems, API & backend engineering. Building systems that survive production.",
   sameAs: [
     "https://github.com/dhimanshashank",
     "https://www.linkedin.com/in/shashank-dhiman-358535219/",
   ],
   knowsAbout: [
+    "Full Stack Engineering",
     "Backend Engineering",
     "Real-time Systems",
     "WebSockets",
     "Node.js",
     "Distributed Systems",
     "Event-driven Architecture",
+    "LLM Integration",
+    "AI Infrastructure",
   ],
 };
 

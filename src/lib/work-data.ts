@@ -50,16 +50,16 @@ export const projects: WorkProject[] = [
     title: "AI Proctoring Platform",
     tagline: "WebRTC at exam scale",
     blurb:
-      "An SFU-based proctoring platform routing 200+ concurrent student streams without decoding a single frame on the server. Behavioral classification (eye-gaze, tab-switch, multi-signal correlation) runs in client worker threads. Sub-200ms alert delivery to admin dashboards.",
-    stack: ["webrtc", "mediasoup", "mediapipe", "node", "postgres", "redis", "socket.io"],
+      "An SFU-based proctoring platform routing 200+ concurrent student streams without decoding a single frame on the server. Behavioral classification (eye-gaze, tab-switch, multi-signal correlation) runs in client worker threads; OpenRouter-powered LLM summaries turn raw session events into reviewer-ready reports. Sub-200ms alert delivery to admin dashboards.",
+    stack: ["webrtc", "mediasoup", "mediapipe", "openrouter", "node", "postgres", "redis"],
     metrics: [
       { value: "200+", label: "concurrent streams" },
+      { value: "+35%", label: "proctoring throughput" },
       { value: "<200ms", label: "alert latency" },
-      { value: "−50%", label: "query time, peak load" },
     ],
     visualKind: "architecture",
     caseStudy: true,
-    context: "Masters' Union · production",
+    context: "Venture Pact (Masters' Union) · production",
     variant: "featured",
   },
   {
@@ -69,7 +69,7 @@ export const projects: WorkProject[] = [
     title: "Doubt & Discussion",
     tagline: "Four chat types, one socket layer",
     blurb:
-      "Direct chats, group threads, course discussions, and announcements — four conversation types sharing one realtime layer. The system tracks who's viewing what, so messages auto-mark-read when the recipient is already inside the thread.",
+      "Direct chats, group threads, course discussions, and announcements — four conversation types sharing one realtime layer with sub-100ms delivery. DataLoader batching killed the N+1 patterns in chat history; the system tracks who's viewing what, so messages auto-mark-read when the recipient is already inside the thread.",
     stack: ["node", "socket.io", "redis", "postgres", "sequelize"],
     metrics: [
       { value: "4", label: "chat types unified" },
@@ -78,7 +78,7 @@ export const projects: WorkProject[] = [
     ],
     visualKind: "architecture",
     caseStudy: true,
-    context: "Masters' Union · production",
+    context: "Venture Pact (Masters' Union) · production",
     variant: "regular",
   },
   {
@@ -96,7 +96,7 @@ export const projects: WorkProject[] = [
     ],
     visualKind: "architecture",
     caseStudy: false,
-    context: "Masters' Union · production",
+    context: "Venture Pact (Masters' Union) · production",
     variant: "regular",
   },
   {

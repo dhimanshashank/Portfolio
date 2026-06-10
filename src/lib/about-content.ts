@@ -14,7 +14,7 @@ export const aboutHero = {
   paragraph:
     "I'm Shashank. I work on backends — the kind where the failure modes are the actual problem, and the diagram doesn't tell you anything until the second user shows up.",
   subline:
-    "One year shipped, four production systems. Currently at Masters' Union; open to what's next.",
+    "One year shipped, four production systems. Currently at Venture Pact (Masters' Union); open to what's next.",
 } as const;
 
 // ─── THREE ESSAYS — the spine of the page ────────────────────────────────
@@ -57,11 +57,11 @@ export const aboutImageBand = {
 // ─── MASTERS' UNION BLOCK — one-line company explainer ──────────────────
 // Used by <MastersUnionBlock /> between essays 02 and 03.
 export const mastersUnion = {
-  name: "Masters' Union",
+  name: "Venture Pact (Masters' Union)",
   logo: "/brands/masters-union.png",
   url: "https://mastersunion.org",
   description:
-    "Edtech in India running an MBA-equivalent program. I built and shipped the proctoring, messaging, and analytics systems that hold the operations together.",
+    "Venture Pact is the engineering arm behind Masters' Union — edtech in India running an MBA-equivalent program. I built and shipped the proctoring, messaging, and analytics systems that hold the operations together.",
   role: "Associate Software Developer",
   period: "Jan 2025 — present",
 } as const;
@@ -75,6 +75,7 @@ export const aboutFacts = {
     { group: "Real-time", items: ["WebRTC (Mediasoup)", "Socket.IO", "Redis Pub/Sub"] },
     { group: "Data", items: ["PostgreSQL", "ClickHouse", "Redis", "MongoDB"] },
     { group: "Cloud", items: ["AWS Lambda", "SQS", "AWS S3", "Docker"] },
+    { group: "AI / LLM", items: ["OpenRouter API", "AI session summaries", "MediaPipe (eye-gaze, tab-switch)"] },
     { group: "Languages", items: ["TypeScript", "JavaScript", "SQL"] },
     { group: "Frontend", items: ["React", "Next.js", "Tailwind"] },
   ],

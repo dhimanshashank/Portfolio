@@ -6,7 +6,8 @@
 export const person = {
   name: "Shashank Dhiman",
   firstName: "Shashank",
-  role: "Backend Engineer",
+  role: "Full Stack Engineer",
+  roleLong: "Full Stack Engineer · Real-Time Systems · API & Backend Engineering",
   location: "India",
   locationDetail: "Open to remote & relocation",
   email: "dhimanshashank15@gmail.com",
@@ -15,6 +16,7 @@ export const person = {
   github: {
     url: "https://github.com/dhimanshashank",
     handle: "@dhimanshashank",
+    user: "dhimanshashank",
   },
   linkedin: {
     url: "https://www.linkedin.com/in/shashank-dhiman-358535219/",
@@ -23,6 +25,7 @@ export const person = {
   leetcode: {
     url: "https://leetcode.com/u/shashankdhiman/",
     label: "LeetCode",
+    handle: "shashankdhiman",
   },
   blog: {
     // Long-form writing lives on GitHub Pages for now
