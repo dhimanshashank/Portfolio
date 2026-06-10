@@ -54,28 +54,22 @@ export function ProofStripView({ stats }: { stats: ProofStats }) {
     ...resumeMetrics.map((m) => ({ value: m.value, label: m.label })),
   ];
 
-  if (stats.github.totalContributions !== null) {
-    cells.splice(1, 0, {
-      value: String(stats.github.totalContributions),
-      label: "contributions, last year",
-    });
-  }
-
   const freshness =
     stats.source === "live"
       ? `live · synced ${relativeHours(stats.fetchedAt)}`
       : "figures as of June 2026";
 
   const hasRing = stats.leetcode.byDifficulty !== null;
-  const hasCalendar = stats.github.days !== null && stats.github.days.length > 0;
+  const hasCalendar =
+    stats.leetcode.calendar !== null && stats.leetcode.calendar.days.length > 0;
 
   return (
     <section
       ref={sectionRef}
-      className="relative bg-paper border-t border-ink/10"
+      className="relative bg-paper border-t border-ink/10 md:flex md:min-h-screen md:flex-col md:justify-center"
       aria-label="Proof of skill"
     >
-      <div className="container-wide py-14 md:py-18">
+      <div className="container-wide w-full py-14 md:py-18">
         <div className="flex items-baseline justify-between gap-4 flex-wrap mb-10">
           <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-ink-3">
             <span className="text-signal">▍</span> Measured, not claimed
@@ -126,10 +120,7 @@ export function ProofStripView({ stats }: { stats: ProofStats }) {
               />
             )}
             {hasCalendar && (
-              <ContributionCalendar
-                days={stats.github.days!}
-                total={stats.github.totalContributions}
-              />
+              <SubmissionCalendar calendar={stats.leetcode.calendar!} />
             )}
           </div>
         )}
@@ -272,21 +263,21 @@ function DifficultyRing({
   );
 }
 
-// ─── GitHub-style contribution calendar ─────────────────────────────────────
+// ─── LeetCode submission calendar — GitHub-heatmap styled ───────────────────
 
 const CELL = 10; // viewBox grid step
 const CELL_SIZE = 8;
 
-function ContributionCalendar({
-  days,
-  total,
+function SubmissionCalendar({
+  calendar,
 }: {
-  days: NonNullable<ProofStats["github"]["days"]>;
-  total: number | null;
+  calendar: NonNullable<ProofStats["leetcode"]["calendar"]>;
 }) {
+  const { days, streak, totalActiveDays } = calendar;
+
   // Align columns to real weeks: pad the first column so each row is a
   // consistent weekday (row 0 = Sunday), exactly like GitHub's calendar.
-  const firstDay = new Date(days[0].date).getDay();
+  const firstDay = new Date(days[0].date).getUTCDay();
   const cols = Math.ceil((days.length + firstDay) / 7);
   const max = Math.max(...days.map((d) => d.count), 1);
 
@@ -302,13 +293,13 @@ function ContributionCalendar({
   return (
     <div data-proof-cell style={{ opacity: 0 }}>
       <p className="mb-4 font-mono text-[10px] uppercase tracking-[0.22em] text-ink-3">
-        github · {total !== null ? `${total} contributions, last year` : "contributions"}
+        leetcode submissions · day by day
       </p>
       <svg
         viewBox={`0 0 ${cols * CELL} ${7 * CELL}`}
         className="w-full max-w-[460px]"
         role="img"
-        aria-label="GitHub contribution calendar, last 26 weeks"
+        aria-label="LeetCode submission calendar, last 26 weeks"
       >
         {days.map((d, i) => {
           const pos = i + firstDay;
@@ -326,13 +317,14 @@ function ContributionCalendar({
               fill={isMax ? "var(--signal)" : "var(--ink)"}
               opacity={isMax ? 0.95 : opacityFor(d.count)}
             >
-              <title>{`${d.count} contribution${d.count === 1 ? "" : "s"} · ${d.date}`}</title>
+              <title>{`${d.count} submission${d.count === 1 ? "" : "s"} · ${d.date}`}</title>
             </rect>
           );
         })}
       </svg>
       <p className="mt-3 font-mono text-[10px] uppercase tracking-[0.2em] text-ink-4">
-        last 26 weeks · busiest day in orange
+        last 26 weeks · busiest day in orange · max streak {streak} ·{" "}
+        {totalActiveDays} active days this year
       </p>
     </div>
   );
