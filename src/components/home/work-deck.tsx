@@ -191,18 +191,22 @@ function DeckCardSurface({
         draggable && "cursor-grab select-none active:cursor-grabbing"
       )}
     >
-      {/* Visual */}
-      <div className="relative min-h-0 flex-[1.05] border-b border-ink/10 bg-paper">
-        <ProjectVisual project={project} />
-        <span className="absolute left-4 top-3 font-mono text-[10px] uppercase tracking-[0.22em] text-signal">
-          {project.num}{" "}
-          <span className="text-ink-4">/ 0{projects.length}</span>
+      {/* Header bar — number + where it shipped. Its own row so the long
+          context label never overlaps the index on a narrow card. */}
+      <div className="flex items-center justify-between gap-3 border-b border-ink/10 px-4 py-2.5">
+        <span className="shrink-0 font-mono text-[10px] uppercase tracking-[0.22em] text-signal">
+          {project.num} <span className="text-ink-4">/ 0{projects.length}</span>
         </span>
         {project.context && (
-          <span className="absolute right-4 top-3 font-mono text-[9px] uppercase tracking-[0.18em] text-ink-4">
+          <span className="min-w-0 truncate font-mono text-[9px] uppercase tracking-[0.18em] text-ink-4">
             {project.context}
           </span>
         )}
+      </div>
+
+      {/* Visual */}
+      <div className="relative min-h-0 flex-[1.05] border-b border-ink/10 bg-paper">
+        <ProjectVisual project={project} />
       </div>
 
       {/* Text */}

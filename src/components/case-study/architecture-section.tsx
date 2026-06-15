@@ -61,15 +61,24 @@ export function ArchitectureSection() {
     { scope: sectionRef as React.RefObject<HTMLElement>, dependencies: [annotations.length] }
   );
 
+  // Tall scroll-distance only where the pin actually runs (desktop). On
+  // mobile the section is content-height and the pinRef is a normal block.
+  const sectionStyle: React.CSSProperties & Record<string, string> = {
+    "--pin-h": `${(PIN_VH + 1) * 100}vh`,
+  };
+
   return (
     <section
       ref={sectionRef}
-      className="relative bg-paper"
-      style={{ height: `${(PIN_VH + 1) * 100}vh` }}
+      className="relative bg-paper md:h-[var(--pin-h)]"
+      style={sectionStyle}
       aria-label={caseArchitecture.sectionTitle}
     >
-      <div ref={pinRef} className="relative h-screen w-full overflow-hidden">
-        <div className="container-wide grid h-full grid-cols-1 gap-10 md:grid-cols-[1.4fr_1fr] md:gap-14">
+      <div
+        ref={pinRef}
+        className="relative w-full md:h-screen md:overflow-hidden"
+      >
+        <div className="container-wide grid grid-cols-1 gap-10 py-20 md:h-full md:grid-cols-[1.4fr_1fr] md:gap-14 md:py-0">
           {/* Diagram column */}
           <div className="flex flex-col justify-center">
             <p className="mb-4 font-mono text-[11px] uppercase tracking-[0.22em] text-signal">

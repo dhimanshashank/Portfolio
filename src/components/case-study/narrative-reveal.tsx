@@ -30,8 +30,9 @@ export function NarrativeReveal() {
     () => {
       if (!sectionRef.current || !pinRef.current || !paragraphs.length) return;
       const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      if (reduce) {
-        // Stack and show statically
+      const isMobile = window.matchMedia("(max-width: 768px)").matches;
+      if (reduce || isMobile) {
+        // Stack and show statically — no pin/scrub on phones.
         gsap.set(paraRefs.current, { autoAlpha: 1, y: 0 });
         return;
       }
@@ -75,26 +76,33 @@ export function NarrativeReveal() {
     { scope: sectionRef as React.RefObject<HTMLElement>, dependencies: [paragraphs.length] }
   );
 
+  const sectionStyle: React.CSSProperties & Record<string, string> = {
+    "--pin-h": `${(PIN_VH + 1) * 100}vh`,
+  };
+
   return (
     <section
       ref={sectionRef}
-      className="relative bg-paper"
-      style={{ height: `${(PIN_VH + 1) * 100}vh` }}
+      className="relative bg-paper md:h-[var(--pin-h)]"
+      style={sectionStyle}
       aria-label="Opening narrative"
     >
-      <div ref={pinRef} className="relative h-screen w-full overflow-hidden">
-        <div className="container-wide absolute inset-0 flex items-center">
-          {/* The relative container holds the absolutely-stacked paragraphs.
-              CRITICAL: w-full is required — without it the parent collapses to
-              0 width (all children are absolute) and each word wraps to a
-              separate line inside the dead column. */}
-          <div className="relative mx-auto w-full max-w-[64ch]">
+      <div ref={pinRef} className="relative w-full md:h-screen md:overflow-hidden">
+        {/* Top eyebrow — in flow on mobile, pinned top-left on desktop */}
+        <p className="px-6 pt-16 font-mono text-[11px] uppercase tracking-[0.22em] text-ink-3 md:absolute md:left-10 md:top-8 md:px-0 md:pt-0">
+          <span className="text-signal">▍</span> The opening
+        </p>
+
+        <div className="container-wide flex items-center py-10 md:absolute md:inset-0 md:py-0">
+          {/* On desktop this holds absolutely-stacked paragraphs (scrubbed);
+              on mobile they flow normally, spaced and all visible. */}
+          <div className="relative mx-auto w-full max-w-[64ch] space-y-8 md:space-y-0">
             {paragraphs.map((text, i) => (
               <p
                 key={i}
                 ref={(el) => { paraRefs.current[i] = el; }}
                 className={cn(
-                  "absolute inset-x-0 font-display text-ink will-change-transform",
+                  "font-display text-ink will-change-transform md:absolute md:inset-x-0",
                   // First paragraph is the hook — italic for weight
                   i === 0 && "italic"
                 )}
@@ -118,11 +126,6 @@ export function NarrativeReveal() {
             ))}
           </div>
         </div>
-
-        {/* Top eyebrow */}
-        <p className="absolute top-8 left-6 md:left-10 font-mono text-[11px] uppercase tracking-[0.22em] text-ink-3">
-          <span className="text-signal">▍</span> The opening
-        </p>
       </div>
     </section>
   );

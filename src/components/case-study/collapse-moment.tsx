@@ -39,9 +39,10 @@ export function CollapseMoment() {
     () => {
       if (!sectionRef.current || !pinRef.current) return;
       const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const isMobile = window.matchMedia("(max-width: 768px)").matches;
 
-      if (reduce) {
-        // Show end-state statically — no climb, no flash
+      if (reduce || isMobile) {
+        // Show end-state statically — no pin/scrub/flash on phones.
         gsap.set([buildupRef.current, headlineRef.current, cooldownRef.current], {
           autoAlpha: 1,
           y: 0,
@@ -146,14 +147,18 @@ export function CollapseMoment() {
     { scope: sectionRef as React.RefObject<HTMLElement> }
   );
 
+  const sectionStyle: React.CSSProperties & Record<string, string> = {
+    "--pin-h": `${(PIN_VH + 1) * 100}vh`,
+  };
+
   return (
     <section
       ref={sectionRef}
-      className="relative bg-paper"
-      style={{ height: `${(PIN_VH + 1) * 100}vh` }}
+      className="relative bg-paper md:h-[var(--pin-h)]"
+      style={sectionStyle}
       aria-label="The collapse moment"
     >
-      <div ref={pinRef} className="relative h-screen w-full overflow-hidden grain">
+      <div ref={pinRef} className="relative w-full overflow-hidden grain md:h-screen">
         {/* Flash overlay — momentary red wash at the collapse */}
         <div
           ref={flashRef}
@@ -162,7 +167,7 @@ export function CollapseMoment() {
           style={{ opacity: 0 }}
         />
 
-        <div className="container-wide absolute inset-0 grid grid-cols-1 items-center gap-12 py-20 md:grid-cols-[1fr_1fr]">
+        <div className="container-wide grid grid-cols-1 items-center gap-12 py-20 md:absolute md:inset-0 md:grid-cols-[1fr_1fr]">
           {/* LEFT: counter + buildup + headline + cooldown */}
           <div className="flex flex-col justify-center">
             <p className="mb-6 font-mono text-[11px] uppercase tracking-[0.22em] text-signal">
