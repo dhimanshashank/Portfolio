@@ -40,6 +40,95 @@ export function ProofStripView({ stats }: { stats: ProofStats }) {
       const calCells = qa("[data-cal-cell]");
       const calMeta = qa("[data-cal-meta]");
 
+      // The same choreography drives both layouts — numbers land, the ring
+      // sweeps closed while the centre counts up, the calendar cascades in.
+      // Desktop scrubs it against a pin; mobile plays it once on scroll-in.
+      const buildScene = (tl: gsap.core.Timeline) => {
+        if (headerRow) {
+          tl.fromTo(
+            headerRow,
+            { autoAlpha: 0, y: 16 },
+            { autoAlpha: 1, y: 0, duration: 0.3, ease: "power2.out" },
+            0
+          );
+        }
+        tl.fromTo(
+          cells,
+          { autoAlpha: 0, y: 18 },
+          { autoAlpha: 1, y: 0, duration: 0.35, ease: "power2.out", stagger: 0.07 },
+          0.08
+        );
+
+        // Instrument panels appear…
+        tl.fromTo(
+          panels,
+          { autoAlpha: 0, y: 22 },
+          { autoAlpha: 1, y: 0, duration: 0.3, ease: "power2.out", stagger: 0.1 },
+          0.45
+        );
+
+        // …the ring sweeps itself closed, one difficulty at a time…
+        arcs.forEach((arc, i) => {
+          const dash = Number(arc.dataset.dash ?? 0);
+          const rest = Number(arc.dataset.circ ?? 0) - dash;
+          tl.fromTo(
+            arc,
+            { attr: { "stroke-dasharray": `0 ${dash + rest}` } },
+            {
+              attr: { "stroke-dasharray": `${dash} ${rest}` },
+              duration: 0.3,
+              ease: "power1.inOut",
+            },
+            0.55 + i * 0.12
+          );
+        });
+
+        // …while the center count climbs to the real figure…
+        if (ringNum) {
+          const target = Number(ringNum.dataset.value ?? 0);
+          const proxy = { v: 0 };
+          tl.to(
+            proxy,
+            {
+              v: target,
+              duration: 0.45,
+              ease: "power1.out",
+              onUpdate: () => {
+                ringNum.textContent = String(Math.round(proxy.v));
+              },
+            },
+            0.55
+          );
+        }
+        tl.fromTo(
+          ringRows,
+          { autoAlpha: 0, x: -10 },
+          { autoAlpha: 1, x: 0, duration: 0.25, ease: "power2.out", stagger: 0.08 },
+          0.62
+        );
+
+        // …and the calendar cascades in, oldest week first.
+        if (calCells.length) {
+          tl.fromTo(
+            calCells,
+            { scale: 0, transformOrigin: "center" },
+            {
+              scale: 1,
+              duration: 0.3,
+              ease: "back.out(1.6)",
+              stagger: { each: 0.0035 },
+            },
+            0.6
+          );
+        }
+        tl.fromTo(
+          calMeta,
+          { autoAlpha: 0 },
+          { autoAlpha: 1, duration: 0.25 },
+          0.95
+        );
+      };
+
       const mm = gsap.matchMedia();
 
       // Desktop + motion ok → pinned scrub scene.
@@ -57,119 +146,20 @@ export function ProofStripView({ stats }: { stats: ProofStats }) {
               invalidateOnRefresh: true,
             },
           });
-
-          if (headerRow) {
-            tl.fromTo(
-              headerRow,
-              { autoAlpha: 0, y: 16 },
-              { autoAlpha: 1, y: 0, duration: 0.3, ease: "power2.out" },
-              0
-            );
-          }
-          tl.fromTo(
-            cells,
-            { autoAlpha: 0, y: 18 },
-            { autoAlpha: 1, y: 0, duration: 0.35, ease: "power2.out", stagger: 0.07 },
-            0.08
-          );
-
-          // Instrument panels appear…
-          tl.fromTo(
-            panels,
-            { autoAlpha: 0, y: 22 },
-            { autoAlpha: 1, y: 0, duration: 0.3, ease: "power2.out", stagger: 0.1 },
-            0.45
-          );
-
-          // …the ring sweeps itself closed, one difficulty at a time…
-          arcs.forEach((arc, i) => {
-            const dash = Number(arc.dataset.dash ?? 0);
-            const rest = Number(arc.dataset.circ ?? 0) - dash;
-            tl.fromTo(
-              arc,
-              { attr: { "stroke-dasharray": `0 ${dash + rest}` } },
-              {
-                attr: { "stroke-dasharray": `${dash} ${rest}` },
-                duration: 0.3,
-                ease: "power1.inOut",
-              },
-              0.55 + i * 0.12
-            );
-          });
-
-          // …while the center count climbs to the real figure…
-          if (ringNum) {
-            const target = Number(ringNum.dataset.value ?? 0);
-            const proxy = { v: 0 };
-            tl.to(
-              proxy,
-              {
-                v: target,
-                duration: 0.45,
-                ease: "power1.out",
-                onUpdate: () => {
-                  ringNum.textContent = String(Math.round(proxy.v));
-                },
-              },
-              0.55
-            );
-          }
-          tl.fromTo(
-            ringRows,
-            { autoAlpha: 0, x: -10 },
-            { autoAlpha: 1, x: 0, duration: 0.25, ease: "power2.out", stagger: 0.08 },
-            0.62
-          );
-
-          // …and the calendar cascades in, oldest week first.
-          if (calCells.length) {
-            tl.fromTo(
-              calCells,
-              { scale: 0, transformOrigin: "center" },
-              {
-                scale: 1,
-                duration: 0.3,
-                ease: "back.out(1.6)",
-                stagger: { each: 0.0035 },
-              },
-              0.6
-            );
-          }
-          tl.fromTo(
-            calMeta,
-            { autoAlpha: 0 },
-            { autoAlpha: 1, duration: 0.25 },
-            0.95
-          );
-
+          buildScene(tl);
           // Hold the finished scene for a beat before releasing the pin.
           tl.to({}, { duration: 0.35 });
         }
       );
 
-      // Mobile + motion ok → simple stagger, no pin.
+      // Mobile + motion ok → same scene, played once on entry (no pin).
       mm.add(
         "(max-width: 768px) and (prefers-reduced-motion: no-preference)",
         () => {
-          gsap.set([...(headerRow ? [headerRow] : []), ...calMeta, ...ringRows], {
-            autoAlpha: 1,
+          const tl = gsap.timeline({
+            scrollTrigger: { trigger: root, start: "top 72%", once: true },
           });
-          gsap.fromTo(
-            [...cells, ...panels],
-            { autoAlpha: 0, y: 14 },
-            {
-              autoAlpha: 1,
-              y: 0,
-              duration: 0.6,
-              ease: "power2.out",
-              stagger: 0.07,
-              scrollTrigger: {
-                trigger: root,
-                start: "top 85%",
-                toggleActions: "play none none reverse",
-              },
-            }
-          );
+          buildScene(tl);
         }
       );
 
@@ -525,22 +515,20 @@ function SubmissionCalendar({
   const panelRef = useRef<HTMLDivElement>(null);
   const tipRef = useRef<HTMLDivElement>(null);
 
-  // Custom tooltip — the native <title> tooltip is slow to appear and
-  // ignores the design system. One delegated listener pair on the svg
-  // positions a paper-styled chip above whichever cell is hovered.
+  // Custom tooltip — the native <title> tooltip is slow and ignores the
+  // design system. A delegated chip positions above the cell. Mouse uses
+  // hover; touch taps the cell to peek the value for a moment (a quick
+  // pointerout would otherwise dismiss it before it's read).
   useEffect(() => {
     const panel = panelRef.current;
     const tip = tipRef.current;
     if (!panel || !tip) return;
+    let hideTimer: ReturnType<typeof setTimeout> | undefined;
 
-    const onOver = (e: PointerEvent) => {
-      const cell = (e.target as Element).closest?.("[data-cal-cell]");
-      if (!(cell instanceof SVGRectElement)) return;
-
+    const show = (cell: SVGRectElement) => {
       const count = cell.dataset.count ?? "0";
       const date = cell.dataset.date ?? "";
       tip.textContent = `${count} submission${count === "1" ? "" : "s"} · ${date}`;
-
       const cellBox = cell.getBoundingClientRect();
       const panelBox = panel.getBoundingClientRect();
       tip.style.left = `${cellBox.left + cellBox.width / 2 - panelBox.left}px`;
@@ -548,18 +536,45 @@ function SubmissionCalendar({
       tip.style.opacity = "1";
       tip.style.transform = "translate(-50%, calc(-100% - 8px)) scale(1)";
     };
-
-    const onOut = (e: PointerEvent) => {
-      if (!(e.target as Element).closest?.("[data-cal-cell]")) return;
+    const hide = () => {
       tip.style.opacity = "0";
       tip.style.transform = "translate(-50%, calc(-100% - 4px)) scale(0.96)";
+    };
+    const cellOf = (e: Event) =>
+      (e.target as Element).closest?.("[data-cal-cell]");
+
+    const onOver = (e: PointerEvent) => {
+      if (e.pointerType && e.pointerType !== "mouse") return; // touch → onDown
+      const cell = cellOf(e);
+      if (cell instanceof SVGRectElement) {
+        clearTimeout(hideTimer);
+        show(cell);
+      }
+    };
+    const onOut = (e: PointerEvent) => {
+      if (e.pointerType && e.pointerType !== "mouse") return;
+      if (cellOf(e)) hide();
+    };
+    const onDown = (e: PointerEvent) => {
+      if (e.pointerType === "mouse") return; // mouse handled by hover
+      const cell = cellOf(e);
+      if (!(cell instanceof SVGRectElement)) {
+        hide();
+        return;
+      }
+      clearTimeout(hideTimer);
+      show(cell);
+      hideTimer = setTimeout(hide, 1800);
     };
 
     panel.addEventListener("pointerover", onOver);
     panel.addEventListener("pointerout", onOut);
+    panel.addEventListener("pointerdown", onDown);
     return () => {
+      clearTimeout(hideTimer);
       panel.removeEventListener("pointerover", onOver);
       panel.removeEventListener("pointerout", onOut);
+      panel.removeEventListener("pointerdown", onDown);
     };
   }, []);
 

@@ -97,8 +97,9 @@ export function LiveTrace({ className }: { className?: string }) {
     };
 
     // Map client x → viewBox x (the svg preserves aspect, width-driven).
+    // Both mouse and touch drive the probe: dragging a finger across the
+    // trace swells it under the touch, same as the cursor does on desktop.
     const onMove = (e: PointerEvent) => {
-      if (e.pointerType !== "mouse") return;
       const r = wrap.getBoundingClientRect();
       pointerX = ((e.clientX - r.left) / r.width) * VIEW_W;
     };
@@ -113,13 +114,19 @@ export function LiveTrace({ className }: { className?: string }) {
     io.observe(wrap);
 
     wrap.addEventListener("pointermove", onMove);
+    wrap.addEventListener("pointerdown", onMove);
     wrap.addEventListener("pointerleave", onLeave);
+    wrap.addEventListener("pointerup", onLeave);
+    wrap.addEventListener("pointercancel", onLeave);
 
     return () => {
       stop();
       io.disconnect();
       wrap.removeEventListener("pointermove", onMove);
+      wrap.removeEventListener("pointerdown", onMove);
       wrap.removeEventListener("pointerleave", onLeave);
+      wrap.removeEventListener("pointerup", onLeave);
+      wrap.removeEventListener("pointercancel", onLeave);
     };
   }, []);
 

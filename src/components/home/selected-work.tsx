@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useRef } from "react";
 import { useGSAP, gsap } from "@/lib/motion/use-gsap";
 import { projects, type WorkProject } from "@/lib/work-data";
+import { WorkDeck } from "./work-deck";
 
 /**
  * <SelectedWork>
@@ -187,21 +188,6 @@ export function SelectedWork() {
         }
       );
 
-      // Mobile + motion ok → vertical stack with per-card reveals.
-      mm.add(
-        "(max-width: 768px) and (prefers-reduced-motion: no-preference)",
-        () => {
-          cards.forEach((card) => {
-            buildReveal(card, {
-              trigger: card,
-              start: "top 78%",
-              end: "top 30%",
-              toggleActions: "play none none reverse",
-            });
-          });
-        }
-      );
-
       // Reduced motion → no pin, no scrub, everything simply visible.
       mm.add("(prefers-reduced-motion: reduce)", () => {
         gsap.set(
@@ -239,13 +225,12 @@ export function SelectedWork() {
         </h2>
       </div>
 
-      {/* Horizontal showcase wrapper. The md:motion-safe: variants apply
-          the one-panel-per-viewport layout only where the GSAP scrub will
-          actually run — mobile and reduced-motion keep the vertical stack
-          purely in CSS, so the page never strands panels off-screen. */}
+      {/* Desktop (≥768): pinned horizontal scrub showcase, or a vertical
+          stack under reduced motion. Hidden on phones — they get the
+          looping swipe deck below instead. */}
       <div
         ref={pinRef}
-        className="pb-32 md:pb-40 md:motion-safe:overflow-hidden md:motion-safe:pb-0"
+        className="hidden md:block md:pb-40 md:motion-safe:overflow-hidden md:motion-safe:pb-0"
       >
         <div
           ref={trackRef}
@@ -267,6 +252,12 @@ export function SelectedWork() {
             </div>
           ))}
         </div>
+      </div>
+
+      {/* Mobile (<768): looping card-stack deck — swipe the top card away
+          and the next rises; the swiped one cycles to the back. */}
+      <div className="md:hidden">
+        <WorkDeck />
       </div>
     </section>
   );

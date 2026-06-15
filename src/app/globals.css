@@ -224,6 +224,25 @@ select {
   color: var(--paper);
 }
 
+/* Tactile press feedback on touch devices only. Hover states never fire on
+   a finger, so taps feel unacknowledged — give every button and link-button
+   a subtle press-shrink and kill the default blue tap-highlight flash. Scoped
+   to (hover: none) so desktop hover styling is untouched. Inline text links
+   ignore transform (inline boxes), so only the real CTAs/cards respond. */
+@media (hover: none) {
+  a,
+  button,
+  [role="button"] {
+    -webkit-tap-highlight-color: transparent;
+  }
+  a[href]:active,
+  button:not(:disabled):active,
+  [role="button"]:active {
+    transform: scale(0.97);
+    transition: transform 0.09s ease;
+  }
+}
+
 /* Scrollbar — narrow, neutral. Lenis handles smoothness. */
 ::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track { background: transparent; }
