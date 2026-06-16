@@ -61,6 +61,7 @@ export const projects: WorkProject[] = [
     caseStudy: true,
     context: "Venture Pact (Masters' Union) · production",
     variant: "featured",
+    liveUrl: "https://proctoring.shashankdhiman.in",
   },
   {
     id: "messaging",
