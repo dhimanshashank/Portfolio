@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Inter, Fraunces, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { WebcamProvider } from "@/components/proctoring/webcam-provider";
+import { LenisProvider } from "@/lib/motion/lenis-provider";
+import { CustomCursor } from "@/components/shell/custom-cursor";
 
 // ─── Fonts ────────────────────────────────────────────────────────────────
 // Same trio as the parent portfolio so the demo reads as the same product.
@@ -46,7 +48,13 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-screen bg-paper text-ink" suppressHydrationWarning>
-        <WebcamProvider>{children}</WebcamProvider>
+        <LenisProvider>
+          <WebcamProvider>{children}</WebcamProvider>
+        </LenisProvider>
+
+        {/* Ink dot + trailing ring over the native cursor. Pointer-fine,
+            hover-capable, motion-tolerant devices only. */}
+        <CustomCursor />
       </body>
     </html>
   );

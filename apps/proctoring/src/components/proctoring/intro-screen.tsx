@@ -2,7 +2,12 @@
 
 // ─── IntroScreen ────────────────────────────────────────────────────────────
 // First stage. Explains what the demo is, what it does locally, and kicks off
-// the environment check.
+// the environment check. Staggered GSAP entrance + magnetic CTA, matching the
+// parent portfolio's motion language.
+
+import { useRef } from "react";
+import { useGSAP, gsap } from "@/lib/motion/use-gsap";
+import { Magnetic } from "@/components/ui/magnetic";
 
 const FEATURES = [
   {
@@ -28,18 +33,44 @@ const FEATURES = [
 ];
 
 export function IntroScreen({ onStart }: { onStart: () => void }) {
+  const root = useRef<HTMLElement>(null);
+
+  useGSAP(
+    () => {
+      gsap.from("[data-reveal]", {
+        y: 24,
+        opacity: 0,
+        duration: 0.8,
+        ease: "power3.out",
+        stagger: 0.08,
+      });
+    },
+    { scope: root },
+  );
+
   return (
-    <section className="container-base flex min-h-screen flex-col justify-center py-20">
-      <p className="font-mono text-[12px] uppercase tracking-[0.12em] text-signal">
+    <section
+      ref={root}
+      className="container-base flex min-h-screen flex-col justify-center py-20"
+    >
+      <p
+        data-reveal
+        className="font-mono text-[12px] uppercase tracking-[0.12em] text-signal"
+      >
         Proctoring engine · demonstration
       </p>
       <h1
+        data-reveal
         className="mt-4 max-w-3xl font-display font-light tracking-[-0.02em]"
         style={{ fontSize: "var(--text-display)", lineHeight: "var(--leading-tight)" }}
       >
         A browser-side exam proctor you can actually watch work.
       </h1>
-      <p className="mt-6 max-w-2xl text-ink-3" style={{ fontSize: "var(--text-lead)" }}>
+      <p
+        data-reveal
+        className="mt-6 max-w-2xl text-ink-3"
+        style={{ fontSize: "var(--text-lead)" }}
+      >
         A frontend-only exam-proctoring engine that runs entirely in your browser. Take a short
         dummy quiz while a real computer-vision loop watches your webcam and flags exam violations
         live — multiple faces in frame, looking away, downward gaze, poor lighting, a blocked
@@ -49,7 +80,7 @@ export function IntroScreen({ onStart }: { onStart: () => void }) {
 
       <div className="mt-12 grid max-w-4xl grid-cols-1 gap-px overflow-hidden rounded-xl bg-hairline-strong sm:grid-cols-2">
         {FEATURES.map((f) => (
-          <div key={f.k} className="bg-paper p-6">
+          <div key={f.k} data-reveal className="bg-paper p-6">
             <span className="font-mono text-[12px] text-ink-4">{f.k}</span>
             <h3 className="mt-2 text-[17px] font-medium tracking-[-0.01em]">{f.title}</h3>
             <p className="mt-1.5 text-[14px] leading-relaxed text-ink-3">{f.body}</p>
@@ -57,13 +88,15 @@ export function IntroScreen({ onStart }: { onStart: () => void }) {
         ))}
       </div>
 
-      <div className="mt-12 flex flex-wrap items-center gap-4">
-        <button
-          onClick={onStart}
-          className="rounded-full bg-ink px-7 py-3.5 text-[15px] font-medium text-paper transition-colors hover:bg-signal"
-        >
-          Start environment check
-        </button>
+      <div data-reveal className="mt-12 flex flex-wrap items-center gap-4">
+        <Magnetic>
+          <button
+            onClick={onStart}
+            className="rounded-full bg-ink px-7 py-3.5 text-[15px] font-medium text-paper transition-colors hover:bg-signal"
+          >
+            Start environment check
+          </button>
+        </Magnetic>
         <span className="font-mono text-[12px] text-ink-4">
           Camera permission required · nothing is uploaded
         </span>

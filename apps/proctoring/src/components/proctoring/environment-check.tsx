@@ -11,6 +11,7 @@ import { useEffect, useMemo, useState } from "react";
 import { WebcamFeed } from "./webcam-feed";
 import { useEnvironmentMonitor } from "@/hooks/use-environment-monitor";
 import type { WebcamStatus } from "@/hooks/use-webcam";
+import { Magnetic } from "@/components/ui/magnetic";
 import { cn } from "@/lib/utils";
 
 type CheckStatus = "pending" | "running" | "pass" | "fail";
@@ -192,21 +193,25 @@ export function EnvironmentCheck({
 
           <div className="mt-8 flex flex-wrap items-center gap-4">
             {!cameraReady ? (
-              <button
-                onClick={() => void onRequestCamera()}
-                disabled={webcamStatus === "requesting"}
-                className="rounded-full bg-ink px-7 py-3.5 text-[15px] font-medium text-paper transition-colors hover:bg-signal disabled:opacity-50"
-              >
-                {webcamStatus === "requesting" ? "Requesting…" : "Enable camera"}
-              </button>
+              <Magnetic>
+                <button
+                  onClick={() => void onRequestCamera()}
+                  disabled={webcamStatus === "requesting"}
+                  className="rounded-full bg-ink px-7 py-3.5 text-[15px] font-medium text-paper transition-colors hover:bg-signal disabled:opacity-50"
+                >
+                  {webcamStatus === "requesting" ? "Requesting…" : "Enable camera"}
+                </button>
+              </Magnetic>
             ) : (
-              <button
-                onClick={onContinue}
-                disabled={!allPassed}
-                className="rounded-full bg-ink px-7 py-3.5 text-[15px] font-medium text-paper transition-colors hover:bg-signal disabled:cursor-not-allowed disabled:opacity-40"
-              >
-                {allPassed ? "Start exam" : "Complete the checks to continue"}
-              </button>
+              <Magnetic>
+                <button
+                  onClick={onContinue}
+                  disabled={!allPassed}
+                  className="rounded-full bg-ink px-7 py-3.5 text-[15px] font-medium text-paper transition-colors hover:bg-signal disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  {allPassed ? "Start exam" : "Complete the checks to continue"}
+                </button>
+              </Magnetic>
             )}
           </div>
         </div>
