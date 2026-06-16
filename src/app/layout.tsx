@@ -123,11 +123,11 @@ export const metadata: Metadata = {
   // declare it explicitly.
   icons: {
     icon: [
-      { url: "/icon1.png", type: "image/png", sizes: "96x96" },
+      { url: "/hero/favicon.png", type: "image/png" },
       { url: "/icon0.svg", type: "image/svg+xml", sizes: "any" },
     ],
     apple: [
-      { url: "/apple-icon.png", sizes: "180x180" },
+      { url: "/hero/favicon.png" },
     ],
     other: [
       { rel: "manifest", url: "/manifest.json" },
