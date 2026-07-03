@@ -27,6 +27,8 @@ type Entry =
   | { kind: "output"; lines: CommandResultLine[] };
 
 const PROMPT = "shashank@portfolio:~$";
+const TYPE_WORD_MS = 42;
+const TYPE_LINE_PAUSE_MS = 80;
 
 const toneClass: Record<Tone, string> = {
   normal: "text-[var(--bone)]",
@@ -154,6 +156,33 @@ export function CommandTerminal({
     if (el) el.scrollTop = el.scrollHeight;
   }, [entries, open]);
 
+  // Keep following stdout while the typewriter mutates text nodes.
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!open || !el) return;
+
+    let frame = 0;
+    const scrollToBottom = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        el.scrollTop = el.scrollHeight;
+      });
+    };
+    const observer = new MutationObserver(scrollToBottom);
+
+    observer.observe(el, {
+      characterData: true,
+      childList: true,
+      subtree: true,
+    });
+    scrollToBottom();
+
+    return () => {
+      cancelAnimationFrame(frame);
+      observer.disconnect();
+    };
+  }, [open]);
+
   const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       submit(value);
@@ -230,7 +259,7 @@ export function CommandTerminal({
             {/* Scrollback */}
             <div
               ref={scrollRef}
-              className="flex-1 overflow-y-auto px-4 py-3 text-[13px] leading-[1.7]"
+              className="min-h-0 flex-1 overflow-y-auto px-4 py-3 text-[13px] leading-[1.7]"
             >
               {entries.map((entry, i) =>
                 entry.kind === "input" ? (
@@ -243,14 +272,26 @@ export function CommandTerminal({
                   </p>
                 ) : (
                   <div key={i} className="mt-1">
-                    {entry.lines.map((ln, j) => (
-                      <ResultLine
-                        key={j}
-                        line={ln}
-                        onInternal={navigate}
-                        onExternal={openExternal}
-                      />
-                    ))}
+                    {(() => {
+                      let delayMs = 0;
+
+                      return entry.lines.map((ln, j) => {
+                        const lineDelayMs = delayMs;
+                        delayMs +=
+                          lineWordCount(ln) * TYPE_WORD_MS + TYPE_LINE_PAUSE_MS;
+
+                        return (
+                          <ResultLine
+                            key={j}
+                            line={ln}
+                            delayMs={lineDelayMs}
+                            reduce={Boolean(reduce)}
+                            onInternal={navigate}
+                            onExternal={openExternal}
+                          />
+                        );
+                      });
+                    })()}
                   </div>
                 )
               )}
@@ -287,10 +328,14 @@ export function CommandTerminal({
 // ── One line of output ─────────────────────────────────────────────────────
 function ResultLine({
   line,
+  delayMs,
+  reduce,
   onInternal,
   onExternal,
 }: {
   line: CommandResultLine;
+  delayMs: number;
+  reduce: boolean;
   onInternal: (href: string) => void;
   onExternal: (href: string) => void;
 }) {
@@ -298,9 +343,12 @@ function ResultLine({
 
   if (line.kind === "text")
     return (
-      <p className={cn("break-words", toneClass[line.tone ?? "normal"])}>
-        {line.text}
-      </p>
+      <AnimatedText
+        text={line.text}
+        delayMs={delayMs}
+        reduce={reduce}
+        className={cn("break-words", toneClass[line.tone ?? "normal"])}
+      />
     );
 
   if (line.kind === "link")
@@ -310,6 +358,8 @@ function ResultLine({
           label={line.label}
           href={line.href}
           external={line.external}
+          delayMs={delayMs}
+          reduce={reduce}
           onInternal={onInternal}
           onExternal={onExternal}
         />
@@ -319,25 +369,155 @@ function ResultLine({
   // list
   return (
     <ul className="my-1 flex flex-col gap-1">
-      {line.items.map((it, i) => (
-        <li key={i} className="flex flex-wrap items-baseline gap-x-3">
-          {it.href ? (
-            <LinkBit
-              label={it.label}
-              href={it.href}
-              external={it.external}
-              onInternal={onInternal}
-              onExternal={onExternal}
-            />
-          ) : (
-            <span className="text-[var(--bone)]">{it.label}</span>
-          )}
-          {it.value && (
-            <span className="text-[var(--bone-3)]">{it.value}</span>
-          )}
-        </li>
-      ))}
+      {line.items.map((it, i) => {
+        const currentDelayMs = itemDelayMs(line.items, i, delayMs);
+
+        return (
+          <li key={i} className="flex flex-wrap items-baseline gap-x-3">
+            {it.href ? (
+              <LinkBit
+                label={it.label}
+                href={it.href}
+                external={it.external}
+                delayMs={currentDelayMs}
+                reduce={reduce}
+                onInternal={onInternal}
+                onExternal={onExternal}
+              />
+            ) : (
+              <TypedSpan
+                text={it.label}
+                delayMs={currentDelayMs}
+                reduce={reduce}
+                className="text-[var(--bone)]"
+              />
+            )}
+            {it.value && (
+              <TypedSpan
+                text={it.value}
+                delayMs={
+                  currentDelayMs +
+                  wordCount(it.label) * TYPE_WORD_MS +
+                  TYPE_LINE_PAUSE_MS / 2
+                }
+                reduce={reduce}
+                className="text-[var(--bone-3)]"
+              />
+            )}
+          </li>
+        );
+      })}
     </ul>
+  );
+}
+
+function AnimatedText({
+  text,
+  delayMs,
+  reduce,
+  className,
+}: {
+  text: string;
+  delayMs: number;
+  reduce: boolean;
+  className?: string;
+}) {
+  const typed = useTypedText(text, delayMs, !reduce);
+
+  return (
+    <p className={className}>
+      {typed.text}
+      {typed.started && !typed.done && (
+        <span className="text-[var(--signal)]">_</span>
+      )}
+    </p>
+  );
+}
+
+function TypedSpan({
+  text,
+  delayMs,
+  reduce,
+  className,
+}: {
+  text: string;
+  delayMs: number;
+  reduce: boolean;
+  className?: string;
+}) {
+  const typed = useTypedText(text, delayMs, !reduce);
+
+  return <span className={className}>{typed.text}</span>;
+}
+
+function useTypedText(text: string, delayMs: number, enabled: boolean) {
+  const [typed, setTyped] = useState({
+    done: !enabled,
+    started: !enabled,
+    text: enabled ? "" : text,
+  });
+
+  useEffect(() => {
+    if (!enabled) return;
+
+    const parts = text.match(/\S+\s*/g) ?? [text];
+    let index = 0;
+    let cancelled = false;
+    let intervalId: number | undefined;
+
+    const timeoutId = window.setTimeout(() => {
+      if (cancelled) return;
+      setTyped({ done: parts.length <= 1, started: true, text: parts[0] ?? "" });
+      index = 1;
+
+      intervalId = window.setInterval(() => {
+        if (cancelled) {
+          window.clearInterval(intervalId);
+          return;
+        }
+        index += 1;
+        setTyped({
+          done: index >= parts.length,
+          started: true,
+          text: parts.slice(0, index).join(""),
+        });
+        if (index >= parts.length) window.clearInterval(intervalId);
+      }, TYPE_WORD_MS);
+    }, delayMs);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timeoutId);
+      if (intervalId) window.clearInterval(intervalId);
+    };
+  }, [delayMs, enabled, text]);
+
+  return enabled ? typed : { done: true, started: true, text };
+}
+
+function wordCount(text: string) {
+  return text.match(/\S+/g)?.length ?? 0;
+}
+
+function lineWordCount(line: CommandResultLine) {
+  if (line.kind === "spacer") return 0;
+  if (line.kind === "text") return wordCount(line.text);
+  if (line.kind === "link") return wordCount(line.label);
+  return line.items.reduce(
+    (total, item) =>
+      total + wordCount(item.label) + wordCount(item.value ?? ""),
+    0
+  );
+}
+
+function itemDelayMs(items: { label: string; value?: string }[], index: number, baseDelayMs: number) {
+  return items.slice(0, index).reduce(
+    (total, item) =>
+      total +
+      wordCount(item.label) * TYPE_WORD_MS +
+      wordCount(item.value ?? "") * TYPE_WORD_MS +
+      TYPE_LINE_PAUSE_MS,
+    baseDelayMs
   );
 }
 
@@ -345,12 +525,16 @@ function LinkBit({
   label,
   href,
   external,
+  delayMs,
+  reduce,
   onInternal,
   onExternal,
 }: {
   label: string;
   href: string;
   external?: boolean;
+  delayMs: number;
+  reduce: boolean;
   onInternal: (href: string) => void;
   onExternal: (href: string) => void;
 }) {
@@ -359,14 +543,16 @@ function LinkBit({
     href.startsWith("http") ||
     href.startsWith("mailto:") ||
     /\.[a-z0-9]{2,4}$/i.test(href);
+  const typedLabel = useTypedText(label, delayMs, !reduce);
+
   return (
     <button
       type="button"
       onClick={() => (isExternal ? onExternal(href) : onInternal(href))}
       className="text-left text-[var(--signal)] underline decoration-[var(--signal-low)] underline-offset-2 transition-colors hover:text-[var(--signal-hi)]"
     >
-      {label}
-      {isExternal && <span aria-hidden> ↗</span>}
+      {typedLabel.text}
+      {isExternal && typedLabel.done && <span aria-hidden> ↗</span>}
     </button>
   );
 }

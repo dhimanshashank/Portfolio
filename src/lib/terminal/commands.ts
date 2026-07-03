@@ -59,6 +59,8 @@ const ROUTES: Record<string, string> = {
   "messaging-system": "/work/messaging-system",
 };
 
+const CAT_FILES = ["about", "resume", "work", "contact"];
+
 const t = (text: string, tone?: Tone): CommandResultLine => ({
   kind: "text",
   text,
@@ -140,13 +142,65 @@ export const commands: Command[] = [
   },
   {
     name: "cat",
-    summary: "print a file",
-    usage: "cat resume",
-    complete: ({ args }) => ["resume"].filter((x) => x.startsWith(args[0] ?? "")),
+    summary: "read a pseudo-file",
+    usage: "cat <about|resume|work|contact>",
+    complete: ({ args }) => CAT_FILES.filter((x) => x.startsWith(args[0] ?? "")),
     run: ({ args, openExternal, print }) => {
-      if ((args[0] ?? "").toLowerCase() === "resume")
+      const file = (args[0] ?? "").toLowerCase();
+
+      if (!file) {
+        return print([
+          t("cat reads small portfolio files inside this terminal.", "muted"),
+          t("available files:", "muted"),
+          {
+            kind: "list",
+            items: CAT_FILES.map((name) => ({
+              label: name,
+              value: `cat ${name}`,
+            })),
+          },
+        ]);
+      }
+
+      if (file === "about") {
+        return print([
+          t(person.name, "signal"),
+          t(person.roleLong),
+          t(`${person.location} · ${person.locationDetail}`, "muted"),
+        ]);
+      }
+
+      if (file === "work") {
+        return print([
+          t("selected work", "signal"),
+          {
+            kind: "list",
+            items: projects.map((p) => ({
+              label: p.title,
+              value: p.tagline,
+              href: p.caseStudy ? `/work/${p.slug}` : "/work",
+            })),
+          },
+        ]);
+      }
+
+      if (file === "contact") {
+        return print([
+          t("contact", "signal"),
+          { kind: "link", label: person.email, href: `mailto:${person.email}`, external: true },
+          { kind: "link", label: "open /contact", href: "/contact" },
+        ]);
+      }
+
+      if (file === "resume") {
+        print([
+          t("resume.pdf is a real file, so cat opens it in a new tab.", "muted"),
+          { kind: "link", label: "Shashank_Resume.pdf", href: "/Shashank_Resume.pdf", external: true },
+        ]);
         return openExternal("/Shashank_Resume.pdf");
-      print([t(`cat: ${args[0] ?? "(none)"}: no such file`, "error")]);
+      }
+
+      print([t(`cat: ${file}: no such file`, "error")]);
     },
   },
   {
