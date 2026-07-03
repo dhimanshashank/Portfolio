@@ -10,6 +10,7 @@ import { ScrollProgress } from "@/components/shell/scroll-progress";
 import { RouteTransition } from "@/components/shell/route-transition";
 import { InitialCurtain } from "@/components/shell/initial-curtain";
 import { CustomCursor } from "@/components/shell/custom-cursor";
+import { TerminalMount } from "@/components/terminal/terminal-mount";
 
 // ─── Fonts ──────────────────────────────────────────────────────────────
 
@@ -210,6 +211,10 @@ export default function RootLayout({
         {/* Ink dot + trailing ring over the native cursor. Pointer-fine,
             hover-capable, motion-tolerant devices only. */}
         <CustomCursor />
+
+        {/* Summonable command terminal (⌘K / nav chip). Overlay is lazy —
+            loads only on first open. */}
+        <TerminalMount />
       </body>
     </html>
   );

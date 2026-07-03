@@ -34,6 +34,9 @@ export function Nav() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
+  // Summon the command terminal (TerminalMount listens for this).
+  const openTerminal = () => window.dispatchEvent(new Event("open-terminal"));
+
   // Auto-close the mobile drawer whenever the route changes. We can't rely
   // on each Link's onClick to close it — the global RouteTransition listens
   // in the capture phase with stopPropagation, which prevents synthetic
@@ -92,16 +95,39 @@ export function Nav() {
                 {l.label}
               </a>
             ))}
+
+            {/* Command terminal — ⌘K */}
+            <button
+              type="button"
+              onClick={openTerminal}
+              aria-label="Open command terminal (Command K)"
+              className="group flex items-center gap-1.5 font-mono text-[11px] tracking-[0.18em] uppercase text-ink-3 hover:text-signal transition-colors"
+            >
+              <span aria-hidden className="text-signal">❯</span>
+              <span className="rounded-[3px] border border-ink/15 px-1.5 py-0.5 group-hover:border-signal/40 transition-colors">
+                ⌘K
+              </span>
+            </button>
           </nav>
 
-          {/* Mobile hamburger */}
-          <button
-            className="md:hidden text-ink-3 hover:text-ink transition-colors p-1 -mr-1"
-            onClick={() => setOpen((v) => !v)}
-            aria-label={open ? "Close menu" : "Open menu"}
-          >
-            {open ? <X size={18} strokeWidth={1.5} /> : <Menu size={18} strokeWidth={1.5} />}
-          </button>
+          {/* Mobile controls — terminal chip + hamburger */}
+          <div className="md:hidden flex items-center gap-1">
+            <button
+              type="button"
+              onClick={openTerminal}
+              aria-label="Open command terminal"
+              className="text-ink-3 hover:text-signal transition-colors p-1 font-mono text-[14px] leading-none tracking-tight"
+            >
+              ❯_
+            </button>
+            <button
+              className="text-ink-3 hover:text-ink transition-colors p-1 -mr-1"
+              onClick={() => setOpen((v) => !v)}
+              aria-label={open ? "Close menu" : "Open menu"}
+            >
+              {open ? <X size={18} strokeWidth={1.5} /> : <Menu size={18} strokeWidth={1.5} />}
+            </button>
+          </div>
         </div>
       </header>
 

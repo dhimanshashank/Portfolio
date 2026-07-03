@@ -1,9 +1,10 @@
 "use client";
 
-import Image from "next/image";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useGSAP, gsap } from "@/lib/motion/use-gsap";
 import { caseArchitecture } from "@/lib/proctoring-case-study";
+import { ExplorableArchitecture } from "@/components/work/visuals/explorable-architecture";
+import { cn } from "@/lib/utils";
 
 /**
  * <ArchitectureSection>
@@ -19,6 +20,7 @@ export function ArchitectureSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const pinRef = useRef<HTMLDivElement>(null);
   const annotRefs = useRef<(HTMLLIElement | null)[]>([]);
+  const [activeAnchor, setActiveAnchor] = useState<string | null>(null);
 
   const annotations = caseArchitecture.annotations;
   const PIN_VH = Math.max(3, annotations.length * 0.9);
@@ -96,21 +98,20 @@ export function ArchitectureSection() {
             >
               {caseArchitecture.sectionTitle}
             </h2>
-            {/* Real architecture image — production system diagram.
-                Replaces the earlier abstract SVG mock; this is what was
-                actually shipped, so peer reviewers get the real artifact. */}
+            {/* Explorable topology — hover/tap a node to inspect it; the
+                matching annotation on the right lights up. "add load" moves
+                an honest CPU/latency readout. */}
             <div className="w-full max-w-[680px]">
-              <div className="relative aspect-[4/3] overflow-hidden rounded-sm border border-ink/10 bg-paper-soft">
-                <Image
-                  src="/work/proctoring/architecture-1.png"
-                  alt="Proctoring system architecture diagram — production"
-                  fill
-                  sizes="(max-width: 768px) 100vw, 680px"
-                  className="object-contain p-2"
+              <div className="rounded-sm border border-ink/10 bg-paper-soft p-3 md:p-4">
+                <ExplorableArchitecture
+                  variant="full"
+                  activeAnchor={activeAnchor}
+                  onActiveAnchor={setActiveAnchor}
+                  className="text-ink"
                 />
               </div>
               <p className="mt-3 font-mono text-[10px] uppercase tracking-[0.22em] text-ink-4">
-                FIG. — System architecture, production
+                FIG. — System architecture · hover a node to inspect
               </p>
             </div>
           </div>
@@ -118,25 +119,36 @@ export function ArchitectureSection() {
           {/* Annotation column */}
           <div className="flex flex-col justify-center">
             <ol className="flex flex-col gap-7 md:gap-9">
-              {annotations.map((a, i) => (
-                <li
-                  key={a.anchor}
-                  ref={(el) => { annotRefs.current[i] = el; }}
-                  className="will-change-transform"
-                  style={{ opacity: 0 }}
-                >
-                  <p className="mb-2 flex items-baseline gap-3 font-mono text-[11px] uppercase tracking-[0.22em] text-signal">
-                    <span className="text-ink-4">{String(i + 1).padStart(2, "0")}</span>
-                    {a.label}
-                  </p>
-                  <p
-                    className="text-ink-2 leading-relaxed"
-                    style={{ fontSize: "clamp(14px, 1.05vw, 16px)" }}
+              {annotations.map((a, i) => {
+                const on = activeAnchor === a.anchor;
+                return (
+                  <li
+                    key={a.anchor}
+                    ref={(el) => { annotRefs.current[i] = el; }}
+                    onPointerEnter={() => setActiveAnchor(a.anchor)}
+                    onPointerLeave={() => setActiveAnchor(null)}
+                    className={cn(
+                      "will-change-transform border-l-2 pl-4 transition-colors duration-200",
+                      on ? "border-signal" : "border-transparent"
+                    )}
+                    style={{ opacity: 0 }}
                   >
-                    {a.note}
-                  </p>
-                </li>
-              ))}
+                    <p className="mb-2 flex items-baseline gap-3 font-mono text-[11px] uppercase tracking-[0.22em] text-signal">
+                      <span className="text-ink-4">{String(i + 1).padStart(2, "0")}</span>
+                      {a.label}
+                    </p>
+                    <p
+                      className={cn(
+                        "leading-relaxed transition-colors duration-200",
+                        on ? "text-ink" : "text-ink-2"
+                      )}
+                      style={{ fontSize: "clamp(14px, 1.05vw, 16px)" }}
+                    >
+                      {a.note}
+                    </p>
+                  </li>
+                );
+              })}
             </ol>
           </div>
         </div>

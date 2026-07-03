@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import {
@@ -35,6 +36,9 @@ import type {
 export function ProblemCard({ problem }: { problem: EngineeringProblem }) {
   const reduce = useReducedMotion();
   const clueLines = problem.clue.split("\n");
+  // Mobile: the evidence block collapses to the smoking-gun line; tap to
+  // reveal the full trace. Desktop always shows everything (md: overrides).
+  const [expanded, setExpanded] = useState(false);
 
   // Deterministic per-card phase offset so a list of cards desyncs naturally
   // as new entries arrive. id.length is stable, varied, and free.
@@ -135,9 +139,18 @@ export function ProblemCard({ problem }: { problem: EngineeringProblem }) {
 
         {/* ── Evidence — warm-paper terminal block ─────────────────────── */}
         <div className="mt-7">
-          <p className="font-mono text-[9.5px] uppercase tracking-[0.22em] text-ink-3 mb-2">
+          {/* Header doubles as a mobile expand toggle; inert on desktop. */}
+          <button
+            type="button"
+            onClick={() => setExpanded((v) => !v)}
+            aria-expanded={expanded}
+            className="mb-2 flex w-full items-center gap-2 font-mono text-[9.5px] uppercase tracking-[0.22em] text-ink-3 md:pointer-events-none md:cursor-default"
+          >
             Evidence
-          </p>
+            <span className="text-ink-4 md:hidden">
+              {expanded ? "· tap to collapse" : "· tap to expand"}
+            </span>
+          </button>
           <div
             className="
               relative rounded-sm border border-ink/12
@@ -159,6 +172,8 @@ export function ProblemCard({ problem }: { problem: EngineeringProblem }) {
                   key={i}
                   className={cn(
                     "font-mono text-[11px] md:text-[12px] leading-relaxed whitespace-pre",
+                    // Collapsed on mobile → show only the smoking-gun line.
+                    !isHighlight && !expanded && "hidden md:block",
                     isHighlight
                       ? "text-signal problem-card-pulse"
                       : i === 0

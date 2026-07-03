@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRef, useState } from "react";
 import { useGSAP, gsap } from "@/lib/motion/use-gsap";
 import { cn } from "@/lib/utils";
+import { PortraitTouchLayer } from "./portrait-touch-layer";
 
 /**
  * <PortraitPanel>
@@ -137,6 +138,9 @@ export function PortraitPanel({
         <div className="absolute bottom-5 right-5 font-mono text-[10px] tracking-[0.22em] uppercase text-ink-3 opacity-60">
           sd · {new Date().getFullYear()}
         </div>
+
+        {/* Mobile-only tap-ripple feedback (no-op on desktop / reduced motion) */}
+        <PortraitTouchLayer />
       </div>
     </div>
   );
