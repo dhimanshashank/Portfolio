@@ -117,7 +117,7 @@ export const projects: WorkProject[] = [
     caseStudy: false,
     context: "Qspider · internship",
     variant: "regular",
-    liveUrl: "https://eventify-gamma-eight.vercel.app",
+    liveUrl: "https://eventify.shashankdhiman.in/",
   },
 ];
 
