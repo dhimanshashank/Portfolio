@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
@@ -8,7 +8,9 @@ import {
   commands,
   resolve,
   complete,
+  suggest,
   cwdPath,
+  findProject,
   type CommandResultLine,
   type Tone,
 } from "@/lib/terminal/commands";
@@ -66,6 +68,17 @@ export function CommandTerminal({
   const panelRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const restoreFocusRef = useRef<Element | null>(null);
+
+  // Fish-style ghost: the dim remainder of the suggested line, rendered
+  // inline after the caret. Accept with → (caret at end) or Tab.
+  // historyRef isn't reactive, but history only mutates on submit — which
+  // also clears `value`, so this recomputes exactly when it needs to.
+  const ghost = useMemo(() => {
+    const s = suggest(value, historyRef.current);
+    return s && s.startsWith(value) && s.length > value.length
+      ? s.slice(value.length)
+      : null;
+  }, [value]);
 
   const print = useCallback(
     (lines: CommandResultLine[]) =>
@@ -215,15 +228,52 @@ export function CommandTerminal({
       const h = historyRef.current;
       histIdxRef.current = Math.max(histIdxRef.current - 1, -1);
       setValue(histIdxRef.current === -1 ? "" : h[histIdxRef.current] ?? "");
+    } else if (e.key === "ArrowRight" || e.key === "End") {
+      // Accept the ghost suggestion when the caret is already at the end —
+      // the fish/zsh-autosuggestions gesture.
+      const el = e.currentTarget;
+      if (ghost && el.selectionStart === value.length && el.selectionEnd === value.length) {
+        e.preventDefault();
+        setValue(value + ghost);
+      }
     } else if (e.key === "Tab") {
       e.preventDefault();
       const cands = complete(value);
-      if (cands.length === 1) {
+      const { cmd } = resolve(value);
+      const isCd = cmd?.name === "cd";
+      const trailing = /\s$/.test(value);
+
+      if (cands.length === 1 && !trailing) {
         const parts = value.split(/\s+/);
         parts[parts.length - 1] = cands[0];
         setValue(parts.join(" ") + " ");
-      } else if (cands.length > 1) {
-        print([{ kind: "text", text: cands.join("   "), tone: "muted" }]);
+        // For `cd 01`, echo the full directory name so the completion reads
+        // like a real terminal ("01  AI Proctoring Platform"), matching `ls`.
+        if (isCd) {
+          const p = findProject(cands[0]);
+          if (p)
+            print([{ kind: "text", text: `${p.num}  ${p.title}`, tone: "signal" }]);
+        }
+      } else if (cands.length >= 1) {
+        // Multiple matches (or browsing after a space): list them. For `cd`,
+        // show each project's full title next to its number, like `ls`.
+        if (isCd) {
+          print([
+            {
+              kind: "list",
+              items: cands.map((c) => {
+                const p = findProject(c);
+                return p ? { label: p.num, value: p.title } : { label: c };
+              }),
+            },
+          ]);
+        } else if (cands.length > 1) {
+          print([{ kind: "text", text: cands.join("   "), tone: "muted" }]);
+        }
+      } else if (ghost) {
+        // No completion candidates but a history ghost is showing —
+        // Tab accepts it, same as →.
+        setValue(value + ghost);
       }
     }
   };
@@ -312,25 +362,41 @@ export function CommandTerminal({
               )}
             </div>
 
-            {/* Input */}
+            {/* Input — with fish-style ghost suggestion behind the caret.
+                The overlay renders the typed text invisibly (to position the
+                ghost) and the suggestion remainder in dim bone. Mono font =
+                identical metrics, so ghost aligns exactly after the caret. */}
             <div className="flex items-center gap-2 border-t border-[var(--void-edge)] px-4 py-3">
               <span aria-hidden className="text-[13px] text-[var(--signal)]">
                 ❯
               </span>
-              <input
-                ref={inputRef}
-                value={value}
-                onChange={(e) => setValue(e.target.value)}
-                onKeyDown={onKeyDown}
-                autoCapitalize="off"
-                autoCorrect="off"
-                autoComplete="off"
-                spellCheck={false}
-                enterKeyHint="send"
-                aria-label="Command input"
-                className="w-full bg-transparent text-[13px] text-[var(--bone)] caret-[var(--signal)] outline-none placeholder:text-[var(--bone-4)]"
-                placeholder="type a command…  (help)"
-              />
+              <div className="relative w-full">
+                {ghost && (
+                  <div
+                    aria-hidden
+                    className="pointer-events-none absolute inset-0 flex items-center overflow-hidden text-[13px]"
+                  >
+                    <span className="invisible whitespace-pre">{value}</span>
+                    <span className="whitespace-pre text-[var(--bone-4)]">
+                      {ghost}
+                    </span>
+                  </div>
+                )}
+                <input
+                  ref={inputRef}
+                  value={value}
+                  onChange={(e) => setValue(e.target.value)}
+                  onKeyDown={onKeyDown}
+                  autoCapitalize="off"
+                  autoCorrect="off"
+                  autoComplete="off"
+                  spellCheck={false}
+                  enterKeyHint="send"
+                  aria-label="Command input"
+                  className="relative w-full bg-transparent text-[13px] text-[var(--bone)] caret-[var(--signal)] outline-none placeholder:text-[var(--bone-4)]"
+                  placeholder="type a command…  (help)"
+                />
+              </div>
             </div>
           </motion.div>
         </motion.div>

@@ -6,6 +6,7 @@ export const metadata: Metadata = {
   title: "Selected Work — Shashank Dhiman",
   description:
     "Real-time systems, event-driven pipelines, and full-stack platforms shipped to production.",
+  alternates: { canonical: "/work" },
 };
 
 /**

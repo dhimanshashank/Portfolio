@@ -8,11 +8,14 @@ import { AiSystems } from "@/components/home/ai-systems";
 import { BeforeAfter } from "@/components/case-study/before-after";
 import { EditorialLessons } from "@/components/case-study/editorial-lessons";
 import { CaseOutro } from "@/components/case-study/case-outro";
+import { JsonLd } from "@/components/seo/json-ld";
+import { caseStudyGraph } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Proctoring System Case Study — Shashank Dhiman",
   description:
     "How an SFU-based proctoring system survives 200 concurrent students. One year, three architectures, a few near-collapses.",
+  alternates: { canonical: "/work/proctoring-system" },
 };
 
 /**
@@ -37,6 +40,7 @@ export const metadata: Metadata = {
 export default function ProctoringCaseStudy() {
   return (
     <>
+      <JsonLd data={caseStudyGraph("proctoring")} />
       <CaseHero />
       <NarrativeReveal />
       <ArchitectureSection />

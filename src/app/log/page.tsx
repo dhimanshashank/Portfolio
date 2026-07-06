@@ -9,6 +9,7 @@ export const metadata: Metadata = {
   title: "Log & Notes — Shashank Dhiman",
   description:
     "A running log of production investigations and long-form writing — the clue that cracked each one, the root cause, the fix.",
+  alternates: { canonical: "/log" },
 };
 
 /**

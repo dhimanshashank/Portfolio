@@ -6,11 +6,14 @@ import {
   SketchDivider,
   SketchUnderline,
 } from "@/components/ui/sketch-marks";
+import { JsonLd } from "@/components/seo/json-ld";
+import { caseStudyGraph } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Doubt & Discussion — Case Study · Shashank Dhiman",
   description:
     "Four chat surfaces — direct, group, course thread, announcement — on a single realtime layer. A general case study of the system's design.",
+  alternates: { canonical: "/work/messaging-system" },
 };
 
 /**
@@ -29,6 +32,7 @@ export const metadata: Metadata = {
 export default function MessagingCaseStudy() {
   return (
     <main className="bg-paper">
+      <JsonLd data={caseStudyGraph("messaging")} />
       {/* ─── Hero ────────────────────────────────────────────────────── */}
       <section className="container-wide pt-20 pb-12 md:pt-28 md:pb-16">
         <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-ink-3 mb-8">

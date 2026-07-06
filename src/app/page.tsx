@@ -1,4 +1,6 @@
+import type { Metadata } from "next";
 import { Hero } from "@/components/hero/hero";
+import { PaperPlaneFlight } from "@/components/home/paper-plane-flight";
 import { Experience } from "@/components/home/experience";
 import { SelectedWork } from "@/components/home/selected-work";
 import { EngineeringLog } from "@/components/problems/engineering-log";
@@ -11,6 +13,10 @@ import { WorksOn } from "@/components/home/works-on";
  * cacheComponents is intentionally OFF in this project.
  */
 export const revalidate = 21600;
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 /**
  * Home (/).
@@ -30,13 +36,16 @@ export const revalidate = 21600;
  */
 export default function HomePage() {
   return (
-    <>
+    // Relative wrapper: the paper plane overlay spans the full page height
+    // (absolute inset-0) and flies down it as you scroll.
+    <div className="relative">
+      <PaperPlaneFlight />
       <Hero />
       <Experience />
       <SelectedWork />
       <EngineeringLog />
       <ProofStrip />
       <WorksOn />
-    </>
+    </div>
   );
 }

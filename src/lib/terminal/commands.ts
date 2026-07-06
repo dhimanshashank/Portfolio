@@ -37,11 +37,16 @@ export type CommandContext = {
   setCwd: (id: string | null) => void;
 };
 
+/** Help sections — rendered in this order by `help`. */
+export type CommandGroup = "navigate" | "explore" | "connect" | "system";
+
 export type Command = {
   name: string;
   aliases?: string[];
   summary: string;
   usage?: string;
+  /** Which `help` section this belongs to. Hidden commands don't need one. */
+  group?: CommandGroup;
   hidden?: boolean; // easter eggs / shorthands not listed by `help`
   complete?: (ctx: { args: string[] }) => string[];
   run: (ctx: CommandContext) => void | Promise<void>;
@@ -71,7 +76,7 @@ const t = (text: string, tone?: Tone): CommandResultLine => ({
 });
 
 /** Resolve a `cd` argument (num, id, or slug) to a project. */
-function findProject(arg: string): WorkProject | undefined {
+export function findProject(arg: string): WorkProject | undefined {
   const a = arg.toLowerCase();
   return projects.find((p) => p.num === a || p.id === a || p.slug === a);
 }
@@ -86,8 +91,8 @@ export function cwdPath(cwd: string | null): string {
 /** A short, Linux-flavoured "readme" for one project dir. */
 function projectReadme(p: WorkProject): CommandResultLine[] {
   const lines: CommandResultLine[] = [
-    t(`${p.slug}/`, "signal"),
-    t(`${p.num} · ${p.title} — ${p.tagline}`, "muted"),
+    t(`${p.num} · ${p.title}`, "signal"),
+    t(`${p.tagline}`, "muted"),
     { kind: "spacer" },
     t(p.blurb),
     { kind: "spacer" },
@@ -132,25 +137,40 @@ export const commands: Command[] = [
   {
     name: "help",
     aliases: ["?", "commands"],
-    summary: "list what you can type",
-    run: ({ print, registry }) =>
-      print([
-        t("commands — type one and press enter:", "muted"),
-        { kind: "spacer" },
-        {
+    summary: "this screen",
+    group: "system",
+    run: ({ print, registry }) => {
+      const sections: { key: CommandGroup; label: string }[] = [
+        { key: "navigate", label: "navigate" },
+        { key: "explore", label: "explore" },
+        { key: "connect", label: "connect" },
+        { key: "system", label: "system" },
+      ];
+
+      const lines: CommandResultLine[] = [];
+      for (const s of sections) {
+        const cmds = registry.filter((c) => !c.hidden && c.group === s.key);
+        if (!cmds.length) continue;
+        lines.push(t(s.label, "signal"));
+        lines.push({
           kind: "list",
-          items: registry
-            .filter((c) => !c.hidden)
-            .map((c) => ({ label: c.name, value: c.summary })),
-        },
-        { kind: "spacer" },
-        t("try:  whoami · ls work · cd 01 · open about · cat resume · gh", "muted"),
-      ]),
+          items: cmds.map((c) => ({ label: c.name, value: c.summary })),
+        });
+        lines.push({ kind: "spacer" });
+      }
+
+      lines.push(
+        t("keys   tab → autocomplete · ↑ ↓ → history · esc → close", "muted"),
+        t("try    cd 01 · cat resume · sudo hire-me", "muted")
+      );
+      print(lines);
+    },
   },
   {
     name: "whoami",
     aliases: ["me"],
     summary: "who is this",
+    group: "explore",
     run: ({ print }) =>
       print([
         t(person.name),
@@ -161,6 +181,7 @@ export const commands: Command[] = [
   {
     name: "about",
     summary: "read the story",
+    group: "navigate",
     run: ({ navigate }) => navigate("/about"),
   },
   {
@@ -168,6 +189,7 @@ export const commands: Command[] = [
     aliases: ["ls", "projects"],
     summary: "list selected work",
     usage: "ls [work]",
+    group: "navigate",
     complete: ({ args }) => ["work"].filter((x) => x.startsWith(args[0] ?? "")),
     run: ({ print }) =>
       print([
@@ -187,16 +209,15 @@ export const commands: Command[] = [
     name: "cd",
     summary: "enter a project dir — cd 01",
     usage: "cd <01|02|03|04|proctoring|messaging|…>",
+    group: "navigate",
     complete: ({ args }) => {
       const frag = (args[0] ?? "").toLowerCase();
-      const cands = [
-        ...projects.map((p) => p.num),
-        ...projects.map((p) => p.id),
-        "..",
-        "~",
-        "work",
-      ];
-      return cands.filter((c) => c.startsWith(frag));
+      // Directory "names" are the project numbers (01, 02, …) plus `..` to go
+      // home — one token each so tab-completion stays clean and idempotent.
+      // ids/slugs still resolve when run; they're just not offered as tokens.
+      return [...projects.map((p) => p.num), ".."].filter((c) =>
+        c.startsWith(frag)
+      );
     },
     run: ({ args, print, setCwd }) => {
       const arg = (args[0] ?? "").toLowerCase();
@@ -209,8 +230,8 @@ export const commands: Command[] = [
           {
             kind: "list",
             items: projects.map((p) => ({
-              label: p.num,
-              value: `${p.title} — ${p.tagline}`,
+              label: `${p.num}  ${p.title}`,
+              value: p.tagline,
             })),
           },
           { kind: "spacer" },
@@ -239,6 +260,7 @@ export const commands: Command[] = [
     aliases: ["goto"],
     summary: "navigate to a section",
     usage: "open <home|work|about|log|contact|proctoring|messaging>",
+    group: "navigate",
     complete: ({ args }) =>
       Object.keys(ROUTES).filter((k) => k.startsWith((args[0] ?? "").toLowerCase())),
     run: ({ args, navigate, print, cwd }) => {
@@ -261,6 +283,7 @@ export const commands: Command[] = [
     name: "cat",
     summary: "read a pseudo-file",
     usage: "cat <about|resume|work|contact>",
+    group: "explore",
     complete: ({ args }) => CAT_FILES.filter((x) => x.startsWith(args[0] ?? "")),
     run: ({ args, openExternal, print }) => {
       const file = (args[0] ?? "").toLowerCase();
@@ -323,6 +346,7 @@ export const commands: Command[] = [
   {
     name: "contact",
     summary: "get in touch",
+    group: "connect",
     run: ({ print }) =>
       print([
         { kind: "link", label: person.email, href: `mailto:${person.email}`, external: true },
@@ -333,6 +357,7 @@ export const commands: Command[] = [
     name: "social",
     aliases: ["links"],
     summary: "find me elsewhere",
+    group: "connect",
     run: ({ print }) =>
       print([
         {
@@ -351,6 +376,7 @@ export const commands: Command[] = [
   {
     name: "demo",
     summary: "open the live proctoring demo",
+    group: "explore",
     run: ({ openExternal, print }) => {
       const p = projects.find((x) => x.id === "proctoring");
       if (p?.liveUrl) return openExternal(p.liveUrl);
@@ -360,6 +386,7 @@ export const commands: Command[] = [
   {
     name: "uptime",
     summary: "systems shipped",
+    group: "explore",
     run: ({ print }) =>
       print([
         t(`${projects.length} production systems · 1+ year shipping`, "normal"),
@@ -370,6 +397,7 @@ export const commands: Command[] = [
     name: "clear",
     aliases: ["cls"],
     summary: "clear the screen",
+    group: "system",
     run: ({ clear }) => clear(),
   },
   {
@@ -417,4 +445,27 @@ export function complete(input: string): string[] {
   const { cmd, args } = resolve(input);
   if (!cmd?.complete) return [];
   return cmd.complete({ args });
+}
+
+/**
+ * Fish-style inline suggestion: the full line the ghost text proposes.
+ * Priority: (1) most recent history line extending the input — repeating
+ * yourself is the common case in a real shell — then (2) the first
+ * completion candidate for the token being typed. Returns null when there
+ * is nothing to suggest. Tab stays the explicit chooser; the ghost is a hint.
+ */
+export function suggest(input: string, history: string[]): string | null {
+  if (!input.trim()) return null;
+
+  const fromHistory = history.find((h) => h.startsWith(input) && h !== input);
+  if (fromHistory) return fromHistory;
+
+  const parts = input.split(/\s+/);
+  const last = (parts[parts.length - 1] ?? "").toLowerCase();
+  const cand = complete(input).find((c) => c.startsWith(last) && c !== last);
+  if (!cand) return null;
+
+  parts[parts.length - 1] = cand;
+  const line = parts.join(" ");
+  return line === input ? null : line;
 }

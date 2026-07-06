@@ -110,9 +110,9 @@ export function Hero() {
             will-change-transform
           "
         >
-          {/* Eyebrow — three coordinates, not a job title */}
+          {/* Eyebrow — coordinates, not a job title */}
           <p className="hero-eyebrow font-mono text-[11px] uppercase tracking-[0.22em] text-signal mb-5 md:mb-8 opacity-0">
-            <span aria-hidden>▍</span> Real-time systems · AI infrastructure · Chandigarh, India
+            <span aria-hidden>▍</span> AI infrastructure · Chandigarh, India
           </p>
 
           {/* Name — large, declarative, no scramble */}

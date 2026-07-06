@@ -7,6 +7,7 @@ export const metadata: Metadata = {
   title: "Contact — Shashank Dhiman",
   description:
     "Get in touch. Backend roles, real-time systems work, WebRTC/proctoring, or just a conversation about scaling backends.",
+  alternates: { canonical: "/contact" },
 };
 
 /**

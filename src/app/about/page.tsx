@@ -14,6 +14,7 @@ export const metadata: Metadata = {
   title: "About — Shashank Dhiman",
   description:
     "Full stack engineer. One year shipped, four production systems at Venture Pact (Masters' Union). Currently chasing real-time + LLM infrastructure problems.",
+  alternates: { canonical: "/about" },
 };
 
 /**

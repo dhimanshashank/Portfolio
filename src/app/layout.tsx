@@ -11,6 +11,8 @@ import { RouteTransition } from "@/components/shell/route-transition";
 import { InitialCurtain } from "@/components/shell/initial-curtain";
 import { CustomCursor } from "@/components/shell/custom-cursor";
 import { TerminalMount } from "@/components/terminal/terminal-mount";
+import { JsonLd } from "@/components/seo/json-ld";
+import { siteGraph } from "@/lib/seo";
 
 // ─── Fonts ──────────────────────────────────────────────────────────────
 
@@ -69,9 +71,9 @@ export const metadata: Metadata = {
   publisher: "Shashank Dhiman",
 
   // ── Canonical & alternates ──────────────────────────────────────────
-  alternates: {
-    canonical: BASE_URL,
-  },
+  // NOTE: no site-wide canonical here. Metadata is inherited as-is, so a
+  // root canonical would mark every sub-page as a duplicate of the
+  // homepage. Each page declares its own via `alternates.canonical`.
 
   // ── Open Graph ──────────────────────────────────────────────────────
   openGraph: {
@@ -141,33 +143,6 @@ export const metadata: Metadata = {
   // },
 };
 
-// ─── JSON-LD Person schema ───────────────────────────────────────────────
-
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "Person",
-  name: "Shashank Dhiman",
-  url: BASE_URL,
-  jobTitle: "Full Stack Engineer",
-  description:
-    "Full stack engineer based in India — real-time systems, API & backend engineering. Building systems that survive production.",
-  sameAs: [
-    "https://github.com/dhimanshashank",
-    "https://www.linkedin.com/in/shashank-dhiman-358535219/",
-  ],
-  knowsAbout: [
-    "Full Stack Engineering",
-    "Backend Engineering",
-    "Real-time Systems",
-    "WebSockets",
-    "Node.js",
-    "Distributed Systems",
-    "Event-driven Architecture",
-    "LLM Integration",
-    "AI Infrastructure",
-  ],
-};
-
 // ─── Root layout ────────────────────────────────────────────────────────
 
 export default function RootLayout({
@@ -180,10 +155,10 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
+        {/* Site-wide entity graph: enriched Person + WebSite, joined by
+            stable @id anchors. Case-study pages add their own TechArticle
+            nodes that reference these. Built in src/lib/seo.ts. */}
+        <JsonLd data={siteGraph()} />
       </head>
       <body className="min-h-screen bg-paper text-ink" suppressHydrationWarning>
         <LenisProvider>
