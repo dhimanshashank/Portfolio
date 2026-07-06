@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useGSAP, gsap } from "@/lib/motion/use-gsap";
 import { TextScramble } from "@/components/hero/text-scramble";
 import { resumeMetrics, type ProofStats } from "@/lib/proof-data";
@@ -189,10 +189,20 @@ export function ProofStripView({ stats }: { stats: ProofStats }) {
     ...resumeMetrics.map((m) => ({ value: m.value, label: m.label })),
   ];
 
-  const freshness =
-    stats.source === "live"
-      ? `live · synced ${relativeHours(stats.fetchedAt)}`
-      : "figures as of June 2026";
+  // Time-relative freshness is computed client-side only. Rendering
+  // `relativeHours()` during SSR would bake in the build-time value, then the
+  // client would hydrate at a later real time and produce a different string —
+  // a text mismatch (React #418). We render a stable label on the server and
+  // fill in the "Nh ago" after mount, so server and client HTML always agree.
+  const staticFreshness =
+    stats.source === "live" ? "live · synced" : "figures as of June 2026";
+  const [freshness, setFreshness] = useState(staticFreshness);
+
+  useEffect(() => {
+    if (stats.source === "live") {
+      setFreshness(`live · synced ${relativeHours(stats.fetchedAt)}`);
+    }
+  }, [stats.source, stats.fetchedAt]);
 
   const hasRing = stats.leetcode.byDifficulty !== null;
   const hasCalendar =

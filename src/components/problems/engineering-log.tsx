@@ -5,6 +5,7 @@ import { useRef } from "react";
 import { useGSAP, gsap } from "@/lib/motion/use-gsap";
 import { problems } from "@/lib/problems-data";
 import { SeverityBadge } from "./problem-card";
+import { CopyButton } from "@/components/ui/copy-button";
 import { cn } from "@/lib/utils";
 
 /**
@@ -211,10 +212,13 @@ export function EngineeringLog() {
               className="rounded-sm border border-ink/15 bg-[var(--void)] px-5 py-6 md:px-7 md:py-7"
               style={{ opacity: 0 }}
             >
-              <p className="mb-5 font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--bone-3,#9a958a)]">
-                The clue
-              </p>
-              <pre className="overflow-x-auto font-mono text-[12px] md:text-[13px] leading-[1.9] text-[var(--bone)]">
+              <div className="mb-5 flex items-center justify-between gap-4">
+                <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--bone-3,#9a958a)]">
+                  The clue
+                </p>
+                <CopyButton text={clueLines.join("\n")} variant="dark" />
+              </div>
+              <pre className="overflow-x-auto [-webkit-overflow-scrolling:touch] font-mono text-[12px] md:text-[13px] leading-[1.9] text-[var(--bone)]">
                 {clueLines.map((line, i) => (
                   <span
                     key={i}

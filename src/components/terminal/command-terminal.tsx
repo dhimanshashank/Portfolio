@@ -8,6 +8,7 @@ import {
   commands,
   resolve,
   complete,
+  cwdPath,
   type CommandResultLine,
   type Tone,
 } from "@/lib/terminal/commands";
@@ -23,10 +24,10 @@ import { cn } from "@/lib/utils";
  */
 
 type Entry =
-  | { kind: "input"; text: string }
+  | { kind: "input"; text: string; path: string }
   | { kind: "output"; lines: CommandResultLine[] };
 
-const PROMPT = "shashank@portfolio:~$";
+const PROMPT_HOST = "shashank@portfolio";
 const TYPE_WORD_MS = 42;
 const TYPE_LINE_PAUSE_MS = 80;
 
@@ -55,6 +56,9 @@ export function CommandTerminal({
 
   const [entries, setEntries] = useState<Entry[]>([{ kind: "output", lines: BANNER }]);
   const [value, setValue] = useState("");
+  // Current working "directory" — a project id, or null at ~ (root). Drives the
+  // Linux-style prompt path and cd/open/pwd behaviour.
+  const [cwd, setCwd] = useState<string | null>(null);
   const historyRef = useRef<string[]>([]);
   const histIdxRef = useRef<number>(-1);
 
@@ -98,7 +102,7 @@ export function CommandTerminal({
   const submit = useCallback(
     (raw: string) => {
       const line = raw.trim();
-      setEntries((e) => [...e, { kind: "input", text: line }]);
+      setEntries((e) => [...e, { kind: "input", text: line, path: cwdPath(cwd) }]);
       if (line) {
         historyRef.current = [
           line,
@@ -119,9 +123,19 @@ export function CommandTerminal({
         ]);
         return;
       }
-      cmd.run({ args, raw: line, navigate, openExternal, clear, print, registry: commands });
+      cmd.run({
+        args,
+        raw: line,
+        navigate,
+        openExternal,
+        clear,
+        print,
+        registry: commands,
+        cwd,
+        setCwd,
+      });
     },
-    [navigate, openExternal, clear, print]
+    [navigate, openExternal, clear, print, cwd]
   );
 
   // ── open/close lifecycle: focus, scroll-lock, restore ──────────────────
@@ -215,6 +229,7 @@ export function CommandTerminal({
   };
 
   const dur = reduce ? 0 : undefined;
+  const prompt = `${PROMPT_HOST}:${cwdPath(cwd)}$`;
 
   return createPortal(
     <AnimatePresence>
@@ -244,7 +259,7 @@ export function CommandTerminal({
             {/* Title bar */}
             <div className="flex items-center justify-between border-b border-[var(--void-edge)] px-4 py-2.5">
               <span className="text-[11px] uppercase tracking-[0.2em] text-[var(--bone-3)]">
-                {PROMPT}
+                {prompt}
               </span>
               <button
                 type="button"
@@ -265,7 +280,7 @@ export function CommandTerminal({
                 entry.kind === "input" ? (
                   <p key={i} className="mt-2 break-words">
                     <span className="text-[var(--bone-3)]">
-                      {PROMPT.replace(":~$", "")}
+                      {PROMPT_HOST}:{entry.path}
                       <span className="text-[var(--signal)]"> $</span>{" "}
                     </span>
                     <span className="text-[var(--bone-2)]">{entry.text}</span>

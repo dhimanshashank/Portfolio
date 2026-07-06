@@ -7,7 +7,7 @@
  */
 
 import { person } from "@/lib/person";
-import { projects } from "@/lib/work-data";
+import { projects, type WorkProject } from "@/lib/work-data";
 
 export type Tone = "normal" | "muted" | "signal" | "success" | "error";
 
@@ -32,6 +32,9 @@ export type CommandContext = {
   clear: () => void;
   print: (lines: CommandResultLine[]) => void;
   registry: Command[];
+  /** Current working "directory": a project id, or null at ~ (root). */
+  cwd: string | null;
+  setCwd: (id: string | null) => void;
 };
 
 export type Command = {
@@ -67,6 +70,64 @@ const t = (text: string, tone?: Tone): CommandResultLine => ({
   tone,
 });
 
+/** Resolve a `cd` argument (num, id, or slug) to a project. */
+function findProject(arg: string): WorkProject | undefined {
+  const a = arg.toLowerCase();
+  return projects.find((p) => p.num === a || p.id === a || p.slug === a);
+}
+
+/** Path shown in the prompt for a given cwd (project id or null). */
+export function cwdPath(cwd: string | null): string {
+  if (!cwd) return "~";
+  const p = projects.find((x) => x.id === cwd);
+  return p ? `~/work/${p.num}` : "~";
+}
+
+/** A short, Linux-flavoured "readme" for one project dir. */
+function projectReadme(p: WorkProject): CommandResultLine[] {
+  const lines: CommandResultLine[] = [
+    t(`${p.slug}/`, "signal"),
+    t(`${p.num} · ${p.title} — ${p.tagline}`, "muted"),
+    { kind: "spacer" },
+    t(p.blurb),
+    { kind: "spacer" },
+    t(`stack     ${p.stack.join(" · ")}`, "muted"),
+    t(
+      `metrics   ${p.metrics
+        .map((m) => `${m.value} ${m.label}`)
+        .join("   ·   ")}`,
+      "muted"
+    ),
+  ];
+  if (p.context) lines.push(t(`shipped   ${p.context}`, "muted"));
+  lines.push({ kind: "spacer" });
+
+  const actions: ListItem[] = [];
+  if (p.caseStudy) {
+    actions.push({
+      label: `open ${p.id}`,
+      value: "read the case study",
+      href: `/work/${p.slug}`,
+    });
+  } else {
+    actions.push({
+      label: "open work",
+      value: "deep-dive coming soon",
+      href: "/work",
+    });
+  }
+  if (p.liveUrl) {
+    actions.push({
+      label: "demo",
+      value: "live deploy",
+      href: p.liveUrl,
+      external: true,
+    });
+  }
+  lines.push({ kind: "list", items: actions });
+  return lines;
+}
+
 export const commands: Command[] = [
   {
     name: "help",
@@ -83,7 +144,7 @@ export const commands: Command[] = [
             .map((c) => ({ label: c.name, value: c.summary })),
         },
         { kind: "spacer" },
-        t("try:  whoami · ls work · open about · cat resume · gh", "muted"),
+        t("try:  whoami · ls work · cd 01 · open about · cat resume · gh", "muted"),
       ]),
   },
   {
@@ -119,18 +180,74 @@ export const commands: Command[] = [
           })),
         },
         { kind: "spacer" },
-        t("open one →  open proctoring", "muted"),
+        t("peek →  cd 01     ·     open →  open proctoring", "muted"),
       ]),
   },
   {
+    name: "cd",
+    summary: "enter a project dir — cd 01",
+    usage: "cd <01|02|03|04|proctoring|messaging|…>",
+    complete: ({ args }) => {
+      const frag = (args[0] ?? "").toLowerCase();
+      const cands = [
+        ...projects.map((p) => p.num),
+        ...projects.map((p) => p.id),
+        "..",
+        "~",
+        "work",
+      ];
+      return cands.filter((c) => c.startsWith(frag));
+    },
+    run: ({ args, print, setCwd }) => {
+      const arg = (args[0] ?? "").toLowerCase();
+
+      // Any "go home" form → root, list the project dirs.
+      if (!arg || arg === "~" || arg === "/" || arg === ".." || arg === "work") {
+        setCwd(null);
+        return print([
+          t("~/work", "muted"),
+          {
+            kind: "list",
+            items: projects.map((p) => ({
+              label: p.num,
+              value: `${p.title} — ${p.tagline}`,
+            })),
+          },
+          { kind: "spacer" },
+          t("enter one →  cd 01", "muted"),
+        ]);
+      }
+
+      const p = findProject(arg);
+      if (!p) {
+        return print([
+          t(`cd: no such file or directory: ${arg}`, "error"),
+        ]);
+      }
+      setCwd(p.id);
+      print(projectReadme(p));
+    },
+  },
+  {
+    name: "pwd",
+    summary: "print working directory",
+    hidden: true,
+    run: ({ print, cwd }) => print([t(cwdPath(cwd), "muted")]),
+  },
+  {
     name: "open",
-    aliases: ["cd", "goto"],
+    aliases: ["goto"],
     summary: "navigate to a section",
     usage: "open <home|work|about|log|contact|proctoring|messaging>",
     complete: ({ args }) =>
       Object.keys(ROUTES).filter((k) => k.startsWith((args[0] ?? "").toLowerCase())),
-    run: ({ args, navigate, print }) => {
+    run: ({ args, navigate, print, cwd }) => {
       const arg = args[0] ?? "";
+      // Bare `open` inside a project dir → open that project.
+      if (!arg && cwd) {
+        const p = projects.find((x) => x.id === cwd);
+        if (p) return navigate(p.caseStudy ? `/work/${p.slug}` : "/work");
+      }
       if (arg.startsWith("/")) return navigate(arg);
       const route = ROUTES[arg.toLowerCase()];
       if (!route)

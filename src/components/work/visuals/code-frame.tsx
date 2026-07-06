@@ -1,5 +1,8 @@
+"use client";
+
 import { cn } from "@/lib/utils";
-import type { ReactNode } from "react";
+import { useRef, type ReactNode } from "react";
+import { CopyButton } from "@/components/ui/copy-button";
 
 /**
  * <CodeFrame>
@@ -30,6 +33,8 @@ export function CodeFrame({
   children: ReactNode;
   className?: string;
 }) {
+  const preRef = useRef<HTMLPreElement>(null);
+
   return (
     <div
       className={cn(
@@ -45,21 +50,27 @@ export function CodeFrame({
           <span className="h-2.5 w-2.5 rounded-full bg-bone-4/40" />
           <span className="h-2.5 w-2.5 rounded-full bg-bone-4/40" />
         </div>
-        <p className="ml-2 flex-1 font-mono text-[10px] uppercase tracking-[0.18em] text-bone-3">
+        <p className="ml-2 flex-1 truncate font-mono text-[10px] uppercase tracking-[0.18em] text-bone-3">
           {filename}
         </p>
-        <p className="font-mono text-[9px] uppercase tracking-[0.22em] text-bone-4">
+        <p className="hidden font-mono text-[9px] uppercase tracking-[0.22em] text-bone-4 sm:block">
           {language}
         </p>
+        <CopyButton targetRef={preRef} variant="dark" />
       </div>
 
-      {/* ─── Code body ──────────────────────────────────────────────── */}
+      {/* ─── Code body ──────────────────────────────────────────────────
+          overflow-auto (not hidden) so long lines scroll horizontally and
+          tall snippets scroll vertically — critical on narrow screens where
+          the frame is fixed-width. Momentum scrolling on touch. */}
       <pre
+        ref={preRef}
         className="
-          flex-1 overflow-hidden
+          flex-1 overflow-auto
           px-5 py-4
           font-mono text-bone
           leading-relaxed
+          [-webkit-overflow-scrolling:touch]
         "
         style={{
           fontSize: "clamp(11px, 1.05vw, 13px)",

@@ -186,15 +186,13 @@ export function ProjectCard({
             )}
 
             {project.liveUrl && (
-              // Stop propagation so the parent <Link> (case study) doesn't
-              // hijack the click — the Live link belongs to a different
-              // destination than the rest of the card.
+              // Sits above the stretched case-study overlay (z-20 > z-10) so
+              // it stays independently clickable to its own destination.
               <a
                 href={project.liveUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                onClick={(e) => e.stopPropagation()}
-                className="font-mono text-[10px] uppercase tracking-[0.18em] text-signal hover:text-ink transition-colors"
+                className="relative z-20 font-mono text-[10px] uppercase tracking-[0.18em] text-signal hover:text-ink transition-colors"
               >
                 Live ↗
               </a>
@@ -202,6 +200,18 @@ export function ProjectCard({
           </div>
         </div>
       </div>
+
+      {/* Stretched link — makes the whole card route to the case study
+          WITHOUT wrapping the card in an <a> (which would nest the Live
+          anchor inside it and break hydration). The Live link above opts
+          out via a higher z-index. */}
+      {href && (
+        <Link
+          href={href}
+          aria-label={`${project.title} — case study`}
+          className="absolute inset-0 z-10"
+        />
+      )}
     </article>
   );
 
@@ -213,13 +223,7 @@ export function ProjectCard({
       viewport={{ once: true, margin: "-10% 0px" }}
       className={cn(isFeatured ? "col-span-full" : "")}
     >
-      {href ? (
-        <Link href={href} className="block">
-          {Body}
-        </Link>
-      ) : (
-        Body
-      )}
+      {Body}
     </motion.div>
   );
 }

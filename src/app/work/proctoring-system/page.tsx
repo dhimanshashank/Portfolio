@@ -4,6 +4,7 @@ import { NarrativeReveal } from "@/components/case-study/narrative-reveal";
 import { ArchitectureSection } from "@/components/case-study/architecture-section";
 import { CollapseMoment } from "@/components/case-study/collapse-moment";
 import { CodeReveal } from "@/components/case-study/code-reveal";
+import { AiSystems } from "@/components/home/ai-systems";
 import { BeforeAfter } from "@/components/case-study/before-after";
 import { EditorialLessons } from "@/components/case-study/editorial-lessons";
 import { CaseOutro } from "@/components/case-study/case-outro";
@@ -24,7 +25,8 @@ export const metadata: Metadata = {
  *   3. Architecture    — diagram + annotations, pinned scroll-through
  *   4. Collapse        — the dramatic CPU climb to 100% at 5 users
  *   5. Code            — 2–3 production snippets, line-by-line reveal
- *   6. Before / After  — parallax metric comparison
+ *   6. AI systems      — LLMs as infrastructure (moved here from the homepage)
+ *   7. Before / After  — parallax metric comparison
  *   7. Lessons         — nine editorial-typography blocks (the voice)
  *   8. Outro           — out to the full blog, link back to /work
  *
@@ -40,6 +42,7 @@ export default function ProctoringCaseStudy() {
       <ArchitectureSection />
       <CollapseMoment />
       <CodeReveal />
+      <AiSystems />
       <BeforeAfter />
       <EditorialLessons />
       <CaseOutro />

@@ -4,8 +4,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRef } from "react";
 import { useGSAP, gsap } from "@/lib/motion/use-gsap";
-import { projects, type WorkProject } from "@/lib/work-data";
+import { homepageProjects, type WorkProject } from "@/lib/work-data";
 import { WorkDeck } from "./work-deck";
+
+const NUM_WORDS = ["Zero", "One", "Two", "Three", "Four", "Five", "Six"] as const;
 
 /**
  * <SelectedWork>
@@ -221,7 +223,8 @@ export function SelectedWork() {
             fontWeight: 400,
           }}
         >
-          Four systems. <em className="italic text-ink-2">One year.</em>
+          {NUM_WORDS[homepageProjects.length] ?? homepageProjects.length} systems.{" "}
+          <em className="italic text-ink-2">One year.</em>
         </h2>
       </div>
 
@@ -240,7 +243,7 @@ export function SelectedWork() {
             md:motion-safe:items-stretch md:motion-safe:gap-0
           "
         >
-          {projects.map((p, i) => (
+          {homepageProjects.map((p, i) => (
             <div
               key={p.id}
               data-work-panel
@@ -296,7 +299,7 @@ function WorkCard({ project, index }: { project: WorkProject; index: number }) {
             {project.num}
           </span>
           <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-ink-4">
-            / 04
+            / 0{homepageProjects.length}
           </span>
         </div>
 

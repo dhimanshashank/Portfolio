@@ -7,7 +7,7 @@
  */
 
 export const aiHeader = {
-  eyebrow: "Plate VI — AI Systems",
+  eyebrow: "AI · LLM infrastructure",
   title: "LLMs as infrastructure.",
   lede:
     "Not the chat UI — the plumbing. Model calls treated like any other unreliable network dependency: routed, rate-limited, retried, and budgeted.",

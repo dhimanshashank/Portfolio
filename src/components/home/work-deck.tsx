@@ -10,7 +10,7 @@ import {
   useReducedMotion,
   type PanInfo,
 } from "framer-motion";
-import { projects, type WorkProject } from "@/lib/work-data";
+import { homepageProjects as projects, type WorkProject } from "@/lib/work-data";
 import { ProjectVisual } from "@/components/work/project-visual";
 import { cn } from "@/lib/utils";
 

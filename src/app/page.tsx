@@ -1,7 +1,6 @@
 import { Hero } from "@/components/hero/hero";
-import { ManifestoScroll } from "@/components/manifesto/manifesto-scroll";
+import { Experience } from "@/components/home/experience";
 import { SelectedWork } from "@/components/home/selected-work";
-import { AiSystems } from "@/components/home/ai-systems";
 import { EngineeringLog } from "@/components/problems/engineering-log";
 import { ProofStrip } from "@/components/home/proof-strip";
 import { WorksOn } from "@/components/home/works-on";
@@ -19,22 +18,22 @@ export const revalidate = 21600;
  * Field Cartography composition:
  *
  *   I.   Hero               — declaration, not description
- *   II.  Manifesto          — two italic lines, one scene, signal-tick between
- *   III. Selected Work      — four projects, scroll-revealed cards w/ visuals
- *   VI.  AI Systems         — LLMs as infrastructure, three production facts
- *   V.   Engineering Log    — production investigations, clue → root cause → fix
+ *   II.  Experience         — current role + timeline, replaces the manifesto
+ *   III. Selected Work      — three projects, scroll-revealed cards w/ visuals
+ *   IV.  Engineering Log    — production investigations, clue → root cause → fix
  *        Proof Strip        — measured numbers: leetcode, throughput, latency
- *   IV.  Territory + Story  — works-on bar + closing CTA into /about
+ *   V.   Territory + Story  — works-on bar + closing CTA into /about
  *
+ * The "LLMs as infrastructure" plate now lives in the proctoring case study
+ * (that's the work it describes); the analytics pipeline is /work-only.
  * The footer (rendered by the root layout) sits directly below. Clean exit.
  */
 export default function HomePage() {
   return (
     <>
       <Hero />
-      <ManifestoScroll />
+      <Experience />
       <SelectedWork />
-      <AiSystems />
       <EngineeringLog />
       <ProofStrip />
       <WorksOn />

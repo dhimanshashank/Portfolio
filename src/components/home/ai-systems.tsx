@@ -6,9 +6,9 @@ import { TextScramble } from "@/components/hero/text-scramble";
 import { aiHeader, aiRows } from "@/lib/ai-content";
 
 /**
- * <AiSystems> — Plate VI (home page)
+ * <AiSystems> — LLMs-as-infrastructure plate
  *
- * Editorial plate between Selected Work and the Engineering Log. Three
+ * Now lives inside the proctoring case study (it describes that work). Three
  * hairline-separated rows, each one production fact about LLM/AI work from
  * the proctoring platform. Typographic on purpose — no cards, no icons,
  * no dashboard creep. Orange appears only in the eyebrow tick and row

@@ -112,7 +112,7 @@ export function Hero() {
         >
           {/* Eyebrow — three coordinates, not a job title */}
           <p className="hero-eyebrow font-mono text-[11px] uppercase tracking-[0.22em] text-signal mb-5 md:mb-8 opacity-0">
-            <span aria-hidden>▍</span> Real-time systems · AI infrastructure · India
+            <span aria-hidden>▍</span> Real-time systems · AI infrastructure · Chandigarh, India
           </p>
 
           {/* Name — large, declarative, no scramble */}
@@ -169,7 +169,7 @@ export function Hero() {
                 <span className="mx-3 text-ink-4">·</span>
                 real-time + ai infra
                 <span className="mx-3 text-ink-4">·</span>
-                India
+                Chandigarh, India
               </p>
 
               <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-ink-4">

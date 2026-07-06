@@ -8,6 +8,7 @@ import {
   SketchDivider,
   SketchUnderline,
 } from "@/components/ui/sketch-marks";
+import { CopyButton } from "@/components/ui/copy-button";
 import type {
   EngineeringProblem,
   ProblemSeverity,
@@ -139,23 +140,27 @@ export function ProblemCard({ problem }: { problem: EngineeringProblem }) {
 
         {/* ── Evidence — warm-paper terminal block ─────────────────────── */}
         <div className="mt-7">
-          {/* Header doubles as a mobile expand toggle; inert on desktop. */}
-          <button
-            type="button"
-            onClick={() => setExpanded((v) => !v)}
-            aria-expanded={expanded}
-            className="mb-2 flex w-full items-center gap-2 font-mono text-[9.5px] uppercase tracking-[0.22em] text-ink-3 md:pointer-events-none md:cursor-default"
-          >
-            Evidence
-            <span className="text-ink-4 md:hidden">
-              {expanded ? "· tap to collapse" : "· tap to expand"}
-            </span>
-          </button>
+          {/* Header doubles as a mobile expand toggle; inert on desktop.
+              Copy sits alongside as a sibling (never nested in the button). */}
+          <div className="mb-2 flex items-center justify-between gap-3">
+            <button
+              type="button"
+              onClick={() => setExpanded((v) => !v)}
+              aria-expanded={expanded}
+              className="flex items-center gap-2 font-mono text-[9.5px] uppercase tracking-[0.22em] text-ink-3 md:pointer-events-none md:cursor-default"
+            >
+              Evidence
+              <span className="text-ink-4 md:hidden">
+                {expanded ? "· tap to collapse" : "· tap to expand"}
+              </span>
+            </button>
+            <CopyButton text={clueLines.join("\n")} variant="light" />
+          </div>
           <div
             className="
               relative rounded-sm border border-ink/12
               bg-paper px-4 py-3 md:px-5 md:py-4
-              overflow-x-auto
+              overflow-x-auto [-webkit-overflow-scrolling:touch]
             "
           >
             {/* Window-chrome dots */}

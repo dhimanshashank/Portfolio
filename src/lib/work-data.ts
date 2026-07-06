@@ -123,3 +123,11 @@ export const projects: WorkProject[] = [
 
 export const featured = projects.find((p) => p.variant === "featured")!;
 export const regular = projects.filter((p) => p.variant === "regular");
+
+/**
+ * Projects surfaced on the HOME PAGE showcase. The full /work page still lists
+ * everything; the homepage stays tight by dropping the analytics pipeline
+ * (no case study yet, weakest as a hero card). Change membership here — the
+ * "Three systems" heading and "/ 0N" counters derive from this length.
+ */
+export const homepageProjects = projects.filter((p) => p.id !== "analytics");
