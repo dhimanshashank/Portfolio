@@ -26,7 +26,7 @@ function personNode() {
     image: `${BASE_URL}/hero/portrait-halftone2.png`,
     jobTitle: person.role,
     description:
-      "Full stack engineer based in Chandigarh, India — real-time systems, API & backend engineering, LLM/AI infrastructure. Building systems that survive production.",
+      "Full stack engineer based in Chandigarh, India — real-time systems, API & backend engineering, LLM/AI infrastructure. Builds the EdTech learning platform (LMS) at Masters' Union: AI proctoring, real-time messaging, and event analytics in production.",
     email: `mailto:${person.email}`,
     address: {
       "@type": "PostalAddress",
@@ -54,6 +54,8 @@ function personNode() {
       "Event-driven Architecture",
       "LLM Integration",
       "AI Infrastructure",
+      "EdTech",
+      "Learning Management Systems (LMS)",
     ],
   };
 }

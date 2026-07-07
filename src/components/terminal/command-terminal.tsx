@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
   commands,
@@ -46,6 +46,19 @@ const BANNER: CommandResultLine[] = [
   { kind: "text", text: "type 'help' to see what you can do.", tone: "muted" },
 ];
 
+// Once the visitor has actually run a command (in any prior session), the
+// intro banner is noise — a real shell doesn't re-explain itself. We remember
+// that in localStorage and open to a clean prompt on every load thereafter.
+const CHATTED_KEY = "term-chatted";
+
+function hasChattedBefore(): boolean {
+  try {
+    return localStorage.getItem(CHATTED_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
 export function CommandTerminal({
   open,
   onClose,
@@ -54,9 +67,15 @@ export function CommandTerminal({
   onClose: () => void;
 }) {
   const router = useRouter();
+  const pathname = usePathname();
   const reduce = useReducedMotion();
 
-  const [entries, setEntries] = useState<Entry[]>([{ kind: "output", lines: BANNER }]);
+  // Returning visitors (have run a command before) open to a clean prompt;
+  // first-timers get the one-time intro banner. ssr:false on this component
+  // means the localStorage read is client-only — no hydration mismatch.
+  const [entries, setEntries] = useState<Entry[]>(() =>
+    hasChattedBefore() ? [] : [{ kind: "output", lines: BANNER }]
+  );
   const [value, setValue] = useState("");
   // Current working "directory" — a project id, or null at ~ (root). Drives the
   // Linux-style prompt path and cd/open/pwd behaviour.
@@ -68,6 +87,22 @@ export function CommandTerminal({
   const panelRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const restoreFocusRef = useRef<Element | null>(null);
+  const lastPathRef = useRef(pathname);
+
+  // Fresh terminal per route. This component is mounted once in the root
+  // layout, so without this its scrollback would trail you across pages — you
+  // navigate /about → /log, reopen, and you're staring at the old `help` dump
+  // and a stale `cd` from the previous page. On a real route change we wipe the
+  // visible session (scrollback, working dir, half-typed input) while keeping
+  // the ↑ command history. Same-page open/close still preserves the session.
+  useEffect(() => {
+    if (lastPathRef.current === pathname) return;
+    lastPathRef.current = pathname;
+    setEntries([]);
+    setCwd(null);
+    setValue("");
+    histIdxRef.current = -1;
+  }, [pathname]);
 
   // Fish-style ghost: the dim remainder of the suggested line, rendered
   // inline after the caret. Accept with → (caret at end) or Tab.
@@ -121,6 +156,10 @@ export function CommandTerminal({
           line,
           ...historyRef.current.filter((h) => h !== line),
         ].slice(0, 50);
+        // They've "had a chat" — skip the intro banner on future loads.
+        try {
+          localStorage.setItem(CHATTED_KEY, "1");
+        } catch {}
       }
       histIdxRef.current = -1;
 

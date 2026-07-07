@@ -56,8 +56,9 @@ export function Experience() {
             className="mt-5 text-ink-2 max-w-[52ch]"
             style={{ fontSize: "clamp(14px, 1.05vw, 16px)", lineHeight: 1.65 }}
           >
-            One year, four production systems — currently building real-time and
-            AI infrastructure at Venture Pact (Masters&apos; Union).
+            One year, four production systems — currently building the real-time
+            and AI infrastructure behind Masters&apos; Union&apos;s EdTech
+            learning platform (LMS).
           </p>
         </motion.div>
 

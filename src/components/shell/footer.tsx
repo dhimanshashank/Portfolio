@@ -70,7 +70,7 @@ export function Footer() {
             target="_blank"
             rel="noopener noreferrer"
             className="group inline-flex items-center gap-2 hover:text-signal transition-colors"
-            aria-label="Currently at Venture Pact (Masters' Union)"
+            aria-label="Currently at Masters' Union (EdTech)"
           >
             <span
               aria-hidden

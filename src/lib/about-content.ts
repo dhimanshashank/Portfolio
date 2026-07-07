@@ -14,7 +14,7 @@ export const aboutHero = {
   paragraph:
     "I'm Shashank. I work on backends — the kind where the failure modes are the actual problem, and the diagram doesn't tell you anything until the second user shows up.",
   subline:
-    "One year shipped, four production systems. Currently at Venture Pact (Masters' Union); open to what's next.",
+    "One year shipped, four production systems. Currently at Masters' Union — EdTech, building the LMS platform; open to what's next.",
 } as const;
 
 // ─── THE ESSAY — the spine of the page ───────────────────────────────────
@@ -26,7 +26,7 @@ export const aboutEssays = [
     title: "Production is a different problem.",
     paragraphs: [
       "I finished my CS degree at Guru Nanak Dev Engineering College in 2025. The first code I shipped to production was during a 2024 internship at Qspider — a MERN event platform with Stripe webhooks, JWT, and role-based access. It worked the way an exam answer works: complete, untested by anything weird.",
-      "The weird stuff arrived at Venture Pact (Masters' Union), mostly on the proctoring system. The first time the server CPU pinned at 100% with five users on it, I learned that an architecture decision can be wrong — not slow, wrong. The rewrite that followed (client-worker inference, SFU routing, OpenRouter-powered session summaries) was a lesson in the difference between optimisation and reconsideration.",
+      "The weird stuff arrived at Masters' Union — building the LMS for an MBA-equivalent EdTech program — mostly on the proctoring system. The first time the server CPU pinned at 100% with five users on it, I learned that an architecture decision can be wrong — not slow, wrong. The rewrite that followed (client-worker inference, SFU routing, OpenRouter-powered session summaries) was a lesson in the difference between optimisation and reconsideration.",
       "The messaging refactor, the analytics pipeline, the event classifier — all variants of the same lesson: the gap between passes the demo and survives 200 concurrent users is where the engineering actually lives. Most of what I now believe about systems came from that year.",
       "What I find most interesting in 2026 is LLMs as infrastructure problems. Not the chat UI — the queueing, the rate limits, the failure modes when inference takes eight seconds and the user is still typing. I want to work on the systems that hold that up. If you're building there, I'd like to hear about it.",
     ],
@@ -43,12 +43,12 @@ export const aboutImageBand = {
 // ─── MASTERS' UNION BLOCK — one-line company explainer ──────────────────
 // Used by <MastersUnionBlock /> between essays 02 and 03.
 export const mastersUnion = {
-  name: "Venture Pact (Masters' Union)",
+  name: "Masters' Union",
   logo: "/brands/masters-union.png",
   url: "https://mastersunion.org",
   description:
-    "Venture Pact is the engineering arm behind Masters' Union — edtech in India running an MBA-equivalent program. I built and shipped the proctoring, messaging, and analytics systems that hold the operations together.",
-  role: "Associate Software Developer",
+    "Masters' Union is an EdTech institution in India running an MBA-equivalent program. On the engineering team I build the learning platform (LMS) — the AI proctoring, real-time messaging, and event-analytics systems that keep live student cohorts running in production.",
+  role: "Associate Software Developer · EdTech",
   period: "Jan 2025 — present",
 } as const;
 

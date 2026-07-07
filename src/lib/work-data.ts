@@ -59,7 +59,7 @@ export const projects: WorkProject[] = [
     ],
     visualKind: "architecture",
     caseStudy: true,
-    context: "Venture Pact (Masters' Union) · production",
+    context: "Masters' Union · EdTech · production",
     variant: "featured",
     liveUrl: "https://proctoring.shashankdhiman.in",
   },
@@ -79,7 +79,7 @@ export const projects: WorkProject[] = [
     ],
     visualKind: "architecture",
     caseStudy: true,
-    context: "Venture Pact (Masters' Union) · production",
+    context: "Masters' Union · EdTech · production",
     variant: "regular",
   },
   {
@@ -97,7 +97,7 @@ export const projects: WorkProject[] = [
     ],
     visualKind: "architecture",
     caseStudy: false,
-    context: "Venture Pact (Masters' Union) · production",
+    context: "Masters' Union · EdTech · production",
     variant: "regular",
   },
   {
@@ -125,9 +125,9 @@ export const featured = projects.find((p) => p.variant === "featured")!;
 export const regular = projects.filter((p) => p.variant === "regular");
 
 /**
- * Projects surfaced on the HOME PAGE showcase. The full /work page still lists
- * everything; the homepage stays tight by dropping the analytics pipeline
- * (no case study yet, weakest as a hero card). Change membership here — the
- * "Three systems" heading and "/ 0N" counters derive from this length.
+ * Projects surfaced on the HOME PAGE showcase. Currently all four — the
+ * homepage work section is an autoplay carousel, so length no longer costs
+ * scroll distance the way the old pinned scrub did. The "Four systems"
+ * heading and "/ 0N" counters derive from this length, so add/remove here.
  */
-export const homepageProjects = projects.filter((p) => p.id !== "analytics");
+export const homepageProjects = projects;

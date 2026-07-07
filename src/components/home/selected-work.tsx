@@ -2,213 +2,42 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useRef } from "react";
-import { useGSAP, gsap } from "@/lib/motion/use-gsap";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useReducedMotion } from "framer-motion";
 import { homepageProjects, type WorkProject } from "@/lib/work-data";
 import { WorkDeck } from "./work-deck";
 
 const NUM_WORDS = ["Zero", "One", "Two", "Three", "Four", "Five", "Six"] as const;
 
+/** Time each slide holds before the carousel advances (ms). */
+const AUTOPLAY_MS = 5200;
+
 /**
  * <SelectedWork>
  *
- * The home page's central work section. On desktop the four project cards
- * play as a horizontal showcase: the section pins and vertical scroll
- * scrubs the track sideways, one full-viewport panel per project. Each
- * card's reveal timeline (number rises, title slides, metrics stagger,
- * SVG line-trace) rides the horizontal scrub via containerAnimation.
+ * The home page's central work section.
  *
- * On mobile (≤768px) and under prefers-reduced-motion the track stacks
- * vertically — pinning + horizontal scrub on a phone is hostile, and the
- * layout fallback is pure CSS (md:motion-safe: variants), so no-JS and
- * reduced-motion visitors get a normal page.
+ * Desktop (≥769px): an autoplay carousel. One project card fills the stage;
+ * the deck advances continuously on a timer, with a story-style segmented
+ * progress bar that fills in real time. It keeps moving on hover (by design —
+ * a living showcase); it only pauses when the section is scrolled off-screen
+ * (perf) or a control is keyboard-focused (so the deck can't slide a link out
+ * from under a keyboard user). Arrows + segments allow manual control.
+ *
+ * The autoplay clock is a single requestAnimationFrame loop driving one
+ * `progress` value — so pausing freezes the fill exactly where it is and
+ * resumes from there (a setTimeout + CSS-animation pair would desync on
+ * pause). Only transform/opacity animate, all on the compositor.
+ *
+ * Mobile (<768px): the looping swipe deck (<WorkDeck>) — a carousel with
+ * hover-pause makes no sense without a pointer.
+ *
+ * Reduced motion: no autoplay and no slide transition; the segments still
+ * work as manual tabs, so nothing ever moves on its own.
  */
 export function SelectedWork() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const pinRef = useRef<HTMLDivElement>(null);
-  const trackRef = useRef<HTMLDivElement>(null);
-
-  useGSAP(
-    () => {
-      if (!sectionRef.current) return;
-      const cards =
-        sectionRef.current.querySelectorAll<HTMLElement>("[data-work-card]");
-
-      // One reveal timeline per card; only the ScrollTrigger vars differ
-      // between the horizontal (desktop) and vertical (mobile) modes.
-      const buildReveal = (
-        card: HTMLElement,
-        scrollTrigger: ScrollTrigger.Vars
-      ) => {
-        const number = card.querySelector<HTMLElement>("[data-work-number]");
-        const title = card.querySelector<HTMLElement>("[data-work-title]");
-        const tagline = card.querySelector<HTMLElement>("[data-work-tagline]");
-        const blurb = card.querySelector<HTMLElement>("[data-work-blurb]");
-        const metrics =
-          card.querySelectorAll<HTMLElement>("[data-work-metric]");
-        const stack = card.querySelector<HTMLElement>("[data-work-stack]");
-        const viz = card.querySelector<HTMLElement>("[data-work-viz]");
-        const vizPaths =
-          card.querySelectorAll<SVGPathElement>("[data-work-viz] path");
-        const vizDots =
-          card.querySelectorAll<SVGCircleElement>("[data-work-viz] circle");
-
-        const tl = gsap.timeline({ scrollTrigger });
-
-        if (number) {
-          tl.fromTo(
-            number,
-            { autoAlpha: 0, y: 40 },
-            { autoAlpha: 1, y: 0, duration: 0.7, ease: "power2.out" },
-            0
-          );
-        }
-        if (title) {
-          tl.fromTo(
-            title,
-            { autoAlpha: 0, y: 24 },
-            { autoAlpha: 1, y: 0, duration: 0.6, ease: "power2.out" },
-            0.08
-          );
-        }
-        if (tagline) {
-          tl.fromTo(
-            tagline,
-            { autoAlpha: 0, y: 16 },
-            { autoAlpha: 1, y: 0, duration: 0.5, ease: "power2.out" },
-            0.18
-          );
-        }
-        if (blurb) {
-          tl.fromTo(
-            blurb,
-            { autoAlpha: 0, y: 12 },
-            { autoAlpha: 1, y: 0, duration: 0.5, ease: "power2.out" },
-            0.26
-          );
-        }
-        if (metrics.length) {
-          tl.fromTo(
-            metrics,
-            { autoAlpha: 0, y: 14 },
-            {
-              autoAlpha: 1,
-              y: 0,
-              duration: 0.45,
-              ease: "power2.out",
-              stagger: 0.08,
-            },
-            0.32
-          );
-        }
-        if (stack) {
-          tl.fromTo(
-            stack,
-            { autoAlpha: 0, y: 10 },
-            { autoAlpha: 1, y: 0, duration: 0.5, ease: "power2.out" },
-            0.5
-          );
-        }
-        if (viz) {
-          tl.fromTo(
-            viz,
-            { autoAlpha: 0 },
-            { autoAlpha: 1, duration: 0.6, ease: "power2.out" },
-            0.1
-          );
-        }
-        // Line-trace effect on the visual
-        if (vizPaths.length) {
-          vizPaths.forEach((p) => {
-            const len = p.getTotalLength?.() ?? 0;
-            if (!len) return;
-            p.style.strokeDasharray = `${len}`;
-            p.style.strokeDashoffset = `${len}`;
-          });
-          tl.to(
-            vizPaths,
-            {
-              strokeDashoffset: 0,
-              duration: 1.4,
-              ease: "power2.out",
-              stagger: 0.06,
-            },
-            0.2
-          );
-        }
-        if (vizDots.length) {
-          tl.fromTo(
-            vizDots,
-            { autoAlpha: 0, scale: 0 },
-            {
-              autoAlpha: 1,
-              scale: 1,
-              duration: 0.4,
-              ease: "back.out(1.7)",
-              stagger: 0.06,
-              transformOrigin: "center",
-            },
-            0.8
-          );
-        }
-      };
-
-      const mm = gsap.matchMedia();
-
-      // Desktop + motion ok → pinned horizontal showcase.
-      mm.add(
-        "(min-width: 769px) and (prefers-reduced-motion: no-preference)",
-        () => {
-          const pin = pinRef.current;
-          const track = trackRef.current;
-          if (!pin || !track) return;
-
-          const scrollWidth = () => track.scrollWidth - window.innerWidth;
-
-          const scrollTween = gsap.to(track, {
-            x: () => -scrollWidth(),
-            ease: "none",
-            scrollTrigger: {
-              trigger: pin,
-              start: "top top",
-              end: () => `+=${scrollWidth()}`,
-              scrub: 1,
-              pin: true,
-              anticipatePin: 1,
-              invalidateOnRefresh: true,
-            },
-          });
-
-          cards.forEach((card) => {
-            buildReveal(card, {
-              trigger: card,
-              containerAnimation: scrollTween,
-              start: "left 72%",
-              toggleActions: "play none none reverse",
-            });
-          });
-        }
-      );
-
-      // Reduced motion → no pin, no scrub, everything simply visible.
-      mm.add("(prefers-reduced-motion: reduce)", () => {
-        gsap.set(
-          sectionRef.current!.querySelectorAll(
-            "[data-work-number], [data-work-title], [data-work-tagline], [data-work-blurb], [data-work-metric], [data-work-stack], [data-work-viz]"
-          ),
-          { autoAlpha: 1 }
-        );
-      });
-    },
-    { scope: sectionRef as React.RefObject<HTMLElement> }
-  );
-
   return (
-    <section
-      ref={sectionRef}
-      className="relative bg-paper"
-      aria-label="Selected work"
-    >
+    <section className="relative bg-paper" aria-label="Selected work">
       {/* Section header */}
       <div className="container-wide pt-32 pb-12 md:pt-40 md:pb-16">
         <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-ink-3">
@@ -223,46 +52,226 @@ export function SelectedWork() {
             fontWeight: 400,
           }}
         >
-          {NUM_WORDS[homepageProjects.length] ?? homepageProjects.length} systems.{" "}
-          <em className="italic text-ink-2">One year.</em>
+          {NUM_WORDS[homepageProjects.length] ?? homepageProjects.length}{" "}
+          systems. <em className="italic text-ink-2">One year.</em>
         </h2>
       </div>
 
-      {/* Desktop (≥768): pinned horizontal scrub showcase, or a vertical
-          stack under reduced motion. Hidden on phones — they get the
-          looping swipe deck below instead. */}
-      <div
-        ref={pinRef}
-        className="hidden md:block md:pb-40 md:motion-safe:overflow-hidden md:motion-safe:pb-0"
-      >
+      {/* Desktop: autoplay carousel */}
+      <div className="hidden md:block">
+        <WorkCarousel projects={homepageProjects} />
+      </div>
+
+      {/* Mobile: looping swipe deck */}
+      <div className="md:hidden">
+        <WorkDeck />
+      </div>
+    </section>
+  );
+}
+
+// ─── Desktop autoplay carousel ──────────────────────────────────────────────
+function WorkCarousel({ projects }: { projects: WorkProject[] }) {
+  const count = projects.length;
+  const reduce = useReducedMotion();
+  const noMotion = Boolean(reduce);
+
+  const [active, setActive] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const [inView, setInView] = useState(true);
+
+  const stageRef = useRef<HTMLDivElement>(null);
+  // One persistent fill element per segment. Keeping them mounted (instead of
+  // mounting/unmounting an "active fill") is what makes the hand-off seamless:
+  // a completed segment simply stays at scaleX(1) — it never drops to 0.
+  const fillRefs = useRef<(HTMLSpanElement | null)[]>([]);
+
+  const go = useCallback(
+    (i: number) => setActive(((i % count) + count) % count),
+    [count]
+  );
+  const next = useCallback(() => go(active + 1), [active, go]);
+  const prev = useCallback(() => go(active - 1), [active, go]);
+
+  // Pause when the section isn't on screen — no point burning frames or
+  // advancing past cards the visitor can't see.
+  useEffect(() => {
+    const el = stageRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => setInView(entry.isIntersecting),
+      { threshold: 0.4 }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  const progressRef = useRef(0);
+
+  // Set every segment's steady state when the SLIDE changes: past = full,
+  // future = empty, active = empty (the rAF loop fills it). Done imperatively
+  // (no CSS transition) so a completed segment is instantly full — no 0→1
+  // refill flash — and a hover-pause freezes the active bar where it is.
+  useEffect(() => {
+    progressRef.current = 0;
+    fillRefs.current.forEach((el, i) => {
+      if (!el) return;
+      // Under reduced motion there's no rAF to fill the active bar, so show it
+      // full as a static position indicator instead of a half-empty stub.
+      const filled = i < active || (i === active && noMotion);
+      el.style.transform = filled ? "scaleX(1)" : "scaleX(0)";
+      el.style.opacity = i < active ? "0.55" : "1"; // completed reads quieter
+    });
+  }, [active, noMotion]);
+
+  // Single rAF clock: advances `progress` 0→1, drives the fill bar directly
+  // (no React re-render per frame), and flips to the next slide at 1. Pausing
+  // (hover / off-screen / reduced-motion) just stops the loop, freezing the
+  // fill; resuming continues from the same spot.
+  useEffect(() => {
+    if (noMotion || paused || !inView) return;
+
+    let raf = 0;
+    let last: number | null = null;
+    const loop = (t: number) => {
+      if (last === null) last = t;
+      const dt = t - last;
+      last = t;
+      progressRef.current = Math.min(1, progressRef.current + dt / AUTOPLAY_MS);
+      const el = fillRefs.current[active];
+      if (el) el.style.transform = `scaleX(${progressRef.current})`;
+      if (progressRef.current >= 1) {
+        setActive((a) => (a + 1) % count);
+        return;
+      }
+      raf = requestAnimationFrame(loop);
+    };
+    raf = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(raf);
+  }, [active, paused, inView, noMotion, count]);
+
+  // Keyboard arrows when the carousel has focus.
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "ArrowRight") {
+      e.preventDefault();
+      next();
+    } else if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      prev();
+    }
+  };
+
+  return (
+    <div
+      ref={stageRef}
+      className="container-wide pb-28 md:pb-36"
+      role="group"
+      aria-roledescription="carousel"
+      aria-label="Selected work carousel"
+      // Keeps moving on hover (a living showcase). Only keyboard focus pauses
+      // it — otherwise the deck could slide a link out from under a keyboard
+      // user mid-reach. Off-screen pausing is handled by the IO below.
+      onFocusCapture={() => setPaused(true)}
+      onBlurCapture={() => setPaused(false)}
+      onKeyDown={onKeyDown}
+    >
+      {/* Stage — one card wide, clips the sliding track. */}
+      <div className="overflow-hidden">
         <div
-          ref={trackRef}
-          className="
-            flex flex-col gap-12 md:gap-40
-            md:motion-safe:h-screen md:motion-safe:w-max md:motion-safe:flex-row
-            md:motion-safe:items-stretch md:motion-safe:gap-0
-          "
+          className="flex w-full"
+          style={{
+            transform: `translateX(-${active * 100}%)`,
+            transition: noMotion
+              ? "none"
+              : "transform 720ms cubic-bezier(0.65, 0, 0.35, 1)",
+          }}
         >
-          {homepageProjects.map((p, i) => (
+          {projects.map((p, i) => (
             <div
               key={p.id}
-              data-work-panel
-              className="md:motion-safe:flex md:motion-safe:h-screen md:motion-safe:w-screen md:motion-safe:shrink-0 md:motion-safe:items-center"
+              className="w-full shrink-0"
+              aria-hidden={i !== active}
+              // Keep off-slide cards out of the tab order.
+              inert={i !== active ? true : undefined}
             >
-              <div className="container-wide w-full">
-                <WorkCard project={p} index={i} />
-              </div>
+              <WorkCard project={p} index={i} />
             </div>
           ))}
         </div>
       </div>
 
-      {/* Mobile (<768): looping card-stack deck — swipe the top card away
-          and the next rises; the swiped one cycles to the back. */}
-      <div className="md:hidden">
-        <WorkDeck />
+      {/* Controls — arrows, segmented autoplay progress, counter. */}
+      <div className="mt-12 flex items-center gap-5 md:gap-8">
+        <div className="flex items-center gap-2">
+          <ArrowButton dir="prev" onClick={prev} />
+          <ArrowButton dir="next" onClick={next} />
+        </div>
+
+        {/* Segmented progress — past = full, active = live rAF fill, future =
+            empty. One persistent fill per segment (see fillRefs) so hand-off
+            never flashes. Doubles as clickable tabs. */}
+        <div className="flex flex-1 items-center gap-2">
+          {projects.map((p, i) => (
+            <button
+              key={p.id}
+              type="button"
+              onClick={() => go(i)}
+              aria-label={`Show ${p.title}`}
+              aria-current={i === active}
+              className="group relative h-[3px] flex-1 cursor-pointer overflow-hidden rounded-full bg-ink/12 transition-[height] duration-200 hover:h-[5px]"
+            >
+              <span
+                ref={(el) => {
+                  fillRefs.current[i] = el;
+                }}
+                // transition-none: the fill is driven imperatively (rAF per
+                // frame + instant state on slide change). Any transition here
+                // would smear the fill and re-introduce the 0→1 refill flash.
+                className="absolute inset-0 origin-left bg-signal transition-none"
+                style={{
+                  transform: `scaleX(${i < active ? 1 : 0})`,
+                  opacity: i < active ? 0.55 : 1,
+                }}
+              />
+            </button>
+          ))}
+        </div>
+
+        <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-4 tabular-nums">
+          {String(active + 1).padStart(2, "0")} / {String(count).padStart(2, "0")}
+        </span>
       </div>
-    </section>
+    </div>
+  );
+}
+
+function ArrowButton({
+  dir,
+  onClick,
+}: {
+  dir: "prev" | "next";
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={dir === "prev" ? "Previous project" : "Next project"}
+      className="
+        group flex h-9 w-9 items-center justify-center
+        rounded-full border border-ink/15 text-ink-3
+        transition-colors duration-200
+        hover:border-signal/50 hover:text-signal
+        active:scale-95
+      "
+    >
+      <span
+        aria-hidden
+        className="inline-block transition-transform duration-200 group-hover:translate-x-0"
+      >
+        {dir === "prev" ? "‹" : "›"}
+      </span>
+    </button>
   );
 }
 
@@ -273,27 +282,23 @@ function WorkCard({ project, index }: { project: WorkProject; index: number }) {
 
   return (
     <article
-      data-work-card
       className="
         relative
-        rounded-sm border border-ink/12 bg-paper-soft/40 p-5
-        md:rounded-none md:border-0 md:bg-transparent md:p-0
-        grid grid-cols-1 gap-6 items-center
+        grid grid-cols-1 items-center gap-6
         md:grid-cols-[1.05fr_1fr] md:gap-16
+        px-1 md:px-2
       "
     >
       {/* ─── Text column ─────────────────────────────────────────────── */}
       <div className={reverse ? "md:order-2" : "md:order-1"}>
-        <div className="flex items-baseline gap-4 mb-4 md:mb-6 md:gap-5">
+        <div className="mb-4 flex items-baseline gap-4 md:mb-6 md:gap-5">
           <span
-            data-work-number
             className="font-display text-ink-4"
             style={{
               fontSize: "clamp(34px, 6vw, 96px)",
               lineHeight: 1,
               fontWeight: 400,
               letterSpacing: "-0.03em",
-              opacity: 0,
             }}
           >
             {project.num}
@@ -304,40 +309,31 @@ function WorkCard({ project, index }: { project: WorkProject; index: number }) {
         </div>
 
         <h3
-          data-work-title
           className="font-display text-ink"
           style={{
             fontSize: "clamp(28px, 3.6vw, 48px)",
             lineHeight: 1.05,
             letterSpacing: "-0.025em",
             fontWeight: 400,
-            opacity: 0,
           }}
         >
           {project.title}
         </h3>
 
         <p
-          data-work-tagline
           className="mt-3 font-display italic text-ink-2"
           style={{
             fontSize: "clamp(16px, 1.6vw, 20px)",
             lineHeight: 1.4,
             letterSpacing: "0",
-            opacity: 0,
           }}
         >
           {project.tagline}
         </p>
 
         <p
-          data-work-blurb
           className="mt-6 text-ink-2 max-w-[52ch]"
-          style={{
-            fontSize: "clamp(14px, 1.05vw, 16px)",
-            lineHeight: 1.65,
-            opacity: 0,
-          }}
+          style={{ fontSize: "clamp(14px, 1.05vw, 16px)", lineHeight: 1.65 }}
         >
           {project.blurb}
         </p>
@@ -345,7 +341,7 @@ function WorkCard({ project, index }: { project: WorkProject; index: number }) {
         {/* Metrics */}
         <div className="mt-8 flex flex-wrap gap-x-10 gap-y-5">
           {project.metrics.map((m) => (
-            <div key={m.label} data-work-metric style={{ opacity: 0 }}>
+            <div key={m.label}>
               <div
                 className="font-display text-ink tabular-nums"
                 style={{
@@ -364,12 +360,8 @@ function WorkCard({ project, index }: { project: WorkProject; index: number }) {
           ))}
         </div>
 
-        {/* Stack + link row */}
-        <div
-          data-work-stack
-          className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3"
-          style={{ opacity: 0 }}
-        >
+        {/* Stack row */}
+        <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3">
           <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-ink-4">
             {project.stack.join("  ·  ")}
           </p>
@@ -446,9 +438,8 @@ function WorkVisual({ project }: { project: WorkProject }) {
 
   return (
     <div
-      data-work-viz
       className="relative h-full w-full overflow-hidden border border-ink/10"
-      style={{ background: "var(--paper-soft)", opacity: 0 }}
+      style={{ background: "var(--paper-soft)" }}
     >
       {/* Faint grid backdrop — only for the abstract mocks. The real diagrams
           have their own surface and the grid would compete with them. */}

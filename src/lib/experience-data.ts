@@ -20,13 +20,13 @@ export type ExperienceEntry = {
 
 export const experience: ExperienceEntry[] = [
   {
-    org: "Venture Pact · Masters' Union",
-    role: "Associate Software Developer",
+    org: "Masters' Union",
+    role: "Associate Software Developer · EdTech",
     period: "Jan 2025 — Present",
     current: true,
     summary:
-      "Built and shipped the proctoring, real-time messaging, and event-analytics systems that hold the platform's operations together.",
-    tags: ["WebRTC", "Socket.IO", "AWS", "LLM infra"],
+      "Own the real-time backbone of the learning platform (LMS) at an MBA-equivalent EdTech institution — AI proctoring at exam scale (WebRTC/SFU, 200+ concurrent streams), a unified messaging layer, and an event-analytics pipeline. Shipped to production, serving live student cohorts.",
+    tags: ["EdTech", "LMS", "WebRTC", "Real-time", "LLM infra"],
     href: "https://mastersunion.org",
   },
   {

@@ -37,7 +37,7 @@ function buildLlmsTxt(): string {
 
   return `# ${person.name} — ${person.role}
 
-> ${person.name} is a ${person.role.toLowerCase()} based in ${person.location}, specialising in real-time systems, API & backend engineering, and LLM/AI infrastructure. He builds production systems — WebRTC media servers, event-driven pipelines, realtime messaging — that survive real load. ${person.locationDetail}.
+> ${person.name} is a ${person.role.toLowerCase()} based in ${person.location}, specialising in real-time systems, API & backend engineering, and LLM/AI infrastructure. He builds the EdTech learning platform (LMS) at Masters' Union — WebRTC media servers, event-driven pipelines, realtime messaging — production systems that survive real load for live student cohorts. ${person.locationDetail}.
 
 Currently: ${experience[0].role} at ${experience[0].org} (${experience[0].period}).
 Education: ${educationLine.degree}, ${educationLine.school} (${educationLine.years}, ${educationLine.note}).

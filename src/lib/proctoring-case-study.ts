@@ -14,7 +14,7 @@ import { person } from "./person";
 // ─── HERO ─────────────────────────────────────────────────────────────────
 export const caseHero = {
   eyebrow: "Case study · 01",
-  context: "Venture Pact (Masters' Union) · Production",
+  context: "Masters' Union · EdTech · Production",
   title: "The system that survives 200 concurrent students.",
   subtitle:
     "One year. Three architectures. A few near-collapses on the way to one that holds.",

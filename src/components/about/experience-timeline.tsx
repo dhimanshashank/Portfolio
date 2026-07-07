@@ -36,18 +36,19 @@ type Row = {
 const ROWS: readonly Row[] = [
   {
     period: "JAN 2025 — PRESENT",
-    role: "Associate Software Developer",
-    org: "Venture Pact (Masters' Union) · Edtech, India.",
-    orgName: "Venture Pact",
+    role: "Associate Software Developer · EdTech",
+    org: "Masters' Union · EdTech · India.",
+    orgName: "Masters' Union",
     orgInitials: "MU",
     orgLogo: "/brands/masters-union.png",
     orgLogoFocus: "center 30%",
     orgUrl: "https://mastersunion.org",
     bullets: [
-      "WebRTC proctoring at 200+ concurrent streams (Mediasoup) — +35% throughput",
-      "MediaPipe behavioral classification + OpenRouter LLM session summaries",
-      "Real-time messaging — Redis presence, keyset pagination, DataLoader (−60% DB round-trips)",
-      "Serverless event analytics — Lambda + ClickHouse",
+      "Own the LMS's real-time systems, in production for live student cohorts",
+      "AI proctoring for online exams — WebRTC/SFU at 200+ concurrent streams (Mediasoup), +35% throughput",
+      "In-browser behavioral classification (MediaPipe) + OpenRouter LLM session summaries for reviewers",
+      "Unified real-time messaging across the LMS — Redis presence, keyset pagination, DataLoader (−60% DB round-trips)",
+      "Serverless event-analytics pipeline — Lambda → ClickHouse, −55% query time",
     ],
   },
   {

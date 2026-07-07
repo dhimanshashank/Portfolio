@@ -74,7 +74,7 @@ export default function MessagingCaseStudy() {
         </p>
 
         <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-2 font-mono text-[10px] uppercase tracking-[0.22em] text-ink-4">
-          <span>Venture Pact (Masters&apos; Union) · production</span>
+          <span>Masters&apos; Union · EdTech · production</span>
           <span aria-hidden>·</span>
           <span>2025 — present</span>
           <span aria-hidden>·</span>
