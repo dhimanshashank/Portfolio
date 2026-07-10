@@ -118,15 +118,11 @@ export const metadata: Metadata = {
   },
 
   // ── Icons ────────────────────────────────────────────────────────────
-  // Single source of truth: the pencil-sketch portrait, cropped square with
-  // a transparent surround (source: assets.shashankdhiman.in/favicon.png).
-  // /favicon.ico is a hand-built multi-size (16/32/48) ICO from the same
-  // crop, so the tab icon matches apple-icon.png / icon1.png exactly —
-  // one portrait everywhere instead of the old vector wordmark + photo mix.
+  // Single source of truth: the square portrait icon. Keep the tab/favicon
+  // family pinned to /icon-512.png so the browser, manifest, and future CDN
+  // swaps all resolve to the same image.
   icons: {
     icon: [
-      { url: "/favicon.ico", type: "image/x-icon" },
-      { url: "/icon1.png", type: "image/png", sizes: "96x96" },
       { url: "/icon-512.png", type: "image/png", sizes: "512x512" },
     ],
     apple: [

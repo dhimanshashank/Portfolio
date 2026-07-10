@@ -83,6 +83,23 @@ export function PortraitPanel({
           )}
         </div>
 
+        {/* Restored edge shadow mix — gives the portrait shell the older
+            framed depth, while the shared portrait still moves independently. */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 z-10 opacity-[0.6] mix-blend-multiply"
+          style={{
+            background: [
+              "radial-gradient(96% 82% at 76% 42%, transparent 58%, rgba(34,29,24,0.12) 84%, rgba(34,29,24,0.18) 100%)",
+              "linear-gradient(to left, rgba(24,20,16,0.16) 0%, rgba(24,20,16,0.08) 10%, transparent 24%)",
+              "linear-gradient(to bottom, rgba(24,20,16,0.12) 0%, rgba(24,20,16,0.05) 9%, transparent 18%)",
+              "linear-gradient(to top, rgba(24,20,16,0.16) 0%, rgba(24,20,16,0.08) 14%, transparent 28%)",
+            ].join(", "),
+            boxShadow:
+              "inset 0 0 0 1px rgba(26,24,21,0.06), inset -42px 0 54px rgba(26,24,21,0.08), inset 0 -38px 52px rgba(26,24,21,0.07)",
+          }}
+        />
+
         {/* Signal-orange warmth */}
         <div
           aria-hidden
