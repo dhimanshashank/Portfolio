@@ -1,6 +1,6 @@
 "use client";
 
-import { CSSProperties } from "react";
+import { CSSProperties, forwardRef } from "react";
 
 /**
  * Hand-drawn SVG primitives that match the pencil-portrait aesthetic.
@@ -15,6 +15,7 @@ import { CSSProperties } from "react";
  *   SketchCircle      — rough oval around a word
  *   SketchDivider     — wavy horizontal section break
  *   SketchAsterisk    — small drawn asterisk / margin star
+ *   SketchFrame       — imperfect rectangle, like a hand-drawn picture frame
  */
 
 type SketchProps = {
@@ -234,6 +235,61 @@ export function SketchDivider({
     </svg>
   );
 }
+
+// ──────────────────────────────────────────────────────────────────────────
+// SketchFrame — an imperfect rectangle, like a hand-drawn picture frame.
+// Stretches to any aspect ratio via preserveAspectRatio="none" — drop it
+// absolutely-positioned over a photo/portrait box. Each side is its own
+// slightly-bowed path with overshooting corners, the way a hand actually
+// closes a rectangle rather than a perfect CSS border.
+// ──────────────────────────────────────────────────────────────────────────
+export const SketchFrame = forwardRef<SVGSVGElement, Omit<SketchProps, "drawMs">>(
+  function SketchFrame({ className, style, color = "currentColor", weight = 1 }, ref) {
+  return (
+    <svg
+      ref={ref}
+      aria-hidden
+      viewBox="0 0 200 260"
+      preserveAspectRatio="none"
+      className={className}
+      style={{ display: "block", overflow: "visible", ...style }}
+    >
+      {/* top */}
+      <path
+        d="M4 5 Q 70 1.5, 100 3 T 196 5"
+        stroke={color}
+        strokeWidth={2.2 * weight}
+        strokeLinecap="round"
+        fill="none"
+      />
+      {/* right */}
+      <path
+        d="M196 4 Q 198.5 90, 197 130 T 195 256"
+        stroke={color}
+        strokeWidth={2.2 * weight}
+        strokeLinecap="round"
+        fill="none"
+      />
+      {/* bottom */}
+      <path
+        d="M197 255 Q 130 258.5, 100 257 T 3 255"
+        stroke={color}
+        strokeWidth={2.2 * weight}
+        strokeLinecap="round"
+        fill="none"
+      />
+      {/* left */}
+      <path
+        d="M4 256 Q 1.5 170, 3 130 T 5 4"
+        stroke={color}
+        strokeWidth={2.2 * weight}
+        strokeLinecap="round"
+        fill="none"
+      />
+    </svg>
+  );
+  }
+);
 
 // ──────────────────────────────────────────────────────────────────────────
 // SketchAsterisk — small drawn star for margin notes / dividers

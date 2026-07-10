@@ -10,6 +10,7 @@
 import { person } from "@/lib/person";
 import { projects, type WorkProject } from "@/lib/work-data";
 import { experience, educationLine } from "@/lib/experience-data";
+import { assetUrl } from "@/lib/assets";
 
 export const BASE_URL = "https://shashankdhiman.in";
 
@@ -23,7 +24,7 @@ function personNode() {
     "@id": PERSON_ID,
     name: person.name,
     url: BASE_URL,
-    image: `${BASE_URL}/hero/portrait-halftone2.png`,
+    image: assetUrl("/hero/portrait-halftone2.png"),
     jobTitle: person.role,
     description:
       "Full stack engineer based in Chandigarh, India — real-time systems, API & backend engineering, LLM/AI infrastructure. Builds the EdTech learning platform (LMS) at Masters' Union: AI proctoring, real-time messaging, and event analytics in production.",

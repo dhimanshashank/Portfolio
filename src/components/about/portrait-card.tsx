@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { person } from "@/lib/person";
+import { assetUrl } from "@/lib/assets";
 
 /**
  * <PortraitCard>
@@ -19,7 +20,7 @@ import { person } from "@/lib/person";
  * feels intentional — no broken-image UI.
  */
 export function PortraitCard({
-  src = "/hero/portrait-halftone2.png",
+  src = assetUrl("/hero/portrait-halftone2.png"),
   className,
 }: {
   src?: string;

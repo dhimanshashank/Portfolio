@@ -6,6 +6,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useReducedMotion } from "framer-motion";
 import { homepageProjects, type WorkProject } from "@/lib/work-data";
 import { WorkDeck } from "./work-deck";
+import { assetUrl } from "@/lib/assets";
 
 const NUM_WORDS = ["Zero", "One", "Two", "Three", "Four", "Five", "Six"] as const;
 
@@ -448,7 +449,7 @@ function WorkVisual({ project }: { project: WorkProject }) {
       {/* project-specific drawing */}
       {project.id === "proctoring" && (
         <Image
-          src="/work/proctoring/architecture-1.png"
+          src={assetUrl("/work/proctoring/architecture-1.png")}
           alt="Proctoring system architecture — production"
           fill
           sizes="(max-width: 768px) 100vw, 50vw"
@@ -457,7 +458,7 @@ function WorkVisual({ project }: { project: WorkProject }) {
       )}
       {project.id === "messaging" && (
         <Image
-          src="/work/chat/chatSystemArchitecture.png"
+          src={assetUrl("/work/chat/chatSystemArchitecture.png")}
           alt="Doubt & Discussion system architecture — production"
           fill
           sizes="(max-width: 768px) 100vw, 50vw"

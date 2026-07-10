@@ -61,7 +61,7 @@ ${writingLines.join("\n")}
 - [About](${BASE_URL}/about): background, working principles, and the longer story
 - [Log](${BASE_URL}/log): long-form engineering writing
 - [Contact](${BASE_URL}/contact): get in touch
-- [Resume (PDF)](${BASE_URL}/Shashank_Resume.pdf)
+- [Resume (PDF)](https://assets.shashankdhiman.in/Shashank_Resume.pdf)
 
 ## Contact
 

@@ -37,6 +37,11 @@ export function Hero() {
     () => {
       if (!heroRef.current) return;
 
+      // Below tablet, the workbench (portrait flight + desk) doesn't
+      // render at all — there's nothing to hand off to, so the hero stays
+      // completely static as the visitor scrolls past it.
+      if (window.innerWidth < 768) return;
+
       // Text content scrubs up and fades as the user scrolls past the hero
       gsap.to(textRef.current, {
         y: -64,
@@ -50,18 +55,10 @@ export function Hero() {
         },
       });
 
-      // Portrait fades slightly later — gives the sense the person lingers
-      gsap.to(portraitRef.current, {
-        opacity: 0.35,
-        scale: 1.06,
-        ease: "none",
-        scrollTrigger: {
-          trigger: heroRef.current,
-          start: "top top",
-          end: "bottom top",
-          scrub: 1,
-        },
-      });
+      // NOTE: the portrait deliberately gets NO exit animation here — the
+      // Workbench flight is the single owner of its motion. Any fade/scale
+      // on this side would make the hand-off read as two different images
+      // (the exact inconsistency Shashank flagged).
 
       // Scroll indicator dies quickly — its job is done as soon as scroll begins
       gsap.to(indicatorRef.current, {

@@ -2,6 +2,7 @@ import Image from "next/image";
 import type { WorkProject } from "@/lib/work-data";
 import { ArchAnalytics } from "./visuals/arch-analytics";
 import { CodeEventify } from "./visuals/code-eventify";
+import { assetUrl } from "@/lib/assets";
 
 /**
  * <ProjectVisual>
@@ -19,14 +20,14 @@ export function ProjectVisual({ project }: { project: WorkProject }) {
     case "proctoring":
       return (
         <RealArchitectureImage
-          src="/work/proctoring/architecture-1.png"
+          src={assetUrl("/work/proctoring/architecture-1.png")}
           alt="Proctoring system architecture — production"
         />
       );
     case "messaging":
       return (
         <RealArchitectureImage
-          src="/work/chat/chatSystemArchitecture.png"
+          src={assetUrl("/work/chat/chatSystemArchitecture.png")}
           alt="Doubt & Discussion system architecture — production"
         />
       );

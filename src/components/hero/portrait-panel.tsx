@@ -1,10 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import { useRef, useState } from "react";
-import { useGSAP, gsap } from "@/lib/motion/use-gsap";
+import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { PortraitTouchLayer } from "./portrait-touch-layer";
+import { assetUrl } from "@/lib/assets";
+
+const SHARED_READY_EVENT = "shared-portrait-ready";
 
 /**
  * <PortraitPanel>
@@ -17,8 +19,8 @@ import { PortraitTouchLayer } from "./portrait-touch-layer";
  * Right padding removed so portrait bleeds to the viewport edge.
  */
 export function PortraitPanel({
-  src = "/hero/portrait-halftone2.png",
-  alt = "Portrait of Shashank Dhiman",
+  src = assetUrl("/hero/portrait-sketch.webp"),
+  alt = "Pencil sketch portrait of Shashank Dhiman",
   className,
 }: {
   src?: string;
@@ -29,24 +31,15 @@ export function PortraitPanel({
   const imgRef = useRef<HTMLImageElement>(null);
   const [loaded, setLoaded] = useState(false);
   const [errored, setErrored] = useState(false);
+  const [sharedReady, setSharedReady] = useState(false);
 
-  useGSAP(
-    () => {
-      if (!imgRef.current || errored) return;
-
-      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      if (reduce) return;
-
-      gsap.to(imgRef.current, {
-        scale: 1.04,
-        duration: 9,
-        ease: "sine.inOut",
-        yoyo: true,
-        repeat: -1,
-      });
-    },
-    { scope: wrapRef, dependencies: [errored, loaded] }
-  );
+  useEffect(() => {
+    const sync = () =>
+      setSharedReady(document.documentElement.dataset.sharedPortraitReady === "true");
+    sync();
+    window.addEventListener(SHARED_READY_EVENT, sync as EventListener);
+    return () => window.removeEventListener(SHARED_READY_EVENT, sync as EventListener);
+  }, []);
 
   return (
     <div
@@ -59,37 +52,41 @@ export function PortraitPanel({
         className
       )}
     >
-      {/* Inner card */}
       <div className="relative isolate h-full w-full overflow-hidden rounded-l-sm bg-paper-soft">
-
-        {/* Portrait — next/image handles WebP conversion + responsive srcSet */}
-        {!errored && (
-          <Image
-            ref={imgRef as React.Ref<HTMLImageElement>}
-            src={src}
-            alt={alt}
-            fill
-            priority          // above-the-fold LCP element — never lazy load
-            sizes="(max-width: 768px) 100vw, 45vw"
-            onLoad={() => setLoaded(true)}
-            onError={() => setErrored(true)}
-            draggable={false}
-            className={cn(
-              "object-cover object-top select-none",
-              "transition-opacity duration-700 ease-out",
-              loaded ? "opacity-100" : "opacity-0"
-            )}
-            style={{
-              filter: "contrast(1.04) brightness(0.99)",
-              willChange: "transform",
-            }}
-          />
-        )}
+        {/* Hero anchor: the shared portrait layer docks to this rect. The
+            inline poster exists only until the shared layer is mounted. */}
+        <div
+          data-hero-portrait-anchor
+          className="absolute inset-[2%_0_6%_0] overflow-hidden rounded-l-sm"
+        >
+          {!sharedReady && !errored && (
+            <Image
+              ref={imgRef as React.Ref<HTMLImageElement>}
+              src={src}
+              alt={alt}
+              fill
+              priority
+              sizes="(max-width: 768px) 100vw, 45vw"
+              onLoad={() => setLoaded(true)}
+              onError={() => setErrored(true)}
+              draggable={false}
+              className={cn(
+                "object-cover object-top select-none",
+                "transition-opacity duration-700 ease-out",
+                loaded ? "opacity-100" : "opacity-0"
+              )}
+              style={{
+                filter: "contrast(1.04) brightness(0.99)",
+                willChange: "transform",
+              }}
+            />
+          )}
+        </div>
 
         {/* Signal-orange warmth */}
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 mix-blend-color opacity-[0.08]"
+          className="pointer-events-none absolute inset-0 z-20 mix-blend-color opacity-[0.08]"
           style={{
             background:
               "radial-gradient(70% 60% at 30% 75%, var(--signal) 0%, transparent 70%)",
@@ -99,7 +96,7 @@ export function PortraitPanel({
         {/* Left feather — blends into text column */}
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-y-0 left-0 w-24 md:w-32"
+          className="pointer-events-none absolute inset-y-0 left-0 z-20 w-24 md:w-32"
           style={{
             background:
               "linear-gradient(to right, var(--paper) 0%, rgba(245,241,232,0.6) 35%, transparent 100%)",
@@ -108,7 +105,7 @@ export function PortraitPanel({
         {/* Top feather */}
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-x-0 top-0 h-16 md:h-24"
+          className="pointer-events-none absolute inset-x-0 top-0 z-20 h-16 md:h-24"
           style={{
             background:
               "linear-gradient(to bottom, var(--paper) 0%, rgba(245,241,232,0.45) 50%, transparent 100%)",
@@ -117,7 +114,7 @@ export function PortraitPanel({
         {/* Bottom feather */}
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-32 md:h-44"
+          className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-32 md:h-44"
           style={{
             background:
               "linear-gradient(to top, var(--paper) 0%, rgba(245,241,232,0.7) 40%, transparent 100%)",
@@ -127,7 +124,7 @@ export function PortraitPanel({
         {/* Subtle film grain */}
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 opacity-[0.04] mix-blend-multiply"
+          className="pointer-events-none absolute inset-0 z-20 opacity-[0.04] mix-blend-multiply"
           style={{
             backgroundImage:
               "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>\")",
@@ -135,7 +132,7 @@ export function PortraitPanel({
         />
 
         {/* Corner signature */}
-        <div className="absolute bottom-5 right-5 font-mono text-[10px] tracking-[0.22em] uppercase text-ink-3 opacity-60">
+        <div className="absolute bottom-5 right-5 z-20 font-mono text-[10px] tracking-[0.22em] uppercase text-ink-3 opacity-60">
           sd · {new Date().getFullYear()}
         </div>
 

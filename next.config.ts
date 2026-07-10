@@ -8,6 +8,23 @@ const nextConfig: NextConfig = {
     root: path.resolve(__dirname),
   },
 
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "assets.shashankdhiman.in",
+        port: "",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "shashankdhiman.in",
+        port: "",
+        pathname: "/**",
+      },
+    ],
+  },
+
   // Retired routes — /now had only draft content, /blog merged into /log.
   async redirects() {
     return [

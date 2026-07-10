@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/sketch-marks";
 import { JsonLd } from "@/components/seo/json-ld";
 import { caseStudyGraph } from "@/lib/seo";
+import { assetUrl } from "@/lib/assets";
 
 export const metadata: Metadata = {
   title: "Doubt & Discussion — Case Study · Shashank Dhiman",
@@ -252,7 +253,7 @@ export default function MessagingCaseStudy() {
 
         <div className="relative aspect-[4/3] w-full max-w-[1100px] mx-auto overflow-hidden border border-ink/10 bg-paper-soft rounded-sm">
           <Image
-            src="/work/chat/chatSystemArchitecture.png"
+            src={assetUrl("/work/chat/chatSystemArchitecture.png")}
             alt="Doubt & Discussion system architecture — production"
             fill
             sizes="(max-width: 768px) 100vw, 1100px"

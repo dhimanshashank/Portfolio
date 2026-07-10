@@ -49,10 +49,27 @@ const WAYPOINTS = [
 const clamp = (v: number, min: number, max: number) =>
   Math.min(max, Math.max(min, v));
 
+/**
+ * The trace behind the plane: stacked segments of the same path with
+ * tapering opacity — nearest the plane is darkest, the tail end dissolves
+ * to almost nothing. (SVG strokes can't gradient along a curved path, so
+ * a stepped fade over short segments is the honest way to fake one.)
+ */
+const TRAIL_SEGMENTS = [
+  { length: 28, opacity: 0.26, width: 1.45 },
+  { length: 21, opacity: 0.18, width: 1.3 },
+  { length: 15, opacity: 0.11, width: 1.15 },
+  { length: 10, opacity: 0.065, width: 1.0 },
+  { length: 6, opacity: 0.03, width: 0.88 },
+  { length: 3, opacity: 0.012, width: 0.8 },
+] as const;
+const TRAIL_OFFSETS = TRAIL_SEGMENTS.map((segment, index) =>
+  TRAIL_SEGMENTS.slice(0, index + 1).reduce((sum, item) => sum + item.length, 0)
+);
+
 export function PaperPlaneFlight() {
   const rootRef = useRef<HTMLDivElement>(null);
-  const trailRef = useRef<SVGPathElement>(null);
-  const maskRef = useRef<SVGPathElement>(null);
+  const trailGroupRef = useRef<SVGGElement>(null);
   const planeRef = useRef<HTMLDivElement>(null);
   const tiltRef = useRef<HTMLDivElement>(null);
   const floatRef = useRef<HTMLDivElement>(null);
@@ -60,11 +77,14 @@ export function PaperPlaneFlight() {
   useGSAP(
     () => {
       const root = rootRef.current;
-      const trail = trailRef.current;
-      const maskPath = maskRef.current;
+      const trailGroup = trailGroupRef.current;
       const plane = planeRef.current;
       const tilt = tiltRef.current;
-      if (!root || !trail || !maskPath || !plane || !tilt) return;
+      if (!root || !trailGroup || !plane || !tilt) return;
+      const trailPaths = Array.from(
+        trailGroup.querySelectorAll<SVGPathElement>("path")
+      );
+      if (!trailPaths.length) return;
 
       const mm = gsap.matchMedia();
 
@@ -87,13 +107,21 @@ export function PaperPlaneFlight() {
 
           const raw = MotionPathPlugin.arrayToRawPath(pts, { curviness: 1.4 });
           const d = MotionPathPlugin.rawPathToString(raw);
-          trail.setAttribute("d", d);
-          maskPath.setAttribute("d", d);
+          for (const p of trailPaths) p.setAttribute("d", d);
 
-          pathLength = trail.getTotalLength();
-          // The mask stroke reveals the dotted trail: one dash the length of
-          // the whole path, slid from fully-hidden to fully-shown.
-          maskPath.style.strokeDasharray = `${pathLength}`;
+          pathLength = trailPaths[0].getTotalLength();
+        };
+
+        // The fading whisker: each stacked path shows one TRAIL_SEG-long
+        // dash, segment k sitting k segments behind the plane's arc
+        // position s — opacity tapers path-by-path toward the tail.
+        const setWhisker = (progress: number) => {
+          const s = progress * pathLength;
+          trailPaths.forEach((p, k) => {
+            const segment = TRAIL_SEGMENTS[k];
+            p.style.strokeDasharray = `${segment.length} ${pathLength + segment.length}`;
+            p.style.strokeDashoffset = `${TRAIL_OFFSETS[k] - s}`;
+          });
         };
 
         layoutPath();
@@ -127,8 +155,8 @@ export function PaperPlaneFlight() {
           plane,
           {
             motionPath: {
-              path: trail,
-              align: trail,
+              path: trailPaths[0],
+              align: trailPaths[0],
               alignOrigin: [0.5, 0.5],
               autoRotate: true,
             },
@@ -137,13 +165,6 @@ export function PaperPlaneFlight() {
           },
           0
         )
-          // Trail draws itself just behind the plane.
-          .fromTo(
-            maskPath,
-            { strokeDashoffset: () => pathLength },
-            { strokeDashoffset: 0, duration: 1, ease: "none" },
-            0
-          )
           // Appear on the first breath of scroll, bow out at the very end.
           .fromTo(
             root,
@@ -181,6 +202,7 @@ export function PaperPlaneFlight() {
         readScroll();
         // Snap to the current position on load (mid-page reload) — no fly-in.
         tl.progress(target);
+        setWhisker(target);
         window.addEventListener("scroll", readScroll, { passive: true });
 
         // Max progress per 60fps frame. This is the smoothness governor: on
@@ -200,26 +222,32 @@ export function PaperPlaneFlight() {
           const gap = target - p;
           const settled = Math.abs(gap) < 0.00005;
 
+          // Gravity: the speed cap is modulated by where the nose points
+          // (autoRotate heading: 0° = right, 90° = straight down). Diving
+          // legs accelerate, climbing legs bleed speed — the asymmetry that
+          // makes a real paper dart swoop instead of cruising at constant
+          // velocity.
+          const heading = Number(gsap.getProperty(plane, "rotation"));
+          const dive = Math.sin((heading * Math.PI) / 180); // >0 = nose down
+          const grav = 1 + 0.7 * Math.max(0, dive) - 0.35 * Math.max(0, -dive);
+          const cap = MAX_STEP * dtr * grav;
+
           let step = 0;
           if (!settled) {
-            // Eased chase with a hard speed cap.
-            step = clamp(
-              gap * Math.min(1, (dtr / 60) * 4.2),
-              -MAX_STEP * dtr,
-              MAX_STEP * dtr
-            );
+            // Eased chase with a gravity-scaled speed cap.
+            step = clamp(gap * Math.min(1, (dtr / 60) * 4.2), -cap, cap);
             tl.progress(p + step);
+            setWhisker(p + step);
           }
 
           // Pitch from ACTUAL per-frame velocity (not the raw gap): ramps
           // smoothly with speed, holds a steady dive at the cap instead of
           // flickering against a clamp, and eases upright as motion ends.
-          const speed = clamp(step / dtr / MAX_STEP, -1, 1); // −1..1
+          const speed = clamp(step / dtr / (MAX_STEP * grav), -1, 1); // −1..1
           pitchTo(speed * 16);
 
           // Bank from heading change, low-passed so S-curve direction flips
           // roll the plane over ~150ms instead of snapping frame-to-frame.
-          const heading = Number(gsap.getProperty(plane, "rotation"));
           const headingRate = settled ? 0 : (heading - lastHeading) / dtr;
           lastHeading = heading;
           smoothedBank +=
@@ -247,6 +275,7 @@ export function PaperPlaneFlight() {
           layoutPath();
           tl.invalidate();
           readScroll();
+          setWhisker(tl.progress());
         };
         ScrollTrigger.addEventListener("refresh", relayout);
 
@@ -269,29 +298,22 @@ export function PaperPlaneFlight() {
       className="pointer-events-none absolute inset-0 z-30 overflow-hidden"
       style={{ opacity: 0 }}
     >
-      {/* Dotted pencil trail — revealed progressively by the mask. */}
+      {/* A short pencil whisker directly behind the plane — no full-route
+          preview. Stacked path segments taper in width + opacity toward
+          the tail; dash geometry driven per-frame (see setWhisker). */}
       <svg className="absolute inset-0 h-full w-full" fill="none">
-        <defs>
-          <mask id="pp-trail-reveal" maskUnits="userSpaceOnUse">
+        <g ref={trailGroupRef}>
+          {TRAIL_SEGMENTS.map((segment, k) => (
             <path
-              ref={maskRef}
-              stroke="#fff"
-              strokeWidth="4"
+              key={k}
+              stroke="var(--ink)"
+              strokeOpacity={segment.opacity}
+              strokeWidth={segment.width}
               strokeLinecap="round"
               fill="none"
             />
-          </mask>
-        </defs>
-        <path
-          ref={trailRef}
-          mask="url(#pp-trail-reveal)"
-          stroke="var(--ink)"
-          strokeOpacity="0.28"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeDasharray="0.5 9"
-          fill="none"
-        />
+          ))}
+        </g>
       </svg>
 
       {/* The plane — HTML layer for trustworthy CSS 3D. */}

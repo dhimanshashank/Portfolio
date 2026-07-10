@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { person } from "@/lib/person";
+import { assetUrl } from "@/lib/assets";
 
 /**
  * <Footer>
@@ -53,7 +54,7 @@ export function Footer() {
           <span aria-hidden className="hidden md:inline-block h-3 w-px bg-ink/15" />
 
           <a
-            href="/Shashank_Resume.pdf"
+            href="https://assets.shashankdhiman.in/Shashank_Resume.pdf"
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-signal transition-colors"
@@ -77,7 +78,7 @@ export function Footer() {
               className="relative inline-block h-[20px] w-[20px] shrink-0 overflow-hidden rounded-[2px] bg-paper border border-ink/10"
             >
               <Image
-                src="/brands/masters-union.png"
+                src={assetUrl("/brands/masters-union.png")}
                 alt=""
                 fill
                 sizes="20px"
