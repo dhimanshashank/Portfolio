@@ -1,3 +1,5 @@
+import { assetUrl } from "@/lib/assets";
+
 /**
  * About / The Story — content.
  *
@@ -35,7 +37,7 @@ export const aboutEssays = [
 
 // ─── DESK IMAGE BAND — overlaid voice line ───────────────────────────────
 export const aboutImageBand = {
-  src: "/about/desk-night.png",
+  src: assetUrl("/about/desk-night.png"),
   alt: "Desk at night — keyboard, notebook with system sketches, monitor with code",
   overlay: "The work has always happened at this desk. Mostly at night.",
 } as const;
@@ -44,7 +46,7 @@ export const aboutImageBand = {
 // Used by <MastersUnionBlock /> between essays 02 and 03.
 export const mastersUnion = {
   name: "Masters' Union",
-  logo: "/brands/masters-union.png",
+  logo: assetUrl("/brands/masters-union.png"),
   url: "https://mastersunion.org",
   description:
     "Masters' Union is an EdTech institution in India running an MBA-equivalent program. On the engineering team I build the learning platform (LMS) — the AI proctoring, real-time messaging, and event-analytics systems that keep live student cohorts running in production.",
@@ -94,7 +96,10 @@ export const aboutOutro = {
   secondary: { label: "Selected work", href: "/work" },
   // Tertiary — recruiter exit ramp. Filename preserved so the download
   // lands in their folder as `Shashank_Resume.pdf`.
-  tertiary: { label: "Download CV", href: "/Shashank_Resume.pdf" },
+  tertiary: {
+    label: "Download CV",
+    href: "https://assets.shashankdhiman.in/Shashank_Resume.pdf",
+  },
 } as const;
 
 // ─── DRAFT helper ────────────────────────────────────────────────────────

@@ -335,9 +335,16 @@ export const commands: Command[] = [
       if (file === "resume") {
         print([
           t("resume.pdf is a real file, so cat opens it in a new tab.", "muted"),
-          { kind: "link", label: "Shashank_Resume.pdf", href: "/Shashank_Resume.pdf", external: true },
+          {
+            kind: "link",
+            label: "Shashank_Resume.pdf",
+            href: "https://assets.shashankdhiman.in/Shashank_Resume.pdf",
+            external: true,
+          },
         ]);
-        return openExternal("/Shashank_Resume.pdf");
+        return openExternal(
+          "https://assets.shashankdhiman.in/Shashank_Resume.pdf"
+        );
       }
 
       print([t(`cat: ${file}: no such file`, "error")]);

@@ -27,7 +27,7 @@ const links = [
 // Filename intentionally meaningful so it lands in the recruiter's
 // downloads folder as `Shashank_Resume.pdf`, not a generic `resume.pdf`.
 const utilityLinks = [
-  { href: "/Shashank_Resume.pdf", label: "Resume ↗", external: true },
+  { href: "https://assets.shashankdhiman.in/Shashank_Resume.pdf", label: "Resume ↗", external: true },
 ];
 
 export function Nav() {

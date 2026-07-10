@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
+import { assetUrl } from "@/lib/assets";
 
 /**
  * <ExperienceTimeline>
@@ -40,7 +41,7 @@ const ROWS: readonly Row[] = [
     org: "Masters' Union · EdTech · India.",
     orgName: "Masters' Union",
     orgInitials: "MU",
-    orgLogo: "/brands/masters-union.png",
+    orgLogo: assetUrl("/brands/masters-union.png"),
     orgLogoFocus: "center 30%",
     orgUrl: "https://mastersunion.org",
     bullets: [
@@ -57,7 +58,7 @@ const ROWS: readonly Row[] = [
     org: "Qspider · Chandigarh, India.",
     orgName: "Qspider",
     orgInitials: "Q",
-    orgLogo: "/brands/qspider.png",
+    orgLogo: assetUrl("/brands/qspider.png"),
     orgUrl: "https://qspiders.com",
     bullets: [
       "Eventify — full-stack MERN platform with Stripe webhooks + RBAC",
@@ -70,7 +71,7 @@ const ROWS: readonly Row[] = [
     org: "Guru Nanak Dev Engineering College, Ludhiana.",
     orgName: "GNDEC",
     orgInitials: "GN",
-    orgLogo: "/brands/gne.png",
+    orgLogo: assetUrl("/brands/gne.png"),
     orgUrl: "https://www.gndec.ac.in",
     bullets: ["CGPA 8.45 / 10"],
   },

@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import { Hero } from "@/components/hero/hero";
+import { Workbench } from "@/components/home/workbench";
+import { SkillsMobile } from "@/components/home/skills-mobile";
+import { SharedPortraitLayer } from "@/components/home/shared-portrait-layer";
 import { PaperPlaneFlight } from "@/components/home/paper-plane-flight";
 import { Experience } from "@/components/home/experience";
 import { SelectedWork } from "@/components/home/selected-work";
@@ -41,6 +44,9 @@ export default function HomePage() {
     <div className="relative">
       <PaperPlaneFlight />
       <Hero />
+      <Workbench />
+      <SharedPortraitLayer />
+      <SkillsMobile />
       <Experience />
       <SelectedWork />
       <EngineeringLog />
