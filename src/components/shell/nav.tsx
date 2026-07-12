@@ -74,7 +74,7 @@ export function Nav() {
                   key={l.href}
                   href={l.href}
                   className={cn(
-                    "font-mono text-[11px] tracking-[0.18em] uppercase transition-colors",
+                    "font-mono text-[11px] tracking-[0.18em] uppercase transition-colors sketch-link",
                     active ? "text-signal" : "text-ink-3 hover:text-ink"
                   )}
                 >
@@ -90,7 +90,7 @@ export function Nav() {
                 href={l.href}
                 target={l.external ? "_blank" : undefined}
                 rel={l.external ? "noopener noreferrer" : undefined}
-                className="font-mono text-[11px] tracking-[0.18em] uppercase text-ink hover:text-signal transition-colors"
+                className="font-mono text-[11px] tracking-[0.18em] uppercase text-ink hover:text-signal transition-colors sketch-link"
               >
                 {l.label}
               </a>

@@ -1,6 +1,6 @@
 "use client";
 
-import { CSSProperties, forwardRef } from "react";
+import { CSSProperties, forwardRef, useId } from "react";
 
 /**
  * Hand-drawn SVG primitives that match the pencil-portrait aesthetic.
@@ -290,6 +290,80 @@ export const SketchFrame = forwardRef<SVGSVGElement, Omit<SketchProps, "drawMs">
   );
   }
 );
+
+// ──────────────────────────────────────────────────────────────────────────
+// HatchDivider — a band of diagonal pencil hatching between sections, the
+// way a hand shades a break line rather than ruling a clean one. A wavy
+// baseline runs through the middle; short diagonal strokes hatch across it.
+// Fades out toward both ends via a mask so it sits in the page like a
+// margin doodle, not a full-bleed rule.
+// ──────────────────────────────────────────────────────────────────────────
+export function HatchDivider({
+  className,
+  style,
+  color = "currentColor",
+  weight = 1,
+}: Omit<SketchProps, "drawMs">) {
+  const id = useId();
+  const patternId = `hatch-${id.replace(/[^a-zA-Z0-9_-]/g, "")}`;
+  return (
+    <svg
+      aria-hidden
+      viewBox="0 0 400 22"
+      preserveAspectRatio="none"
+      className={className}
+      style={{
+        display: "block",
+        width: "100%",
+        height: "18px",
+        // Fade the band into the page at both ends
+        WebkitMaskImage:
+          "linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%)",
+        maskImage:
+          "linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%)",
+        ...style,
+      }}
+    >
+      <defs>
+        <pattern
+          id={patternId}
+          width="13"
+          height="22"
+          patternUnits="userSpaceOnUse"
+        >
+          {/* Two slightly-off diagonal strokes per tile — hand pressure varies */}
+          <path
+            d="M2.5 19 Q 5 12, 10 3"
+            stroke={color}
+            strokeWidth={0.9 * weight}
+            strokeLinecap="round"
+            fill="none"
+            opacity={0.5}
+          />
+          <path
+            d="M8 20 Q 10.5 14, 15.5 4.5"
+            stroke={color}
+            strokeWidth={0.7 * weight}
+            strokeLinecap="round"
+            fill="none"
+            opacity={0.3}
+          />
+        </pattern>
+      </defs>
+      {/* Hatch band */}
+      <rect x="0" y="1" width="400" height="20" fill={`url(#${patternId})`} opacity={0.55} />
+      {/* Wavy baseline through the middle of the band */}
+      <path
+        d="M2 11.5 Q 40 8.5, 80 11.5 T 160 11 T 240 11.5 T 320 11 T 398 11.5"
+        stroke={color}
+        strokeWidth={1 * weight}
+        strokeLinecap="round"
+        fill="none"
+        opacity={0.6}
+      />
+    </svg>
+  );
+}
 
 // ──────────────────────────────────────────────────────────────────────────
 // SketchAsterisk — small drawn star for margin notes / dividers

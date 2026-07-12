@@ -104,7 +104,7 @@ export function TerminalMount() {
         <button
           type="button"
           onClick={openTerminal}
-          className="fixed bottom-6 right-6 z-[80] hidden items-center gap-2 rounded-sm border border-[var(--void-edge)] bg-[var(--void)] px-3 py-2 font-mono text-[11px] uppercase tracking-[0.16em] text-[var(--bone-2)] shadow-[0_16px_40px_-16px_rgba(0,0,0,0.6)] transition-colors hover:text-[var(--bone)] motion-safe:animate-[term-hint-in_0.5s_ease-out] md:flex"
+          className="fixed bottom-6 right-6 z-[80] hidden items-center gap-2 rounded-sm border border-[var(--void-edge)] bg-[var(--void)] px-3 py-2 font-mono text-[11px] uppercase tracking-[0.16em] text-[var(--bone-2)] shadow-[0_16px_40px_-16px_rgba(0,0,0,0.6)] transition-colors hover:text-[var(--bone)] motion-safe:animate-[term-hint-in_0.5s_ease-out,term-hint-pulse_1.5s_ease-in-out_1.6s_2] md:flex"
           aria-label="Open command terminal"
         >
           <span className="text-[var(--signal)]">❯</span>

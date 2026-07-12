@@ -30,8 +30,8 @@ export function NoteCard({
       href={note.url}
       {...linkProps}
       className={cn(
-        "group block hairline rounded-sm bg-paper-soft transition-colors duration-300",
-        "hover:border-ink/40",
+        "group block sketch-edge rounded-sm bg-paper-soft transition-[color,transform] duration-300",
+        "hover:-translate-y-0.5 hover:rotate-[0.15deg]",
         isFeatured ? "p-8 md:p-12" : "p-6 md:p-8"
       )}
     >

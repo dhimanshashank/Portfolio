@@ -22,6 +22,7 @@ import { gsap } from "@/lib/motion/gsap";
 export function CustomCursor() {
   const dotRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
+  const trailRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     const ok = window.matchMedia(
@@ -32,6 +33,57 @@ export function CustomCursor() {
     const dot = dotRef.current;
     const ring = ringRef.current;
     if (!dot || !ring) return;
+
+    // ── Graphite trail — a faint pencil stroke the pointer leaves behind,
+    // fading out in ~a third of a second. Drawn on its own canvas under
+    // the dot/ring; the rAF loop only runs while strokes are still alive.
+    const canvas = trailRef.current;
+    const ctx = canvas?.getContext("2d") ?? null;
+    type TrailPoint = { x: number; y: number; t: number };
+    const trail: TrailPoint[] = [];
+    const TRAIL_MS = 380;
+    let trailRaf = 0;
+
+    const sizeCanvas = () => {
+      if (!canvas || !ctx) return;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.round(window.innerWidth * dpr);
+      canvas.height = Math.round(window.innerHeight * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+    sizeCanvas();
+    window.addEventListener("resize", sizeCanvas);
+
+    const drawTrail = () => {
+      if (!canvas || !ctx) return;
+      const now = performance.now();
+      while (trail.length && now - trail[0].t > TRAIL_MS) trail.shift();
+      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+      if (trail.length > 1) {
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+        for (let i = 1; i < trail.length; i++) {
+          const a = trail[i - 1];
+          const b = trail[i];
+          const age = (now - b.t) / TRAIL_MS; // 0 fresh → 1 gone
+          ctx.strokeStyle = `rgba(14, 14, 14, ${(0.12 * (1 - age)).toFixed(3)})`;
+          ctx.lineWidth = 1 + 0.6 * (1 - age);
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+          ctx.stroke();
+        }
+        trailRaf = requestAnimationFrame(drawTrail);
+      } else {
+        trail.length = 0;
+        trailRaf = 0;
+      }
+    };
+
+    const pushTrail = (x: number, y: number) => {
+      trail.push({ x, y, t: performance.now() });
+      if (!trailRaf) trailRaf = requestAnimationFrame(drawTrail);
+    };
 
     gsap.set([dot, ring], { xPercent: -50, yPercent: -50, autoAlpha: 0 });
 
@@ -54,6 +106,7 @@ export function CustomCursor() {
       dotY(e.clientY);
       ringX(e.clientX);
       ringY(e.clientY);
+      pushTrail(e.clientX, e.clientY);
     };
 
     const onLeave = () => {
@@ -101,11 +154,18 @@ export function CustomCursor() {
       document.documentElement.removeEventListener("mouseleave", onLeave);
       document.removeEventListener("mouseover", onOver);
       document.removeEventListener("mouseout", onOut);
+      window.removeEventListener("resize", sizeCanvas);
+      if (trailRaf) cancelAnimationFrame(trailRaf);
     };
   }, []);
 
   return (
     <div aria-hidden className="hidden md:block">
+      {/* Graphite trail canvas — sits just under the dot/ring */}
+      <canvas
+        ref={trailRef}
+        className="pointer-events-none fixed inset-0 z-[89] h-full w-full"
+      />
       <div
         ref={dotRef}
         className="pointer-events-none fixed left-0 top-0 z-[90] h-[5px] w-[5px] rounded-full bg-ink"

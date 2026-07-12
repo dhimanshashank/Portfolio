@@ -6,6 +6,8 @@ import { useGSAP, gsap } from "@/lib/motion/use-gsap";
 import { problems } from "@/lib/problems-data";
 import { SeverityBadge } from "./problem-card";
 import { CopyButton } from "@/components/ui/copy-button";
+import { HatchDivider } from "@/components/ui/sketch-marks";
+import { MarginDoodle } from "@/components/ui/margin-doodle";
 import { cn } from "@/lib/utils";
 
 /**
@@ -164,9 +166,15 @@ export function EngineeringLog() {
   return (
     <section
       ref={sectionRef}
-      className="relative bg-paper border-t border-ink/10"
+      className="relative bg-paper"
       aria-label="Engineering log"
     >
+      {/* Pencil-hatched section break — replaces the clean border-t rule */}
+      <div aria-hidden className="container-wide absolute inset-x-0 top-0 text-ink-2">
+        <HatchDivider />
+      </div>
+      {/* Margin annotation — pencils itself in on first scroll into view */}
+      <MarginDoodle mark="asterisk" className="left-[4%] bottom-24" size={18} rotate={-6} opacity={0.3} />
       <div
         ref={pinRef}
         className="md:motion-safe:flex md:motion-safe:h-screen md:motion-safe:flex-col md:motion-safe:justify-center"

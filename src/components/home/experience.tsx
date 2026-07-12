@@ -2,6 +2,8 @@
 
 import { motion, useReducedMotion } from "framer-motion";
 import { experience, educationLine } from "@/lib/experience-data";
+import { HatchDivider } from "@/components/ui/sketch-marks";
+import { MarginDoodle } from "@/components/ui/margin-doodle";
 
 /**
  * <Experience> — Plate II (home page)
@@ -32,9 +34,15 @@ export function Experience() {
 
   return (
     <section
-      className="relative bg-paper border-t border-ink/10"
+      className="relative bg-paper"
       aria-label="Experience"
     >
+      {/* Pencil-hatched section break — replaces the clean border-t rule */}
+      <div aria-hidden className="container-wide absolute inset-x-0 top-0 text-ink-2">
+        <HatchDivider />
+      </div>
+      {/* Margin annotation — pencils itself in on first scroll into view */}
+      <MarginDoodle mark="asterisk" className="right-[4.5%] top-28" size={20} rotate={10} />
       <div className="container-wide py-20 md:py-28">
         {/* ─── Header ─────────────────────────────────────────────────── */}
         <motion.div {...fade(0)}>

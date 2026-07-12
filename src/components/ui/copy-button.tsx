@@ -82,7 +82,40 @@ export function CopyButton({
         className
       )}
     >
-      {copied ? "copied ✓" : "copy"}
+      {copied ? (
+        <>
+          copied
+          {/* Pencil check — strokes itself in like a hand ticking a list.
+              Deliberately imperfect path, same language as sketch-marks. */}
+          <svg
+            aria-hidden
+            viewBox="0 0 14 12"
+            className="h-[0.9em] w-[1.05em]"
+            style={{ overflow: "visible" }}
+          >
+            <path
+              d="M1.5 6.5 Q 4 8.5, 5.2 10 Q 8 4.5, 12.5 1.5"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              style={{
+                strokeDasharray: 18,
+                strokeDashoffset: 18,
+                animation: "copy-check-draw 260ms cubic-bezier(0.7,0,0.3,1) 40ms forwards",
+              }}
+            />
+          </svg>
+          <style>{`
+            @keyframes copy-check-draw {
+              to { stroke-dashoffset: 0; }
+            }
+          `}</style>
+        </>
+      ) : (
+        "copy"
+      )}
     </button>
   );
 }

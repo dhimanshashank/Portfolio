@@ -187,7 +187,7 @@ export function Hero() {
                     bg-signal text-paper
                     px-6 py-3.5
                     font-mono text-[12px] uppercase tracking-[0.18em]
-                    rounded-sm
+                    sketch-btn
                     transition-colors duration-300
                     hover:bg-signal-low
                   "
@@ -208,6 +208,7 @@ export function Hero() {
                   group inline-flex items-center gap-2
                   font-mono text-[12px] uppercase tracking-[0.18em] text-ink-3
                   px-2 py-3.5
+                  sketch-link
                   transition-colors duration-300
                   hover:text-ink
                 "

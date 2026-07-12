@@ -6,6 +6,7 @@ import { useGSAP, gsap } from "@/lib/motion/use-gsap";
 import {
   SketchUnderline,
   SketchAsterisk,
+  HatchDivider,
 } from "@/components/ui/sketch-marks";
 import { LiveTrace } from "./live-trace";
 
@@ -103,9 +104,13 @@ export function WorksOn() {
   return (
     <section
       ref={sectionRef}
-      className="relative bg-paper border-t border-ink/10"
+      className="relative bg-paper"
       aria-label="Territory"
     >
+      {/* Pencil-hatched section break — replaces the clean border-t rule */}
+      <div aria-hidden className="container-wide absolute inset-x-0 top-0 text-ink-2">
+        <HatchDivider />
+      </div>
       {/* Faint blueprint grid — fills the plate's air without competing
           with the type. Same 40px cell as the architecture diagrams. */}
       <svg
@@ -236,12 +241,11 @@ export function WorksOn() {
             href="/about"
             className="
               group inline-flex items-center gap-3
-              border border-ink/20
               px-7 py-4
               font-mono text-[12px] uppercase tracking-[0.18em] text-ink
-              rounded-sm
+              sketch-btn
               transition-colors duration-300
-              hover:bg-signal hover:text-paper hover:border-signal
+              hover:bg-signal hover:text-paper
             "
           >
             Read the story

@@ -50,9 +50,9 @@ export function ProjectCard({
   const Body = (
     <article
       className={cn(
-        "group relative flex flex-col overflow-hidden bg-paper",
-        "border border-hairline transition-all duration-500",
-        href && "cursor-pointer hover:border-ink/30 hover:-translate-y-0.5",
+        "group relative flex flex-col bg-paper",
+        "sketch-edge transition-all duration-500",
+        href && "cursor-pointer hover:-translate-y-0.5 hover:-rotate-[0.2deg]",
         isFeatured
           ? "md:grid md:grid-cols-[1.35fr_1fr] md:grid-rows-1"
           : "h-full"

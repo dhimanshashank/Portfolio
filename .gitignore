@@ -39,3 +39,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# AI asset-generation masters (heavy .mp4/.png sources; shipped assets
+# live in /public — these are archives only, ~100MB)
+/design/avatar
+
+# local agent logs
+.codex-dev.log
+.codex-dev.err

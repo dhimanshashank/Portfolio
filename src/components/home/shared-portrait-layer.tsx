@@ -110,6 +110,30 @@ export function SharedPortraitLayer() {
         img.style.height = `${inner.h}px`;
       };
 
+      // Feathered edge mask — at the hero (t=1) the portrait melts into the
+      // paper on every side, the way the mobile poster's gradient feathers
+      // read; as it flies toward the desk frame (t→0) the edges sharpen so
+      // it lands as a crisp framed picture. Two gradients intersected: one
+      // horizontal, one vertical.
+      const setFeather = (t: number) => {
+        if (t <= 0.001) {
+          root.style.setProperty("mask-image", "");
+          root.style.setProperty("-webkit-mask-image", "");
+          return;
+        }
+        const left = 96 * t;
+        const right = 36 * t;
+        const top = 64 * t;
+        const bottom = 128 * t;
+        const m =
+          `linear-gradient(to right, transparent 0px, black ${left}px, black calc(100% - ${right}px), transparent 100%), ` +
+          `linear-gradient(to bottom, transparent 0px, black ${top}px, black calc(100% - ${bottom}px), transparent 100%)`;
+        root.style.setProperty("mask-image", m);
+        root.style.setProperty("mask-composite", "intersect");
+        root.style.setProperty("-webkit-mask-image", m);
+        root.style.setProperty("-webkit-mask-composite", "source-in");
+      };
+
       const applySnappedState = (raw: number) => {
         const hero = getHeroRect();
         const desk = getDeskRect();
@@ -121,10 +145,11 @@ export function SharedPortraitLayer() {
           landed ? "contain" : "cover",
           landed ? "center" : "top"
         );
-        applyRect(outer, inner, {
-          radius: landed ? 0 : 2,
-          shadow: landed ? "" : "drop-shadow(0 8px 16px rgba(26,24,21,0.08))",
-        });
+        // No sheet shadow in either resting state — at the hero the portrait
+        // is drawn ON the page (feathered, shadowless); on the desk it's a
+        // framed picture (crisp, the drawn frame supplies the edge).
+        applyRect(outer, inner, { radius: 0, shadow: "" });
+        setFeather(landed ? 0 : 1);
         root.style.opacity = String(getStageOpacity());
       };
 
@@ -155,10 +180,17 @@ export function SharedPortraitLayer() {
 
         const roll = (pickUp - settle) * -1.4;
         const scale = 1 + hover * 0.02;
+        // Shadow rides the hover arc only: zero at both resting states
+        // (drawn-on-page at the hero, framed picture on the desk), peaking
+        // mid-flight while the sheet is "off the paper".
         applyRect(outer, inner, {
           radius: lerp(2, 0, e),
-          shadow: `drop-shadow(0 ${6 + hover * 14}px ${12 + hover * 22}px rgba(26,24,21,${0.06 + hover * 0.1}))`,
+          shadow:
+            hover > 0.02
+              ? `drop-shadow(0 ${4 + hover * 14}px ${10 + hover * 22}px rgba(26,24,21,${(hover * 0.16).toFixed(3)}))`
+              : "",
         });
+        setFeather(1 - e);
         root.style.transform = `translate(${outer.x}px, ${outer.y}px) rotate(${roll}deg) scale(${scale})`;
         root.style.opacity = String(getStageOpacity());
       };
@@ -199,6 +231,7 @@ export function SharedPortraitLayer() {
       return () => {
         if (!reduce) gsap.ticker.remove(render);
         flightST.kill();
+        setFeather(0);
         root.style.opacity = "0";
         root.style.filter = "";
         root.style.transform = "translate(0px, 0px)";

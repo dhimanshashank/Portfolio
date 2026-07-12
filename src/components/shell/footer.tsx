@@ -23,7 +23,7 @@ export function Footer() {
             href={person.github.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:text-signal transition-colors"
+            className="hover:text-signal transition-colors sketch-link"
           >
             GitHub ↗
           </a>
@@ -31,19 +31,19 @@ export function Footer() {
             href={person.linkedin.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:text-signal transition-colors"
+            className="hover:text-signal transition-colors sketch-link"
           >
             LinkedIn ↗
           </a>
           <a
             href={`mailto:${person.email}`}
-            className="hover:text-signal transition-colors"
+            className="hover:text-signal transition-colors sketch-link"
           >
             Email ↗
           </a>
           <a
             href={person.leetcode.url}
-            className="hover:text-signal transition-colors"
+            className="hover:text-signal transition-colors sketch-link"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -57,7 +57,7 @@ export function Footer() {
             href="https://assets.shashankdhiman.in/Shashank_Resume.pdf"
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:text-signal transition-colors"
+            className="hover:text-signal transition-colors sketch-link"
           >
             Resume ↗
           </a>

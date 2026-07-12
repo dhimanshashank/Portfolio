@@ -336,6 +336,10 @@ export function PaperPlaneFlight() {
               }}
               fill="none"
             >
+              {/* opaque paper base — the plane is folded from the page's own
+                  paper, so nothing behind it shows through the wings */}
+              <path d="M46 17 L5 4.5 Q10.5 11.5 13.6 16.4 Z" fill="var(--paper)" />
+              <path d="M46 17 L8 29.5 Q11 22.5 13.6 16.8 Z" fill="var(--paper)" />
               {/* top wing — lit */}
               <path
                 d="M46 17 L5 4.5 Q10.5 11.5 13.6 16.4 Z"

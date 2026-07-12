@@ -259,6 +259,12 @@ select {
   to   { opacity: 1; transform: translateY(0); }
 }
 
+/* Soft attention pulse — runs twice after the hint settles, then rests. */
+@keyframes term-hint-pulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.035); }
+}
+
 /* Reduced-motion — kill all transforms & long transitions when requested */
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -298,6 +304,121 @@ select {
 
 @utility hairline-b {
   border-bottom: 1px solid var(--hairline);
+}
+
+/* ─── PAPER TEXTURE (site-wide) ────────────────────────────────────────
+   One fixed sheet the whole site is "drawn on". Sits at z-60: above every
+   page surface (opaque bg-paper panels would otherwise punch holes in it)
+   but below the functional overlays — terminal chip (80), cursor (90),
+   terminal (95), route transition (100). Multiply blend means it darkens
+   the warm paper by a few percent and vanishes into dark ink/graphite, so
+   text contrast is never reduced.
+   Layers, back to front:
+     1. vignette        — soft edge darkening, cinematic desk-lamp falloff
+     2. fibers          — anisotropic streaks, the pulp direction of the sheet
+     3. mottling        — low-frequency clouds, handmade-paper unevenness
+     4. tooth grain     — fine speckle the pencil would catch on
+   Per-layer strength is baked into each SVG's rect opacity; the element's
+   own opacity is the single master knob. */
+.paper-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+  opacity: 0.17;
+  background-image:
+    radial-gradient(ellipse 130% 110% at 50% 42%, transparent 60%, rgba(26, 24, 21, 0.6) 100%),
+    /* Graphite smudges — asymmetric hand-shaded patches, the side of a
+       palm resting on the sheet. Deliberately uneven placement. */
+    radial-gradient(42% 30% at 5% 3%, rgba(26, 24, 21, 0.38), transparent 70%),
+    radial-gradient(26% 38% at 99% 34%, rgba(26, 24, 21, 0.22), transparent 70%),
+    radial-gradient(36% 26% at 10% 98%, rgba(26, 24, 21, 0.3), transparent 70%),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='700' height='700'><filter id='f'><feTurbulence type='fractalNoise' baseFrequency='0.004 0.12' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%' height='100%' filter='url(%23f)' opacity='0.25'/></svg>"),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='560' height='560'><filter id='m'><feTurbulence type='fractalNoise' baseFrequency='0.012' numOctaves='5' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%' height='100%' filter='url(%23m)' opacity='0.35'/></svg>"),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%' height='100%' filter='url(%23g)' opacity='0.55'/></svg>");
+  background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%, 700px 700px, 560px 560px, 220px 220px;
+}
+
+/* ─── HAND-DRAWN UI ────────────────────────────────────────────────────
+   Pencil-built interface primitives. Shapes wobble the way a hand cuts
+   them; hovers underline the way a hand annotates. Pair with the sketch
+   marks in src/components/ui/sketch-marks.tsx.
+   ─────────────────────────────────────────────────────────────────── */
+
+/* Wobbly hand-cut button shape + graphite outline. Drop on any button
+   or CTA link; keeps whatever fill it already has.
+   Hover re-traces the shape (the wobble shifts, like a hand going over
+   the outline again); press squishes into the paper. Both stay subtle. */
+@utility sketch-btn {
+  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+  border: 1.5px solid rgba(14, 14, 14, 0.35);
+  transition:
+    border-radius 260ms ease-out,
+    transform 140ms ease-out,
+    background-color 300ms,
+    color 300ms,
+    border-color 300ms;
+}
+.sketch-btn:hover {
+  border-radius: 15px 225px 15px 255px / 255px 15px 225px 15px;
+  border-color: rgba(14, 14, 14, 0.5);
+}
+.sketch-btn:active {
+  transform: scale(0.97);
+}
+
+/* Pencil underline on hover — the wavy double stroke from SketchUnderline
+   as a data-URI, so any inline link can take it without extra markup. */
+@utility sketch-link {
+  position: relative;
+}
+.sketch-link::after {
+  content: "";
+  position: absolute;
+  left: -2px;
+  right: -2px;
+  bottom: -5px;
+  height: 6px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 160ms ease-out;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 14' preserveAspectRatio='none'><g fill='none' stroke='rgba(14,14,14,0.75)' stroke-linecap='round'><path d='M3 7 Q 28 3, 55 6.5 T 110 6 T 165 7 L 197 6' stroke-width='1.6'/><path d='M8 10 Q 50 7.5, 90 10.5 T 160 10 L 192 9.5' stroke-width='1' opacity='0.55'/></g></svg>") center / 100% 100% no-repeat;
+}
+.sketch-link:hover::after,
+.sketch-link:focus-visible::after {
+  opacity: 1;
+}
+
+/* Hand-drawn card frame — replaces a clean 1px hairline border with the
+   imperfect SketchFrame rectangle, stretched to the card's aspect ratio.
+   vector-effect keeps the stroke weight constant while the box stretches.
+   On hover a second, slightly-offset trace fades in over the first — the
+   hand going over the frame again, darkening it. */
+@utility sketch-edge {
+  position: relative;
+}
+.sketch-edge::after {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  pointer-events: none;
+  z-index: 2;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 260' preserveAspectRatio='none'><g fill='none' stroke='rgba(14,14,14,0.5)' stroke-width='1.7' stroke-linecap='round'><path vector-effect='non-scaling-stroke' d='M4 5 Q 70 1.5, 100 3 T 196 5'/><path vector-effect='non-scaling-stroke' d='M196 4 Q 198.5 90, 197 130 T 195 256'/><path vector-effect='non-scaling-stroke' d='M197 255 Q 130 258.5, 100 257 T 3 255'/><path vector-effect='non-scaling-stroke' d='M4 256 Q 1.5 170, 3 130 T 5 4'/></g></svg>") center / 100% 100% no-repeat;
+}
+.sketch-edge::before {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0;
+  transition: opacity 280ms ease-out;
+  /* Second trace — same frame, wobbles bowed the other way */
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 260' preserveAspectRatio='none'><g fill='none' stroke='rgba(14,14,14,0.45)' stroke-width='1.4' stroke-linecap='round'><path vector-effect='non-scaling-stroke' d='M4 4 Q 60 6, 105 4.5 T 196 3.5'/><path vector-effect='non-scaling-stroke' d='M197 5 Q 195 80, 196.5 140 T 196 255'/><path vector-effect='non-scaling-stroke' d='M196 256 Q 140 254, 95 255.5 T 4 256.5'/><path vector-effect='non-scaling-stroke' d='M3 255 Q 5 180, 3.5 120 T 4 5'/></g></svg>") center / 100% 100% no-repeat;
+}
+.sketch-edge:hover::before {
+  opacity: 1;
 }
 
 @utility grain {

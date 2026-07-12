@@ -7,6 +7,7 @@ import { useReducedMotion } from "framer-motion";
 import { homepageProjects, type WorkProject } from "@/lib/work-data";
 import { WorkDeck } from "./work-deck";
 import { assetUrl } from "@/lib/assets";
+import { MarginDoodle } from "@/components/ui/margin-doodle";
 
 const NUM_WORDS = ["Zero", "One", "Two", "Three", "Four", "Five", "Six"] as const;
 
@@ -39,6 +40,8 @@ const AUTOPLAY_MS = 5200;
 export function SelectedWork() {
   return (
     <section className="relative bg-paper" aria-label="Selected work">
+      {/* Margin annotation — pencils itself in on first scroll into view */}
+      <MarginDoodle mark="arrow" className="left-[3.5%] top-44" size={30} rotate={-18} opacity={0.3} />
       {/* Section header */}
       <div className="container-wide pt-32 pb-12 md:pt-40 md:pb-16">
         <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-ink-3">

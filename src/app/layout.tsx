@@ -164,6 +164,11 @@ export default function RootLayout({
           <ScrollProgress />
         </LenisProvider>
 
+        {/* Site-wide handmade-paper texture + soft vignette. One fixed
+            multiply-blended sheet over all page surfaces (z-60), under the
+            functional overlays. Styled in globals.css → .paper-overlay. */}
+        <div aria-hidden className="paper-overlay" />
+
         {/* Vercel telemetry — page views + Web Vitals. Both inject scripts
             only in production and respect Do Not Track. Safe to leave on
             in dev (they no-op locally). */}
