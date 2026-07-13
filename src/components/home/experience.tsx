@@ -4,6 +4,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { experience, educationLine } from "@/lib/experience-data";
 import { HatchDivider } from "@/components/ui/sketch-marks";
 import { MarginDoodle } from "@/components/ui/margin-doodle";
+import { ShippedStamp } from "@/components/ui/shipped-stamp";
 
 /**
  * <Experience> — Plate II (home page)
@@ -127,17 +128,25 @@ export function Experience() {
                 </p>
               </div>
 
-              {/* Tags */}
-              <ul className="flex flex-wrap gap-1.5 md:justify-end md:self-start">
-                {e.tags.map((tg) => (
-                  <li
-                    key={tg}
-                    className="font-mono text-[10px] lowercase tracking-[0.06em] text-ink-3 px-2 py-1 border border-ink/12 rounded-sm"
-                  >
-                    {tg}
-                  </li>
-                ))}
-              </ul>
+              {/* Stamp + tags */}
+              <div className="flex flex-col gap-3 md:items-end md:self-start">
+                {/* Rubber-stamp verdict — the section title made literal.
+                    Current role reads IN PRODUCTION; past ones SHIPPED. */}
+                <ShippedStamp
+                  label={e.current ? "IN PRODUCTION" : "SHIPPED"}
+                  rotate={i % 2 === 0 ? -7 : 5}
+                />
+                <ul className="flex flex-wrap gap-1.5 md:justify-end">
+                  {e.tags.map((tg) => (
+                    <li
+                      key={tg}
+                      className="font-mono text-[10px] lowercase tracking-[0.06em] text-ink-3 px-2 py-1 border border-ink/12 rounded-sm"
+                    >
+                      {tg}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </motion.li>
           ))}
         </ol>

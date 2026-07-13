@@ -185,6 +185,13 @@ export const commands: Command[] = [
     run: ({ navigate }) => navigate("/about"),
   },
   {
+    name: "play",
+    aliases: ["draw", "sketch"],
+    summary: "open the drafting table — draw something",
+    group: "navigate",
+    run: ({ navigate }) => navigate("/play"),
+  },
+  {
     name: "work",
     aliases: ["ls", "projects"],
     summary: "list selected work",

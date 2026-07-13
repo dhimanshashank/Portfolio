@@ -19,6 +19,7 @@ const links = [
   { href: "/work", label: "Work" },
   { href: "/about", label: "About" },
   { href: "/log", label: "Log" },
+  { href: "/play", label: "Play" },
   { href: "/contact", label: "Contact" },
 ];
 
