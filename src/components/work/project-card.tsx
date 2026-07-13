@@ -86,8 +86,9 @@ export function ProjectCard({
         )}
       >
         <div>
-          {/* Eyebrow row: num · context */}
-          <div className="mb-6 flex items-baseline justify-between gap-4">
+          {/* Eyebrow row: num · context. Stacks below sm — the two mono
+              labels collide into a 3-line wrap at 375px otherwise. */}
+          <div className="mb-6 flex flex-col gap-1.5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
             <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-signal">
               {project.num} / {project.tagline}
             </span>
@@ -192,7 +193,7 @@ export function ProjectCard({
                 href={project.liveUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="relative z-20 font-mono text-[10px] uppercase tracking-[0.18em] text-signal hover:text-ink transition-colors"
+                className="relative z-20 -my-2.5 -mr-3 inline-flex min-h-11 items-center px-3 py-2.5 font-mono text-[10px] uppercase tracking-[0.18em] text-signal hover:text-ink transition-colors"
               >
                 Live ↗
               </a>

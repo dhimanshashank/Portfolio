@@ -111,18 +111,20 @@ export function Nav() {
             </button>
           </nav>
 
-          {/* Mobile controls — terminal chip + hamburger */}
-          <div className="md:hidden flex items-center gap-1">
+          {/* Mobile controls — terminal chip + hamburger. Both are 44px
+              (h-11 w-11) touch targets; the glyphs stay small, the hit
+              area doesn't. */}
+          <div className="md:hidden flex items-center">
             <button
               type="button"
               onClick={openTerminal}
               aria-label="Open command terminal"
-              className="text-ink-3 hover:text-signal transition-colors p-1 font-mono text-[14px] leading-none tracking-tight"
+              className="flex h-11 w-11 items-center justify-center text-ink-3 hover:text-signal transition-colors font-mono text-[14px] leading-none tracking-tight"
             >
               ❯_
             </button>
             <button
-              className="text-ink-3 hover:text-ink transition-colors p-1 -mr-1"
+              className="flex h-11 w-11 items-center justify-center text-ink-3 hover:text-ink transition-colors -mr-2"
               onClick={() => setOpen((v) => !v)}
               aria-label={open ? "Close menu" : "Open menu"}
             >

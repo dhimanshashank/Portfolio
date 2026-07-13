@@ -35,7 +35,7 @@ export function Experience() {
 
   return (
     <section
-      className="relative bg-paper"
+      className="relative overflow-x-clip bg-paper"
       aria-label="Experience"
     >
       {/* Pencil-hatched section break — replaces the clean border-t rule */}
@@ -128,13 +128,17 @@ export function Experience() {
                 </p>
               </div>
 
-              {/* Stamp + tags */}
-              <div className="flex flex-col gap-3 md:items-end md:self-start">
+              {/* Stamp + tags. Mobile: stamp sits at the right end of the
+                  row so its rotated corners bleed inward, not off the left
+                  viewport edge; tags take the left. Desktop: stacked,
+                  right-aligned as before. */}
+              <div className="flex flex-row-reverse items-center justify-between gap-3 md:flex-col md:items-end md:justify-start md:self-start">
                 {/* Rubber-stamp verdict — the section title made literal.
                     Current role reads IN PRODUCTION; past ones SHIPPED. */}
                 <ShippedStamp
                   label={e.current ? "IN PRODUCTION" : "SHIPPED"}
                   rotate={i % 2 === 0 ? -7 : 5}
+                  className="mr-4 shrink-0 origin-right md:mr-0 md:origin-center"
                 />
                 <ul className="flex flex-wrap gap-1.5 md:justify-end">
                   {e.tags.map((tg) => (

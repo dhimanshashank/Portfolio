@@ -82,18 +82,18 @@ export function Hero() {
       ref={heroRef}
       className="
         relative overflow-hidden bg-paper
-        min-h-screen
+        min-h-[calc(100svh-84px)]
         md:h-screen md:min-h-[640px]
       "
     >
       {/* ─── Split grid ────────────────────────────────────────────────────
-          On mobile: portrait row above text. Portrait sized to 42vh (was
-          55vh) so the recruiter-anchor line + CTAs reach above the fold.
-          The section is min-h-screen, not h-screen, so the text row can
-          grow naturally without clipping.
-          On desktop: 55/45 split with text left, portrait right.
+          On mobile: the portrait fills the visible viewport below the 84px
+          navigation. The extra vertical room keeps the face clear and moves
+          the copy into the lower paper-feather transition.
+          On desktop: 55/45 split with text left, portrait right (unchanged;
+          the flight layer measures the same anchor rect as before).
           ─────────────────────────────────────────────────────────────── */}
-      <div className="relative grid grid-cols-1 grid-rows-[42vh_auto] md:h-full md:grid-cols-[1.22fr_1fr] md:grid-rows-1">
+      <div className="relative grid min-h-[calc(100svh-84px)] grid-cols-1 md:h-full md:min-h-0 md:grid-cols-[1.22fr_1fr] md:grid-rows-1">
 
         {/* ── TEXT COLUMN ─────────────────────────────────────────────── */}
         <div
@@ -102,13 +102,30 @@ export function Hero() {
             order-2 md:order-1
             relative z-10
             flex flex-col justify-center
+            max-md:absolute max-md:inset-x-0 max-md:bottom-0
+            max-md:justify-end
             px-6 md:px-10 lg:pl-[clamp(40px,6vw,96px)] lg:pr-6
-            py-10 md:py-0
+            py-10 max-md:pb-8 max-md:pt-14 md:py-0
             will-change-transform
           "
         >
-          {/* Eyebrow — coordinates, not a job title */}
-          <p className="hero-eyebrow font-mono text-[11px] uppercase tracking-[0.22em] text-signal mb-5 md:mb-8 opacity-0">
+          {/* Paper feather behind the mobile overlay — solid under the
+              CTAs, dissolving up into the portrait. Desktop text sits on
+              plain paper and never needs it. */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 -z-10 md:hidden"
+            style={{
+              background:
+                "linear-gradient(to top, var(--paper) 0%, var(--paper) 30%, rgba(245,241,232,0.9) 55%, rgba(245,241,232,0.4) 80%, transparent 100%)",
+            }}
+          />
+
+          {/* Eyebrow — coordinates, not a job title. Hidden on mobile: it
+              would sit directly over the portrait's face where the feather
+              gradient is thinnest, and the location already lives in the
+              meta line below. */}
+          <p className="hero-eyebrow hidden font-mono text-[11px] uppercase tracking-[0.22em] text-signal mb-5 md:mb-8 opacity-0 md:block">
             <span aria-hidden>▍</span> AI infrastructure · Chandigarh, India
           </p>
 
@@ -154,6 +171,9 @@ export function Hero() {
                 mono lines here read as clutter, and the sketch-style
                 MU mark didn't render legibly at 14px anyway. */}
             <div className="flex flex-col gap-1.5">
+              {/* Mobile shows one condensed line over the portrait overlay;
+                  the location segment and the second stats line return at
+                  wider widths where they wrap cleanly. */}
               <p className="font-mono text-[12px] uppercase tracking-[0.18em] text-ink-3">
                 <a
                   href={person.github.url}
@@ -165,11 +185,13 @@ export function Hero() {
                 </a>
                 <span className="mx-3 text-ink-4">·</span>
                 real-time + ai infra
-                <span className="mx-3 text-ink-4">·</span>
-                Chandigarh, India
+                <span className="hidden min-[420px]:inline">
+                  <span className="mx-3 text-ink-4">·</span>
+                  Chandigarh, India
+                </span>
               </p>
 
-              <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-ink-4">
+              <p className="hidden font-mono text-[11px] uppercase tracking-[0.18em] text-ink-4 md:block">
                 1+ year shipped
                 <span className="mx-3">·</span>
                 4 production systems
@@ -231,7 +253,7 @@ export function Hero() {
           className="
             order-1 md:order-2
             relative
-            h-[42vh] md:h-full
+            h-[calc(100svh-84px)] min-h-[560px] md:h-full md:min-h-0
             will-change-transform
           "
         >

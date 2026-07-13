@@ -45,19 +45,22 @@ export function PortraitPanel({
     <div
       ref={wrapRef}
       className={cn(
-        // No right padding → portrait bleeds to viewport edge.
-        // Left padding keeps a small gap from the text column on desktop.
+        // Mobile: zero padding — the portrait is a full-bleed backdrop.
+        // Desktop: left/top padding keeps a small gap from the text column;
+        // no right padding so the portrait bleeds to the viewport edge.
         "relative h-full w-full bg-paper",
-        "pl-4 pr-0 pt-4 pb-0 md:pl-6 md:pr-0 md:pt-6 md:pb-0 lg:pl-10 lg:pr-0 lg:pt-8 lg:pb-0",
+        "p-0 md:pl-6 md:pr-0 md:pt-6 md:pb-0 lg:pl-10 lg:pr-0 lg:pt-8 lg:pb-0",
         className
       )}
     >
-      <div className="relative isolate h-full w-full overflow-hidden rounded-l-sm bg-paper-soft">
+      <div className="relative isolate h-full w-full overflow-hidden rounded-none md:rounded-l-sm bg-paper-soft">
         {/* Hero anchor: the shared portrait layer docks to this rect. The
-            inline poster exists only until the shared layer is mounted. */}
+            inline poster exists only until the shared layer is mounted.
+            Mobile fills the whole panel; the desktop inset is unchanged so
+            the flight layer measures the exact same rect as before. */}
         <div
           data-hero-portrait-anchor
-          className="absolute inset-[2%_0_6%_0] overflow-hidden rounded-l-sm"
+          className="absolute inset-0 md:inset-[2%_0_6%_0] overflow-hidden rounded-none md:rounded-l-sm"
         >
           {!sharedReady && !errored && (
             <Image
@@ -110,10 +113,11 @@ export function PortraitPanel({
           }}
         />
 
-        {/* Left feather — blends into text column */}
+        {/* Left feather — blends into text column (desktop only; the
+            mobile full-bleed backdrop has no text column beside it) */}
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-y-0 left-0 z-20 w-24 md:w-32"
+          className="pointer-events-none absolute inset-y-0 left-0 z-20 hidden w-24 md:block md:w-32"
           style={{
             background:
               "linear-gradient(to right, var(--paper) 0%, rgba(245,241,232,0.6) 35%, transparent 100%)",
@@ -128,10 +132,11 @@ export function PortraitPanel({
               "linear-gradient(to bottom, var(--paper) 0%, rgba(245,241,232,0.45) 50%, transparent 100%)",
           }}
         />
-        {/* Bottom feather */}
+        {/* Bottom feather — on mobile it reaches ~45% up the portrait so
+            the image dissolves into the text overlay's paper gradient */}
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-32 md:h-44"
+          className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-[45%] md:h-44"
           style={{
             background:
               "linear-gradient(to top, var(--paper) 0%, rgba(245,241,232,0.7) 40%, transparent 100%)",
@@ -148,8 +153,9 @@ export function PortraitPanel({
           }}
         />
 
-        {/* Corner signature */}
-        <div className="absolute bottom-5 right-5 z-20 font-mono text-[10px] tracking-[0.22em] uppercase text-ink-3 opacity-60">
+        {/* Corner signature — desktop only; on mobile it would collide
+            with the text overlay sitting on the portrait's lower third */}
+        <div className="absolute bottom-5 right-5 z-20 hidden font-mono text-[10px] tracking-[0.22em] uppercase text-ink-3 opacity-60 md:block">
           sd · {new Date().getFullYear()}
         </div>
 

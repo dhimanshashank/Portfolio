@@ -276,7 +276,7 @@ function DeckCardSurface({
               rel="noopener noreferrer"
               draggable={false}
               onClick={(e) => e.stopPropagation()}
-              className="font-mono text-[10px] uppercase tracking-[0.18em] text-signal"
+              className="-my-2.5 -mr-3 inline-flex min-h-11 items-center px-3 py-2.5 font-mono text-[10px] uppercase tracking-[0.18em] text-signal"
             >
               Live ↗
             </a>

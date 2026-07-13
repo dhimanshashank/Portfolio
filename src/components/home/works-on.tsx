@@ -69,34 +69,71 @@ export function WorksOn() {
         "[data-works-cta]"
       );
 
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top 78%",
-          toggleActions: "play none none reverse",
-        },
+      const allTargets = [eyebrow, ...columns, divider, punchline, cta].filter(
+        Boolean
+      ) as HTMLElement[];
+
+      const mm = gsap.matchMedia();
+
+      // Desktop — one choreographed timeline off the section trigger.
+      mm.add("(min-width: 769px) and (prefers-reduced-motion: no-preference)", () => {
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 78%",
+            toggleActions: "play none none reverse",
+          },
+        });
+
+        if (eyebrow) {
+          tl.fromTo(eyebrow, { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, duration: 0.5, ease: "power2.out" }, 0);
+        }
+        if (columns.length) {
+          tl.fromTo(
+            columns,
+            { autoAlpha: 0, y: 18 },
+            { autoAlpha: 1, y: 0, duration: 0.6, ease: "power2.out", stagger: 0.12 },
+            0.1
+          );
+        }
+        if (divider) {
+          tl.fromTo(divider, { autoAlpha: 0, scaleX: 0 }, { autoAlpha: 1, scaleX: 1, duration: 0.7, ease: "power2.out", transformOrigin: "center" }, 0.45);
+        }
+        if (punchline) {
+          tl.fromTo(punchline, { autoAlpha: 0, y: 14 }, { autoAlpha: 1, y: 0, duration: 0.7, ease: "power2.out" }, 0.55);
+        }
+        if (cta) {
+          tl.fromTo(cta, { autoAlpha: 0, y: 14 }, { autoAlpha: 1, y: 0, duration: 0.6, ease: "power2.out" }, 0.75);
+        }
       });
 
-      if (eyebrow) {
-        tl.fromTo(eyebrow, { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, duration: 0.5, ease: "power2.out" }, 0);
-      }
-      if (columns.length) {
-        tl.fromTo(
-          columns,
-          { autoAlpha: 0, y: 18 },
-          { autoAlpha: 1, y: 0, duration: 0.6, ease: "power2.out", stagger: 0.12 },
-          0.1
-        );
-      }
-      if (divider) {
-        tl.fromTo(divider, { autoAlpha: 0, scaleX: 0 }, { autoAlpha: 1, scaleX: 1, duration: 0.7, ease: "power2.out", transformOrigin: "center" }, 0.45);
-      }
-      if (punchline) {
-        tl.fromTo(punchline, { autoAlpha: 0, y: 14 }, { autoAlpha: 1, y: 0, duration: 0.7, ease: "power2.out" }, 0.55);
-      }
-      if (cta) {
-        tl.fromTo(cta, { autoAlpha: 0, y: 14 }, { autoAlpha: 1, y: 0, duration: 0.6, ease: "power2.out" }, 0.75);
-      }
+      // Mobile — per-element early fades. The tall centered section meant
+      // the single section-level trigger fired late on phones, leaving the
+      // plate looking blank on entry. Same pattern as engineering-log's
+      // mobile branch.
+      mm.add("(max-width: 768px) and (prefers-reduced-motion: no-preference)", () => {
+        for (const el of allTargets) {
+          gsap.fromTo(
+            el,
+            { autoAlpha: 0, y: 14 },
+            {
+              autoAlpha: 1,
+              y: 0,
+              duration: 0.55,
+              ease: "power2.out",
+              scrollTrigger: { trigger: el, start: "top 92%" },
+            }
+          );
+        }
+      });
+
+      // Reduced motion — everything simply visible. Without this branch the
+      // inline opacity:0 styles would leave the section permanently blank.
+      mm.add("(prefers-reduced-motion: reduce)", () => {
+        gsap.set(allTargets, { autoAlpha: 1 });
+      });
+
+      return () => mm.revert();
     },
     { scope: sectionRef as React.RefObject<HTMLElement> }
   );
@@ -208,7 +245,7 @@ export function WorksOn() {
             style={{ width: 14, height: 14, opacity: 0.5 }}
           />
           <h2
-            className="font-display italic text-ink max-w-[22ch]"
+            className="font-display italic text-ink max-w-[22ch] text-balance"
             style={{
               fontSize: "clamp(28px, 3.8vw, 48px)",
               lineHeight: 1.18,
@@ -217,6 +254,8 @@ export function WorksOn() {
             }}
           >
             The system is the{" "}
+            {/* Period lives INSIDE the nowrap span — otherwise "portrait"
+                wrapping at 375px leaves the "." orphaned on its own line. */}
             <span className="relative inline-block whitespace-nowrap">
               <span className="text-signal">portrait</span>
               <span
@@ -226,8 +265,8 @@ export function WorksOn() {
               >
                 <SketchUnderline color="currentColor" weight={1.2} drawMs={900} />
               </span>
+              .
             </span>
-            .
           </h2>
         </div>
 

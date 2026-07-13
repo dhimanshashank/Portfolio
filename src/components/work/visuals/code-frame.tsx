@@ -66,6 +66,7 @@ export function CodeFrame({
       <pre
         ref={preRef}
         className="
+          scroll-hint-x-dark
           flex-1 overflow-auto
           px-5 py-4
           font-mono text-bone
@@ -73,7 +74,7 @@ export function CodeFrame({
           [-webkit-overflow-scrolling:touch]
         "
         style={{
-          fontSize: "clamp(11px, 1.05vw, 13px)",
+          fontSize: "clamp(12px, 1.05vw, 13px)",
           lineHeight: 1.65,
           fontFeatureSettings: '"calt", "liga"',
         }}

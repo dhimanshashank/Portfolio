@@ -158,6 +158,7 @@ export function ProblemCard({ problem }: { problem: EngineeringProblem }) {
           </div>
           <div
             className="
+              scroll-hint-x-light
               relative rounded-sm border border-ink/12
               bg-paper px-4 py-3 md:px-5 md:py-4
               overflow-x-auto [-webkit-overflow-scrolling:touch]
@@ -176,7 +177,7 @@ export function ProblemCard({ problem }: { problem: EngineeringProblem }) {
                 <p
                   key={i}
                   className={cn(
-                    "font-mono text-[11px] md:text-[12px] leading-relaxed whitespace-pre",
+                    "font-mono text-[12px] leading-relaxed whitespace-pre",
                     // Collapsed on mobile → show only the smoking-gun line.
                     !isHighlight && !expanded && "hidden md:block",
                     isHighlight

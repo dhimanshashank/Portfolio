@@ -408,8 +408,10 @@ export function Playboard() {
 
   // ── UI ──────────────────────────────────────────────────────────────
 
+  // min-h-11 keeps the rail at 44px touch height on phones; desktop
+  // collapses back to the compact chip height.
   const actionBtn =
-    "px-3.5 py-2 font-mono text-[11px] uppercase tracking-[0.16em] sketch-btn transition-colors duration-300 cursor-pointer select-none";
+    "px-3.5 py-2 min-h-11 md:min-h-0 font-mono text-[11px] uppercase tracking-[0.16em] sketch-btn transition-colors duration-300 cursor-pointer select-none";
 
   return (
     <div>

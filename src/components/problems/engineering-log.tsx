@@ -226,7 +226,7 @@ export function EngineeringLog() {
                 </p>
                 <CopyButton text={clueLines.join("\n")} variant="dark" />
               </div>
-              <pre className="overflow-x-auto [-webkit-overflow-scrolling:touch] font-mono text-[12px] md:text-[13px] leading-[1.9] text-[var(--bone)]">
+              <pre className="scroll-hint-x-dark overflow-x-auto [-webkit-overflow-scrolling:touch] font-mono text-[12px] md:text-[13px] leading-[1.9] text-[var(--bone)]">
                 {clueLines.map((line, i) => (
                   <span
                     key={i}

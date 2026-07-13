@@ -26,6 +26,11 @@ const MARKS = {
  *
  * Draw-in runs once per mount via IntersectionObserver. Reduced-motion
  * users get the mark instantly (the global CSS kills the stroke animation).
+ *
+ * Deliberately md+ only: callers position these into gutter coordinates
+ * (e.g. right-[4.5%]) that don't exist at phone widths — 24px of container
+ * padding means a doodle would sit on top of the text column. Mobile keeps
+ * its sketch identity via stamps, hatch dividers and sketch-edge frames.
  */
 export function MarginDoodle({
   mark = "asterisk",

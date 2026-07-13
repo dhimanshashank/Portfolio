@@ -18,12 +18,14 @@ export function Footer() {
           {person.name} · {person.role} · {person.location}
         </p>
 
-        <div className="flex flex-wrap items-center gap-x-6 gap-y-3 font-mono text-[11px] uppercase tracking-[0.18em] text-ink-3">
+        {/* Mobile: 2-column grid of 44px-tall tap rows; md+: the original
+            inline wrap row. */}
+        <div className="grid grid-cols-2 gap-x-4 font-mono text-[11px] uppercase tracking-[0.18em] text-ink-3 md:flex md:flex-wrap md:items-center md:gap-x-6 md:gap-y-3">
           <a
             href={person.github.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:text-signal transition-colors sketch-link"
+            className="inline-flex min-h-11 items-center py-2.5 md:min-h-0 md:py-0 hover:text-signal transition-colors sketch-link"
           >
             GitHub ↗
           </a>
@@ -31,19 +33,19 @@ export function Footer() {
             href={person.linkedin.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:text-signal transition-colors sketch-link"
+            className="inline-flex min-h-11 items-center py-2.5 md:min-h-0 md:py-0 hover:text-signal transition-colors sketch-link"
           >
             LinkedIn ↗
           </a>
           <a
             href={`mailto:${person.email}`}
-            className="hover:text-signal transition-colors sketch-link"
+            className="inline-flex min-h-11 items-center py-2.5 md:min-h-0 md:py-0 hover:text-signal transition-colors sketch-link"
           >
             Email ↗
           </a>
           <a
             href={person.leetcode.url}
-            className="hover:text-signal transition-colors sketch-link"
+            className="inline-flex min-h-11 items-center py-2.5 md:min-h-0 md:py-0 hover:text-signal transition-colors sketch-link"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -57,7 +59,7 @@ export function Footer() {
             href="https://assets.shashankdhiman.in/Shashank_Resume.pdf"
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:text-signal transition-colors sketch-link"
+            className="inline-flex min-h-11 items-center py-2.5 md:min-h-0 md:py-0 hover:text-signal transition-colors sketch-link"
           >
             Resume ↗
           </a>
@@ -70,7 +72,7 @@ export function Footer() {
             href="https://mastersunion.org"
             target="_blank"
             rel="noopener noreferrer"
-            className="group inline-flex items-center gap-2 hover:text-signal transition-colors"
+            className="group inline-flex min-h-11 items-center gap-2 py-2.5 max-md:col-span-2 md:min-h-0 md:py-0 hover:text-signal transition-colors"
             aria-label="Currently at Masters' Union (EdTech)"
           >
             <span

@@ -265,6 +265,24 @@ select {
   50%      { transform: scale(1.035); }
 }
 
+/* Terminal caret blink (skills mini-terminal on mobile). The global
+   reduced-motion rule would freeze this at the LAST keyframe (invisible),
+   so an explicit override pins it to a visible static caret instead. */
+@keyframes term-caret-blink {
+  0%, 49%   { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+.term-caret {
+  color: var(--signal);
+  animation: term-caret-blink 1.1s step-end infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .term-caret {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+}
+
 /* Reduced-motion — kill all transforms & long transitions when requested */
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -386,7 +404,9 @@ select {
   background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 14' preserveAspectRatio='none'><g fill='none' stroke='rgba(14,14,14,0.75)' stroke-linecap='round'><path d='M3 7 Q 28 3, 55 6.5 T 110 6 T 165 7 L 197 6' stroke-width='1.6'/><path d='M8 10 Q 50 7.5, 90 10.5 T 160 10 L 192 9.5' stroke-width='1' opacity='0.55'/></g></svg>") center / 100% 100% no-repeat;
 }
 .sketch-link:hover::after,
-.sketch-link:focus-visible::after {
+.sketch-link:focus-visible::after,
+/* Touch has no hover — the press shows the pencil underline instead */
+.sketch-link:active::after {
   opacity: 1;
 }
 
@@ -419,6 +439,38 @@ select {
 }
 .sketch-edge:hover::before {
   opacity: 1;
+}
+
+/* ─── MOBILE SCROLL HINTS ──────────────────────────────────────────────
+   Right-edge fade on horizontally-scrolling code blocks, so cut-off lines
+   read as "scrollable" instead of "broken". CSS-only scroll shadows:
+   the background-attachment:local cover layer scrolls WITH the content
+   and slides over the fixed shadow once you reach the end — the hint
+   hides itself. Backgrounds sit under the glyphs, never covering text.
+   Layer order: cover (local) first so it paints over the shadow.
+   ─────────────────────────────────────────────────────────────────── */
+@media (max-width: 767px) {
+  /* Longhands (not the `background` shorthand) so the host element's own
+     background-color utility survives. */
+  .scroll-hint-x-dark,
+  .scroll-hint-x-light {
+    background-position: right center, right center;
+    /* Cover (local) is twice the shadow's width: solid across the whole
+       shadow zone at scroll-end, feathering out past it. */
+    background-size: 88px 100%, 44px 100%;
+    background-repeat: no-repeat, no-repeat;
+    background-attachment: local, scroll;
+  }
+  .scroll-hint-x-dark {
+    background-image:
+      linear-gradient(to left, var(--void) 44px, transparent 88px),
+      linear-gradient(to left, var(--void) 6px, rgba(10, 10, 11, 0.85) 20px, transparent 44px);
+  }
+  .scroll-hint-x-light {
+    background-image:
+      linear-gradient(to left, var(--paper) 44px, transparent 88px),
+      linear-gradient(to left, var(--paper) 6px, rgba(245, 241, 232, 0.85) 20px, transparent 44px);
+  }
 }
 
 @utility grain {
