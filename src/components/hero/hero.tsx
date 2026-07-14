@@ -87,9 +87,8 @@ export function Hero() {
       "
     >
       {/* ─── Split grid ────────────────────────────────────────────────────
-          On mobile: the portrait fills the visible viewport below the 84px
-          navigation. The extra vertical room keeps the face clear and moves
-          the copy into the lower paper-feather transition.
+          On mobile: first viewport is portrait + name. Supporting copy and
+          actions sit in normal flow below it and reveal as the user scrolls.
           On desktop: 55/45 split with text left, portrait right (unchanged;
           the flight layer measures the same anchor rect as before).
           ─────────────────────────────────────────────────────────────── */}
@@ -102,10 +101,9 @@ export function Hero() {
             order-2 md:order-1
             relative z-10
             flex flex-col justify-center
-            max-md:absolute max-md:inset-x-0 max-md:bottom-0
-            max-md:justify-end
             px-6 md:px-10 lg:pl-[clamp(40px,6vw,96px)] lg:pr-6
-            py-10 max-md:pb-8 max-md:pt-14 md:py-0
+            max-md:-mt-10 max-md:justify-start max-md:pb-16 max-md:pt-8
+            md:py-0
             will-change-transform
           "
         >
@@ -117,7 +115,7 @@ export function Hero() {
             className="pointer-events-none absolute inset-0 -z-10 md:hidden"
             style={{
               background:
-                "linear-gradient(to top, var(--paper) 0%, var(--paper) 30%, rgba(245,241,232,0.9) 55%, rgba(245,241,232,0.4) 80%, transparent 100%)",
+                "linear-gradient(to bottom, transparent 0px, rgba(245,241,232,0.58) 44px, rgba(245,241,232,0.94) 116px, var(--paper) 176px, var(--paper) 100%)",
             }}
           />
 
@@ -133,7 +131,7 @@ export function Hero() {
           <h1
             className="hero-name font-display text-ink opacity-0"
             style={{
-              fontSize: "clamp(46px, 7vw, 96px)",
+              fontSize: "clamp(34px, 7vw, 96px)",
               lineHeight: 1.0,
               letterSpacing: "-0.035em",
               fontWeight: 400,
@@ -145,25 +143,26 @@ export function Hero() {
           {/* Tagline — declaration, not description. Implies the role through
               what it builds, not by announcing a title. Works for backend AND
               AI infra because "production" is the common adversary. */}
-          <p
-            className="hero-tagline mt-5 font-display italic text-ink-2 opacity-0"
-            style={{
-              fontSize: "clamp(18px, 1.9vw, 24px)",
-              lineHeight: 1.4,
-              letterSpacing: "0",
-              wordSpacing: "0.02em",
-              fontWeight: 400,
-              maxWidth: "32ch",
-            }}
-          >
-            Builds the parts that don&apos;t fail
-            <br className="hidden md:block" />
-            {" "}when production finally looks at them.
-          </p>
+          <div className="hero-details max-md:mt-6">
+            <p
+              className="hero-tagline mt-0 font-display italic text-ink-2 opacity-100 md:mt-5 md:opacity-0"
+              style={{
+                fontSize: "clamp(18px, 1.9vw, 24px)",
+                lineHeight: 1.4,
+                letterSpacing: "0",
+                wordSpacing: "0.02em",
+                fontWeight: 400,
+                maxWidth: "32ch",
+              }}
+            >
+              Builds the parts that don&apos;t fail
+              <br className="hidden md:block" />
+              {" "}when production finally looks at them.
+            </p>
 
           {/* Signature + CTA — tighter on mobile so the recruiter anchor
               and CTAs both fit close to the fold. */}
-          <div className="hero-meta mt-8 md:mt-12 flex flex-col gap-5 md:gap-7 opacity-0">
+            <div className="hero-meta mt-8 md:mt-12 flex flex-col gap-5 md:gap-7 opacity-100 md:opacity-0">
             {/* Layered meta block — 2 lines:
                   1. Handle + discipline + location  (primary)
                   2. Recruiter anchor                (secondary)
@@ -244,6 +243,7 @@ export function Hero() {
                 </span>
               </Link>
             </div>
+            </div>
           </div>
         </div>
 
@@ -253,7 +253,7 @@ export function Hero() {
           className="
             order-1 md:order-2
             relative
-            h-[calc(100svh-84px)] min-h-[560px] md:h-full md:min-h-0
+            aspect-[3/4] h-auto min-h-0 md:aspect-auto md:h-full md:min-h-0
             will-change-transform
           "
         >
@@ -278,17 +278,19 @@ export function Hero() {
           from { opacity: 0; transform: translateY(14px); }
           to   { opacity: 1; transform: translateY(0); }
         }
-        .hero-eyebrow {
-          animation: hero-fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.15s forwards;
-        }
         .hero-name {
           animation: hero-fade-up 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.35s forwards;
         }
-        .hero-tagline {
-          animation: hero-fade-up 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.75s forwards;
-        }
-        .hero-meta {
-          animation: hero-fade-up 0.9s cubic-bezier(0.16, 1, 0.3, 1) 1.2s forwards;
+        @media (min-width: 768px) {
+          .hero-eyebrow {
+            animation: hero-fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.15s forwards;
+          }
+          .hero-tagline {
+            animation: hero-fade-up 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.75s forwards;
+          }
+          .hero-meta {
+            animation: hero-fade-up 0.9s cubic-bezier(0.16, 1, 0.3, 1) 1.2s forwards;
+          }
         }
         @media (prefers-reduced-motion: reduce) {
           .hero-eyebrow,

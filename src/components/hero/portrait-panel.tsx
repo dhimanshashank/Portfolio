@@ -74,7 +74,7 @@ export function PortraitPanel({
               onError={() => setErrored(true)}
               draggable={false}
               className={cn(
-                "object-cover object-top select-none",
+                "object-contain object-top select-none md:object-cover",
                 "transition-opacity duration-700 ease-out",
                 loaded ? "opacity-100" : "opacity-0"
               )}
@@ -132,11 +132,11 @@ export function PortraitPanel({
               "linear-gradient(to bottom, var(--paper) 0%, rgba(245,241,232,0.45) 50%, transparent 100%)",
           }}
         />
-        {/* Bottom feather — on mobile it reaches ~45% up the portrait so
-            the image dissolves into the text overlay's paper gradient */}
+        {/* Bottom feather follows the portrait's 3:4 mobile frame, so the
+            bitmap dissolves directly into the text paper without a blank gap. */}
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-[45%] md:h-44"
+          className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-[32%] md:h-44"
           style={{
             background:
               "linear-gradient(to top, var(--paper) 0%, rgba(245,241,232,0.7) 40%, transparent 100%)",
