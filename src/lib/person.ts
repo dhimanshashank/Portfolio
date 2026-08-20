@@ -8,7 +8,7 @@ export const person = {
   firstName: "Shashank",
   role: "Full Stack Engineer",
   roleLong: "Full Stack Engineer · Real-Time Systems · API & Backend Engineering",
-  location: "Chandigarh, India",
+  location: "Jalandhar, India",
   locationDetail: "Open to remote & relocation",
   email: "contact@shashankdhiman.in",
   phone: "+91 88476 80989",

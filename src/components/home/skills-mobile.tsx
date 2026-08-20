@@ -1,5 +1,7 @@
 import { SKILL_GROUPS, SKILL_PROMPT } from "@/lib/skills";
 
+const FLAG = "--all";
+
 /**
  * <SkillsMobile> — the phone-only counterpart to <Workbench>'s drawn
  * monitor. Below tablet, the flight/desk sequence doesn't render at all
@@ -7,9 +9,14 @@ import { SKILL_GROUPS, SKILL_PROMPT } from "@/lib/skills";
  * scene's essence instead: a small hand-drawn monitor (sketch-edge bezel)
  * with the skills as static terminal output and a blinking caret. No JS,
  * no scroll-linked motion; the caret blink is pure CSS (`.term-caret`,
- * with a reduced-motion override to a steady caret). Same data source
- * (src/lib/skills.ts) as the desktop terminal, so editing one place
- * updates both.
+ * with a reduced-motion override to a steady caret).
+ *
+ * This is the FULL list, not the desktop preview. The drawn monitor in
+ * <Workbench> is capped at a 58-column screen and renders the curated
+ * HOME_SKILL_GROUPS; this block is plain flowing text with no such limit,
+ * so it prints every group and every item at resume wording. The prompt
+ * carries `--all` to make the difference legible rather than look like the
+ * two surfaces simply disagree.
  */
 export function SkillsMobile() {
   return (
@@ -39,7 +46,7 @@ export function SkillsMobile() {
             {/* SKILL_PROMPT already includes its own "$ " prefix */}
             <p className="text-bone">
               <span className="text-[#9BD2A6]">$</span>{" "}
-              {SKILL_PROMPT.replace(/^\$\s*/, "")}
+              {SKILL_PROMPT.replace(/^\$\s*/, "")} {FLAG}
             </p>
 
             {SKILL_GROUPS.map((group) => (
@@ -47,7 +54,9 @@ export function SkillsMobile() {
                 <p className="text-[11px] uppercase tracking-[0.16em] text-signal">
                   ## {group.label}
                 </p>
-                <p className="mt-1 text-bone-2">{group.items.join("  ·  ")}</p>
+                <p className="mt-1 text-bone-2">
+                  {group.items.map((s) => s.name).join("  ·  ")}
+                </p>
               </div>
             ))}
 

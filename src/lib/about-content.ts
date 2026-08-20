@@ -16,7 +16,7 @@ export const aboutHero = {
   paragraph:
     "I'm Shashank. I work on backends — the kind where the failure modes are the actual problem, and the diagram doesn't tell you anything until the second user shows up.",
   subline:
-    "One year shipped, four production systems. Currently at Masters' Union — EdTech, building the LMS platform; open to what's next.",
+    "1.5+ years shipped, four production systems. Currently at Masters' Union — EdTech, building the LMS platform; open to what's next.",
 } as const;
 
 // ─── THE ESSAY — the spine of the page ───────────────────────────────────
@@ -58,15 +58,9 @@ export const mastersUnion = {
 // Skills as a small categorized list. Education as a single line. Contact
 // links route through person.ts (already centralized).
 export const aboutFacts = {
-  skills: [
-    { group: "Backend", items: ["Node.js", "Express", "REST", "Microservices"] },
-    { group: "Real-time", items: ["WebRTC (Mediasoup)", "Socket.IO", "Redis Pub/Sub"] },
-    { group: "Data", items: ["PostgreSQL", "ClickHouse", "Redis", "MongoDB"] },
-    { group: "Cloud", items: ["AWS Lambda", "SQS", "AWS S3", "Docker"] },
-    { group: "AI / LLM", items: ["OpenRouter API", "AI session summaries", "MediaPipe (eye-gaze, tab-switch)"] },
-    { group: "Languages", items: ["TypeScript", "JavaScript", "SQL"] },
-    { group: "Frontend", items: ["React", "Next.js", "Tailwind"] },
-  ],
+  // Skills moved to src/lib/skills.ts — one source now feeds the /about
+  // sidebar, the mobile terminal, and the desktop monitor. They had
+  // drifted into three different vocabularies.
   education: {
     degree: "B.Tech, Computer Science & Engineering",
     school: "Guru Nanak Dev Engineering College, Ludhiana",

@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "portfolio-v2",
+      "runtimeExecutable": "C:\\Users\\SHASHA~1\\Desktop\\Personal\\portfolio-v2\\node_modules\\.bin\\next.cmd",
+      "runtimeArgs": ["dev", "C:\\Users\\Shashank Dhiman\\Desktop\\Personal\\portfolio-v2", "-p", "3003"],
+      "port": 3003,
+      "autoPort": true
+    }
+  ]
+}

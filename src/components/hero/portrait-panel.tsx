@@ -13,8 +13,13 @@ const SHARED_READY_EVENT = "shared-portrait-ready";
  *
  * Right-side visual anchor of the Hero. Uses next/image for:
  *   - Auto WebP/AVIF conversion (396KB PNG → ~40-60KB)
- *   - priority prop = no lazy load penalty on LCP element
  *   - Responsive srcSet = correct size per viewport
+ *   - eager + high fetch priority = no lazy-load penalty on the LCP element.
+ *     This used to be the `priority` prop, which Next 16 deprecated in favour
+ *     of `preload`; the deprecated prop no longer emits fetchpriority or
+ *     loading attributes, so the LCP image was shipping unprioritised. The
+ *     docs recommend loading/fetchPriority over `preload` in most cases, and
+ *     `preload` is explicitly not for use alongside either of them.
  *
  * Right padding removed so portrait bleeds to the viewport edge.
  */
@@ -68,13 +73,20 @@ export function PortraitPanel({
               src={src}
               alt={alt}
               fill
-              priority
+              loading="eager"
+              fetchPriority="high"
               sizes="(max-width: 768px) 100vw, 45vw"
               onLoad={() => setLoaded(true)}
               onError={() => setErrored(true)}
               draggable={false}
               className={cn(
-                "object-contain object-top select-none md:object-cover",
+                // Mobile crops rather than letterboxes: the panel is now
+                // height-budgeted (44svh), so `contain` would pillarbox the
+                // 3:4 sketch inside a squarer box. Ink-density sampling puts
+                // the head between 10% and 30% of the frame with an empty
+                // top decile, so a 10% offset trims dead paper and keeps the
+                // face well clear of the crop. Desktop is unchanged.
+                "object-cover object-[50%_10%] select-none md:object-top",
                 "transition-opacity duration-700 ease-out",
                 loaded ? "opacity-100" : "opacity-0"
               )}
@@ -132,8 +144,8 @@ export function PortraitPanel({
               "linear-gradient(to bottom, var(--paper) 0%, rgba(245,241,232,0.45) 50%, transparent 100%)",
           }}
         />
-        {/* Bottom feather follows the portrait's 3:4 mobile frame, so the
-            bitmap dissolves directly into the text paper without a blank gap. */}
+        {/* Bottom feather dissolves the bitmap into the text paper without a
+            blank gap — proportional, so it follows the 44svh mobile frame. */}
         <div
           aria-hidden
           className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-[32%] md:h-44"

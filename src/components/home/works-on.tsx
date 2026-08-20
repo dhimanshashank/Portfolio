@@ -284,7 +284,7 @@ export function WorksOn() {
               font-mono text-[12px] uppercase tracking-[0.18em] text-ink
               sketch-btn
               transition-colors duration-300
-              hover:bg-signal hover:text-paper
+              hover:bg-signal-cta hover:text-white
             "
           >
             Read the story

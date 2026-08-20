@@ -428,7 +428,7 @@ export function Playboard() {
               actionBtn,
               tool === t.id
                 ? t.id === "marker"
-                  ? "bg-signal text-paper"
+                  ? "bg-signal-cta text-white"
                   : "bg-ink text-paper"
                 : "text-ink-2 hover:text-ink"
             )}

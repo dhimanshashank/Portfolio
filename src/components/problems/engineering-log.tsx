@@ -282,7 +282,7 @@ export function EngineeringLog() {
                     font-mono text-[11px] uppercase tracking-[0.18em] text-ink
                     rounded-sm
                     transition-colors duration-300
-                    hover:bg-signal hover:text-paper hover:border-signal
+                    hover:bg-signal-cta hover:text-white hover:border-signal
                   "
                 >
                   Open the log

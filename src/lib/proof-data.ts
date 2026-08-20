@@ -36,7 +36,7 @@ export const fallbackProof: ProofStats = {
   source: "fallback",
   fetchedAt: "2026-06-08",
   leetcode: {
-    solved: 225,
+    solved: 240,
     beatsPercent: 93.9,
     byDifficulty: null,
     calendar: null,

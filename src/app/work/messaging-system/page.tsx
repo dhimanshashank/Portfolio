@@ -312,12 +312,12 @@ export default function MessagingCaseStudy() {
               href="/contact"
               className="
                 group inline-flex items-center gap-3
-                bg-signal text-paper
+                bg-signal-cta text-white
                 px-5 py-3
                 font-mono text-[11px] uppercase tracking-[0.18em]
                 rounded-sm
                 transition-colors duration-300
-                hover:bg-signal-low
+                hover:bg-signal-cta-hi
               "
             >
               Talk shop

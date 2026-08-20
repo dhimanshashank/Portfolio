@@ -13,7 +13,7 @@ import { aboutEssays } from "@/lib/about-content";
 export const metadata: Metadata = {
   title: "About — Shashank Dhiman",
   description:
-    "Full stack engineer. One year shipped, four production systems at Masters' Union (EdTech) — building the LMS platform. Currently chasing real-time + LLM infrastructure problems.",
+    "Full stack engineer. 1.5+ years shipped, four production systems at Masters' Union (EdTech) — building the LMS platform. Currently chasing real-time + LLM infrastructure problems.",
   alternates: { canonical: "/about" },
 };
 

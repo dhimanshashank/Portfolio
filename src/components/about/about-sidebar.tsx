@@ -1,5 +1,6 @@
 import { person } from "@/lib/person";
 import { aboutFacts } from "@/lib/about-content";
+import { SKILL_GROUPS } from "@/lib/skills";
 import { PortraitCard } from "./portrait-card";
 
 /**
@@ -26,13 +27,13 @@ export function AboutSidebar() {
             What I reach for
           </p>
           <ul className="flex flex-col gap-6">
-            {aboutFacts.skills.map((group) => (
-              <li key={group.group} className="grid grid-cols-1 gap-2 md:grid-cols-[180px_1fr]">
+            {SKILL_GROUPS.map((group) => (
+              <li key={group.label} className="grid grid-cols-1 gap-2 md:grid-cols-[180px_1fr]">
                 <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-ink-3">
-                  {group.group}
+                  {group.label}
                 </span>
                 <span className="text-ink-2" style={{ fontSize: "15px", lineHeight: 1.55 }}>
-                  {group.items.join(" · ")}
+                  {group.items.map((s) => s.name).join(" · ")}
                 </span>
               </li>
             ))}

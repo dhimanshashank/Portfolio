@@ -403,7 +403,7 @@ export const commands: Command[] = [
     group: "explore",
     run: ({ print }) =>
       print([
-        t(`${projects.length} production systems · 1+ year shipping`, "normal"),
+        t(`${projects.length} production systems · 1.5+ years shipping`, "normal"),
         t("real-time · APIs · LLM integration — still running.", "muted"),
       ]),
   },

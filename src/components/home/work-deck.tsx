@@ -259,7 +259,7 @@ function DeckCardSurface({
             href={href}
             draggable={false}
             onClick={(e) => e.stopPropagation()}
-            className="group inline-flex items-center gap-2 rounded-sm border border-ink/20 px-4 py-2.5 font-mono text-[11px] uppercase tracking-[0.18em] text-ink transition-colors hover:border-signal hover:bg-signal hover:text-paper"
+            className="group inline-flex items-center gap-2 rounded-sm border border-ink/20 px-4 py-2.5 font-mono text-[11px] uppercase tracking-[0.18em] text-ink transition-colors hover:border-signal hover:bg-signal-cta hover:text-white"
           >
             {project.caseStudy ? "Case study" : "View"}
             <span

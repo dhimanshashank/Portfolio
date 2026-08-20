@@ -5,6 +5,7 @@ import { experience, educationLine } from "@/lib/experience-data";
 import { HatchDivider } from "@/components/ui/sketch-marks";
 import { MarginDoodle } from "@/components/ui/margin-doodle";
 import { ShippedStamp } from "@/components/ui/shipped-stamp";
+import { Recognition } from "@/components/home/recognition";
 
 /**
  * <Experience> — Plate II (home page)
@@ -65,7 +66,7 @@ export function Experience() {
             className="mt-5 text-ink-2 max-w-[52ch]"
             style={{ fontSize: "clamp(14px, 1.05vw, 16px)", lineHeight: 1.65 }}
           >
-            One year, four production systems — currently building the real-time
+            1.5+ years, four production systems — currently building the real-time
             and AI infrastructure behind Masters&apos; Union&apos;s EdTech
             learning platform (LMS).
           </p>
@@ -163,6 +164,9 @@ export function Experience() {
           {educationLine.degree} · {educationLine.school} · {educationLine.years}
           {educationLine.note ? ` · ${educationLine.note}` : ""}
         </motion.p>
+
+        {/* ─── Recognition — the award, attached to the role it was for ── */}
+        <Recognition />
       </div>
     </section>
   );

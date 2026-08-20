@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useGSAP, gsap } from "@/lib/motion/use-gsap";
-import { SKILL_GROUPS, SKILL_PROMPT } from "@/lib/skills";
+import { HOME_SKILL_GROUPS, SKILL_PROMPT } from "@/lib/skills";
 import { SketchFrame } from "@/components/ui/sketch-marks";
 import { assetUrl } from "@/lib/assets";
 
@@ -28,13 +28,31 @@ const T_TYPE_START = 0.24;
 const T_TYPE_END = 0.8;
 const T_FADE_START = 0.88;
 
-type Line = { text: string; kind: "prompt" | "label" | "items" };
+/**
+ * One line per group, not two.
+ *
+ * The drawn screen measures 507×161 at a 1440px viewport, and a line costs
+ * 24px (13px type × 1.5 leading + a 0.35em gap) — so roughly six lines fit.
+ * The previous label-line + items-line layout spent two lines per group,
+ * which meant four groups needed nine lines and the last group was being
+ * clipped by the screen's `overflow-hidden` before it ever finished typing.
+ *
+ * Collapsed to `▍ label  item · item · item`, five groups fit in six lines
+ * with room to spare, and the widest line is 59 characters ≈ 460px inside a
+ * 477px usable width. `splitAt` marks where the orange label ends so the
+ * line can still be drawn in two colours.
+ */
+type Line = { text: string; kind: "prompt" | "group"; splitAt?: number };
 const LINES: Line[] = [
   { text: SKILL_PROMPT, kind: "prompt" },
-  ...SKILL_GROUPS.flatMap((g): Line[] => [
-    { text: `▍ ${g.label}`, kind: "label" },
-    { text: `  ${g.items.join("  ·  ")}`, kind: "items" },
-  ]),
+  ...HOME_SKILL_GROUPS.map((g): Line => {
+    const label = `▍ ${g.label}`;
+    return {
+      text: `${label}  ${g.items.join("  ·  ")}`,
+      kind: "group",
+      splitAt: label.length,
+    };
+  }),
 ];
 const LINE_STARTS = LINES.reduce<number[]>(
   (starts, line, index) => [
@@ -50,13 +68,18 @@ const easeInOut = (t: number) =>
   t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 
 /** Shallow per-line horizontal arc, echoing the curved monitor. Center
- * characters sit a hair "forward" (translateY up), edges recede. */
-function CurvedLine({ text }: { text: string }) {
+ * characters sit a hair "forward" (translateY up), edges recede.
+ *
+ * `offset` is the character index this fragment starts at within its line.
+ * A group line is drawn as two differently-coloured spans, and without the
+ * offset the second span would restart the arc from the left edge, kinking
+ * the curve where the colour changes. */
+function CurvedLine({ text, offset = 0 }: { text: string; offset?: number }) {
   const chars = [...text];
   return (
     <span className="inline-block whitespace-pre">
       {chars.map((ch, i) => {
-        const t = Math.min(1, Math.max(-1, (i / SCREEN_COLS) * 2 - 1));
+        const t = Math.min(1, Math.max(-1, ((i + offset) / SCREEN_COLS) * 2 - 1));
         const rotY = -t * CURVE_MAX_DEG;
         const bow = (1 - t * t) * CURVE_BOW_PX;
         return (
@@ -275,15 +298,21 @@ export function Workbench() {
                 {rendered.map((line, i) => (
                   <p
                     key={i}
-                    className={
-                      line.kind === "prompt"
-                        ? "text-ink"
-                        : line.kind === "label"
-                          ? "text-signal"
-                          : "text-ink-2"
-                    }
+                    className={line.kind === "prompt" ? "text-ink" : "text-ink-2"}
                   >
-                    <CurvedLine text={line.visible} />
+                    {line.kind === "group" && line.splitAt !== undefined ? (
+                      <>
+                        <span className="text-signal">
+                          <CurvedLine text={line.visible.slice(0, line.splitAt)} />
+                        </span>
+                        <CurvedLine
+                          text={line.visible.slice(line.splitAt)}
+                          offset={Math.min(line.visible.length, line.splitAt)}
+                        />
+                      </>
+                    ) : (
+                      <CurvedLine text={line.visible} />
+                    )}
                     {i === activeIndex && (
                       <span aria-hidden className="animate-pulse text-ink">
                         ▍

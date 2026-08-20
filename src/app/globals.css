@@ -12,6 +12,16 @@
   --signal-dim: rgba(255, 91, 31, 0.12);
   --signal-glow: rgba(255, 91, 31, 0.22);
 
+  /* Filled-button fill. --signal itself is too light to carry light text:
+     white on #FF5B1F is 3.10:1, well under the 4.5:1 AA floor for 12px
+     labels, and paper (#F5F1E8) is worse still at 2.75:1. #CE4A0D is
+     essentially the lightest orange that clears the floor with pure white
+     (4.56:1), so this is as close to the signature orange as a legible
+     light-on-orange button can get. --signal stays untouched everywhere it
+     is used as an accent: glyphs, borders, rules, text-signal. */
+  --signal-cta: #CE4A0D;        /* Filled CTA — white text clears 4.56:1 */
+  --signal-cta-hi: #B8410B;     /* Filled CTA hover — 5.53:1 */
+
   /* ─── Neutrals (warm) ────────────────────────────────────────────── */
   --paper: #F5F1E8;             /* Warm off-white — light mode bg */
   --paper-soft: #EFEADF;        /* Recessed bg in light mode */
@@ -20,7 +30,10 @@
   --ink: #0E0E0E;               /* Graphite black — text on paper */
   --ink-2: #2A2A2A;             /* Secondary text on paper */
   --ink-3: #5C5C5C;             /* Tertiary text on paper */
-  --ink-4: #8A8A8A;             /* Quaternary / disabled */
+  /* Was #8A8A8A, which read at 3.06:1 on paper — below the 4.5:1 AA floor
+     for body-size text, and it is used for body-size text all over the site.
+     #6E6E6E clears it at 4.57:1 while staying clearly quieter than ink-3. */
+  --ink-4: #6E6E6E;             /* Quaternary / disabled */
 
   /* ─── Neutrals (cool / dark mode) ────────────────────────────────── */
   --void: #0A0A0B;              /* Deep graphite — dark mode bg */
@@ -83,6 +96,11 @@
   --tracking-wide:     0.04em;
   --tracking-label:    0.12em;
 
+  /* ─── Chrome ─────────────────────────────────────────────────────── */
+  /* The sticky header's rendered height. The hero subtracts it so "one
+     screen" actually means one screen; keep in sync with <Nav>'s padding. */
+  --nav-h: 84px;
+
   /* ─── Container widths ───────────────────────────────────────────── */
   --container-xs:    480px;
   --container-sm:    640px;
@@ -113,6 +131,8 @@
   --color-signal-low:    var(--signal-low);
   --color-signal-dim:    var(--signal-dim);
   --color-signal-glow:   var(--signal-glow);
+  --color-signal-cta:    var(--signal-cta);
+  --color-signal-cta-hi: var(--signal-cta-hi);
 
   --color-paper:         var(--paper);
   --color-paper-soft:    var(--paper-soft);

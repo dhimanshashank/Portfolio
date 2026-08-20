@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
  *
  * Cold-load ceremony. Plays once on every fresh page load (and hard reload).
  * Two ink panels are already closed when the page paints; a signal-orange
- * registration tick + Chandigarh coordinates fade in across a long hold, then
+ * registration tick + Jalandhar coordinates fade in across a long hold, then
  * the tick + coordinates fade away, then the panels split apart cleanly.
  *
  * Timeline (≈2360ms):
@@ -15,7 +15,7 @@ import { useEffect, useState } from "react";
  *   t = 0       panels already closed, ink + paper grain
  *   t = 200     signal-orange tick fades in at centre
  *   t = 360     coordinates fade in (28°36'N · 77°12'E)
- *   t = 520     place line fades in (Chandigarh · IN)
+ *   t = 520     place line fades in (Jalandhar · IN)
  *   t = 1600    tick + coords + place begin fading out (200ms)
  *   t = 1800    hold ends, panels start splitting (560ms open) — content
  *               already gone so the seam reveals a clean ink field
@@ -60,7 +60,7 @@ export function InitialCurtain() {
           30°44&apos;N &nbsp;·&nbsp; 76°47&apos;E
         </p>
         <p className="initial-curtain-place font-mono">
-          Chandigarh · IN
+          Jalandhar · IN
         </p>
       </div>
 

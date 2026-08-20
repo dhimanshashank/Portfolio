@@ -94,12 +94,12 @@ export default function NotFound() {
           href="/"
           className="
             group inline-flex items-center gap-3
-            bg-signal text-paper
+            bg-signal-cta text-white
             px-6 py-3.5
             font-mono text-[12px] uppercase tracking-[0.18em]
             sketch-btn
             transition-colors duration-300
-            hover:bg-signal-low
+            hover:bg-signal-cta-hi
           "
         >
           Back to the desk
